@@ -8,6 +8,11 @@ import org.gradle.kotlin.dsl.dependencies
 
 internal class AndroidComposePlugin : Plugin<Project> {
 
+    /**
+     * Configures the target Android project for Jetpack Compose by enabling Compose build features, applying necessary plugins, and adding Compose-related dependencies using the version catalog.
+     *
+     * This setup includes the Compose BOM, core Compose libraries, UI tooling for debug builds, navigation, adaptive Compose libraries, and Kotlin serialization support.
+     */
     override fun apply(target: Project) = with(target) {
         val libs = getVersionCatalog()
 

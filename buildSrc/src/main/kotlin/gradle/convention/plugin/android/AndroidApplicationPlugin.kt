@@ -9,6 +9,12 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.withType
 
 internal class AndroidApplicationPlugin : Plugin<Project> {
+    /**
+     * Applies and configures Android, Kotlin, Hilt, and Compose plugins for the target Gradle project.
+     *
+     * This method ensures the required plugins are applied and invokes additional configuration
+     * for plugins of type `BasePlugin` and `AppPlugin`.
+     */
     override fun apply(target: Project) = with(target) {
         with(pluginManager) {
             apply("com.android.application")

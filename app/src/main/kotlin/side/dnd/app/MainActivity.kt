@@ -14,6 +14,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import side.dnd.app.ui.theme.SideprojectTheme
 
 class MainActivity : ComponentActivity() {
+    /**
+     * Initializes the activity and sets up the main UI content using Jetpack Compose.
+     *
+     * Enables edge-to-edge display and defines the app's theme and layout, displaying a greeting message.
+     *
+     * @param savedInstanceState The previously saved instance state, or null if none exists.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -30,6 +37,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Displays a greeting message with the specified name.
+ *
+ * @param name The name to include in the greeting message.
+ * @param modifier Optional modifier to adjust the layout or appearance of the greeting.
+ */
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
@@ -38,6 +51,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
+/**
+ * Displays a preview of the Greeting composable within the SideprojectTheme for IDE inspection.
+ */
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {

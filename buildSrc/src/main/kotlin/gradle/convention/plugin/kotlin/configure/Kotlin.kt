@@ -9,6 +9,11 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+/**
+ * Configures the project for Kotlin JVM compilation with standardized Java and Kotlin compiler settings.
+ *
+ * Sets the Java source and target compatibility, configures all Kotlin compile tasks to use a specified JVM target, and enables explicit backing fields in the Kotlin DSL extension.
+ */
 internal fun Project.configureKotlinJVM() {
     extensions.configure<JavaPluginExtension> {
         sourceCompatibility = VersionConst.JAVA_VERSION

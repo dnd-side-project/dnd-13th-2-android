@@ -13,6 +13,12 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 
+/**
+ * Configures Android application-specific build settings for the project.
+ *
+ * Sets the target SDK version to 35 and defines build types for debug and release variants.
+ * Debug builds have code and resource shrinking disabled, while release builds enable both and apply ProGuard configuration files.
+ */
 internal fun Project.configureApplication() {
     onApplicationExtension {
         defaultConfig {
@@ -36,6 +42,12 @@ internal fun Project.configureApplication() {
     }
 }
 
+/**
+ * Configures common Android build settings for the project.
+ *
+ * Sets the compile SDK and minimum SDK versions, enables support library usage for vector drawables,
+ * configures Java source and target compatibility, enables BuildConfig generation, and sets up the Kotlin JVM toolchain.
+ */
 internal fun Project.configureAndroid() {
     androidExtension.apply {
         compileSdk = VersionConst.compileSdk

@@ -8,6 +8,11 @@ import org.gradle.kotlin.dsl.dependencies
 
 internal class AndroidFeaturePlugin : Plugin<Project> {
 
+    /**
+     * Configures the target Gradle project as an Android feature module.
+     *
+     * Applies standard plugins, sets up Android test configurations, and adds dependencies on internal modules and external libraries to ensure consistent setup for feature modules.
+     */
     override fun apply(target: Project) = with(target) {
         with(pluginManager) {
             apply("side.dnd.android.library")

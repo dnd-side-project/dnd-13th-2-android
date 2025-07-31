@@ -8,6 +8,11 @@ import org.gradle.kotlin.dsl.withType
 
 internal class AndroidLibraryPlugin : Plugin<Project> {
 
+    /**
+     * Applies the Android library and Kotlin Android plugins to the target project and configures Android-specific settings.
+     *
+     * This method ensures the necessary plugins are applied and invokes additional configuration for each applied Android base plugin.
+     */
     override fun apply(target: Project) = with(target) {
         with(pluginManager) {
             apply("com.android.library")
