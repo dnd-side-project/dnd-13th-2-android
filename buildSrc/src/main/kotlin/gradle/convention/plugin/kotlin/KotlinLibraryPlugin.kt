@@ -9,9 +9,9 @@ class KotlinLibraryPlugin: Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         with(pluginManager) {
             apply("org.jetbrains.kotlin.jvm")
-
-            configureKotlinJVM()
-            configureKotlinTest()
         }
+
+        configureKotlinJVM()
+        configureKotlinTest()
     }
 }

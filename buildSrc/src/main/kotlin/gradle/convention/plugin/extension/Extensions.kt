@@ -14,14 +14,14 @@ internal fun Project.onApplicationExtension(action: ApplicationExtension.() -> U
     extensions.configure<ApplicationExtension>(action)
 }
 
-internal val Project.baseAppModuleException: CommonExtension<*, *, *, *, *, *>
+internal val Project.baseAppModuleExtension: CommonExtension<*, *, *, *, *, *>
     get() = extensions.getByType<BaseAppModuleExtension>()
 
 internal val Project.libraryExtension: CommonExtension<*, *, *, *, *, *>
     get() = extensions.getByType<LibraryExtension>()
 
 internal val Project.androidExtension get() = runCatching { libraryExtension }
-    .recoverCatching { baseAppModuleException }
+    .recoverCatching { baseAppModuleExtension }
     .onFailure { println("Could not find Library or Application extension from this project") }
     .getOrThrow()
 
