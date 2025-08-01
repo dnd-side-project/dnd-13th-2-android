@@ -514,9 +514,6 @@ potential-bugs:
   WrongEqualsTypeParameter:
     active: true
 
-formatting:
-  active: true
-
 style:
   active: false
   AlsoCouldBeApply:
