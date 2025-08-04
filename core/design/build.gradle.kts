@@ -1,5 +1,6 @@
 plugins {
     id("side.dnd.android.library")
+    id("side.dnd.compose")
 }
 
 android {
@@ -8,5 +9,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":common"))
+    implementation(project(":core:common"))
+
+    implementation(libs.material)
 }

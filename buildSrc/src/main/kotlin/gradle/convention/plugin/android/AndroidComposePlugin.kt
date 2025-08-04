@@ -1,19 +1,23 @@
 package gradle.convention.plugin.android
 
+import com.android.build.gradle.BasePlugin
+import gradle.convention.plugin.extension.androidExtension
 import gradle.convention.plugin.extension.getVersionCatalog
-import gradle.convention.plugin.extension.onApplicationExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.withType
 
 internal class AndroidComposePlugin : Plugin<Project> {
 
     override fun apply(target: Project) = with(target) {
         val libs = getVersionCatalog()
 
-        onApplicationExtension {
-            buildFeatures {
-                compose = true
+        plugins.withType<BasePlugin>().configureEach {
+            androidExtension.apply {
+                buildFeatures {
+                    compose = true
+                }
             }
         }
 

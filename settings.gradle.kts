@@ -21,7 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Sideproject"
 include(":app")
-include(":data")
-include(":design")
-include(":common")
-include(":domain")
+include(":core:data")
+include(":core:design")
+include(":core:common")
+include(":core:domain")

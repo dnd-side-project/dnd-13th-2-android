@@ -7,6 +7,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":data"))
-    implementation(project(":common"))
+    implementation(project(":core:data"))
+    implementation(project(":core:common"))
 }

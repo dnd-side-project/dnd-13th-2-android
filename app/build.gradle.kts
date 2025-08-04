@@ -1,6 +1,3 @@
-import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
-
 plugins {
     id("side.dnd.android.application")
 }
@@ -17,7 +14,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":design"))
+    implementation(project(":core:design"))
     implementation(libs.activity.compose)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.bundles.lifecycle)

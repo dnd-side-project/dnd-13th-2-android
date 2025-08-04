@@ -1,6 +1,5 @@
-package side.dnd.app.ui.theme
+package side.dnd.design.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

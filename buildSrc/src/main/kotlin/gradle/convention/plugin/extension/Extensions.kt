@@ -20,10 +20,11 @@ internal val Project.baseAppModuleExtension: CommonExtension<*, *, *, *, *, *>
 internal val Project.libraryExtension: CommonExtension<*, *, *, *, *, *>
     get() = extensions.getByType<LibraryExtension>()
 
-internal val Project.androidExtension get() = runCatching { libraryExtension }
-    .recoverCatching { baseAppModuleExtension }
-    .onFailure { println("Could not find Library or Application extension from this project") }
-    .getOrThrow()
+internal val Project.androidExtension
+    get() = runCatching { libraryExtension }
+        .recoverCatching { baseAppModuleExtension }
+        .onFailure { println("Could not find Library or Application extension from this project") }
+        .getOrThrow()
 
 fun Project.getVersionCatalog() = extensions.getByType<VersionCatalogsExtension>().named("libs")
 

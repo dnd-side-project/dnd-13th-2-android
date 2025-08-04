@@ -19,10 +19,10 @@ internal class AndroidFeaturePlugin : Plugin<Project> {
 
         val libs = getVersionCatalog()
         dependencies {
-            "implementation"(project(":common"))
-            "implementation"(project(":domain"))
-            "implementation"(project(":data"))
-            "implementation"(project(":design"))
+            "implementation"(project(":core:common"))
+            "implementation"(project(":core:domain"))
+            "implementation"(project(":core:data"))
+            "implementation"(project(":core:design"))
 
             "implementation"(libs.findLibrary("hilt.navigation.compose").get())
             "implementation"(libs.findBundle("lifecycle").get())

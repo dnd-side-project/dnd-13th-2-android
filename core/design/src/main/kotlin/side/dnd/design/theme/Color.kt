@@ -1,4 +1,4 @@
-package side.dnd.app.ui.theme
+package side.dnd.design.theme
 
 import androidx.compose.ui.graphics.Color
 
