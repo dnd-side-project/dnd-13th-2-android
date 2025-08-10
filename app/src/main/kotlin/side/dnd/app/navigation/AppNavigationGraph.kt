@@ -1,8 +1,11 @@
 package side.dnd.app.navigation
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
@@ -24,6 +27,7 @@ import kotlinx.serialization.Serializable
 import side.dnd.core.TopLevelRoute
 import side.dnd.design.R
 import side.dnd.design.theme.component.VerticalSpacer
+import side.dnd.design.theme.component.text.tu
 
 @Composable
 internal fun NavigationGraph(
@@ -61,7 +65,7 @@ sealed class TempRoute {
         override val description: String = "홈"
     }
 }
-
+//TODO 지워야 함!!!
 @Serializable
 sealed class TempRoute2 {
     @Serializable
@@ -93,6 +97,7 @@ internal fun RowScope.BottomNavigationItems(
                 selectedTextColor = NavigationDefaults.contentColor(),
                 indicatorColor = NavigationDefaults.navigationIndicatorColor(),
             ),
+            modifier = Modifier.height(45.dp)
         )
     }
 }
@@ -107,18 +112,20 @@ private fun BottomNavigationIcon(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = destination.icon),
             contentDescription = "BottomBar Icon",
-            tint = itemColor.value
+            tint = itemColor.value,
+            modifier = Modifier.height(20.dp)
         )
         VerticalSpacer(8.dp)
         Text(
             text = destination.description,
-            style = MaterialTheme.typography.labelSmall,
             color = itemColor.value,
-            fontSize = 12.sp
+            fontSize = 12.tu,
+            lineHeight = 12.tu
         )
     }
 }
