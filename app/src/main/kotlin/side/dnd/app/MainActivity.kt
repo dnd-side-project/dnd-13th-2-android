@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.style.TextDirection.Companion.Content
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -83,54 +84,45 @@ class MainActivity : ComponentActivity() {
                 snackBarChannel.trySend(snackBarMessage)
             }
         ) {
-            Column(
+            Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
                         top = WindowInsets.statusBars.asPaddingValues()
-                            .run { calculateTopPadding() + calculateBottomPadding() }
-                    )
-            ) {
-                Scaffold(
+                            .run { calculateTopPadding() + calculateBottomPadding() }),
+                bottomBar = {
+                    NavigationBar(
+                        containerColor = NavigationDefaults.containerColor(),
+                        contentColor = NavigationDefaults.contentColor(),
+                        tonalElevation = 10.dp,
+                        modifier = Modifier
+                            .height(72.dp)
+                            .shadow(
+                                10.dp, RoundedCornerShape(
+                                    topStart = 16.dp,
+                                    topEnd = 16.dp
+                                )
+                            ),
+                    ) {
+                        BottomNavigationItems(
+                            currentDestination = currentDestination,
+                            onClick = { topLevelRoute ->
+                                router.navigateTopLevelDestination(topLevelRoute)
+                            }
+                        )
+                    }
+                }
+            ) { paddingValues ->
+                NavigationGraph(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(
-                            top = WindowInsets.statusBars.asPaddingValues()
-                                .run { calculateTopPadding() + calculateBottomPadding() }),
-                    bottomBar = {
-                        NavigationBar(
-                            containerColor = NavigationDefaults.containerColor(),
-                            contentColor = NavigationDefaults.contentColor(),
-                            tonalElevation = 10.dp,
-                            modifier = Modifier
-                                .height(72.dp)
-                                .shadow(
-                                    10.dp, RoundedCornerShape(
-                                        topStart = 16.dp,
-                                        topEnd = 16.dp
-                                    )
-                                ),
-                        ) {
-                            BottomNavigationItems(
-                                currentDestination = currentDestination,
-                                onClick = { topLevelRoute ->
-                                    router.navigateTopLevelDestination(topLevelRoute)
-                                }
-                            )
-                        }
-                    }
-                ) { paddingValues ->
-                    NavigationGraph(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(
-                                bottom = paddingValues.calculateBottomPadding(),
-                                start = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
-                                end = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
-                            ),
-                        router = router,
-                    )
-                }
+                            bottom = paddingValues.calculateBottomPadding(),
+                            start = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
+                            end = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
+                        ),
+                    router = router,
+                )
             }
         }
     }

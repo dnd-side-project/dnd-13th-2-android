@@ -61,9 +61,9 @@ fun NavDestination?.isBarHasToBeShown(): Boolean =
         TopLevelRoutes.any { topLevelRoute -> hasRoute(route = topLevelRoute::class) }
     } == true
 
-fun <T> NavDestination?.isDestinationInHierarchy(destination: T) =
+fun <T: Any> NavDestination?.isDestinationInHierarchy(destination: T) =
     this?.hierarchy?.any {
-        it.hasRoute(destination!!::class)
+        it.hasRoute(destination::class)
     } == true
 
 fun NavController.popBackStackIfCan() {
