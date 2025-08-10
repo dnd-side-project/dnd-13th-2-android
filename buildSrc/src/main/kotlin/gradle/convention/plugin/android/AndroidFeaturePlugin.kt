@@ -5,6 +5,7 @@ import gradle.convention.plugin.extension.getVersionCatalog
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
+import kotlin.text.get
 
 internal class AndroidFeaturePlugin : Plugin<Project> {
 
@@ -27,7 +28,6 @@ internal class AndroidFeaturePlugin : Plugin<Project> {
             "implementation"(libs.findLibrary("hilt.navigation.compose").get())
             "implementation"(libs.findBundle("lifecycle").get())
             "implementation"(libs.findLibrary("kotlinx-collections-immutable").get())
-            "implementation"(libs.findBundle("navigation").get())
             "implementation"(libs.findLibrary("coil").get())
         }
     }
