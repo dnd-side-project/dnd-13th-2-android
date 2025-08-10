@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
                     NavigationBar(
                         containerColor = NavigationDefaults.containerColor(),
                         contentColor = NavigationDefaults.contentColor(),
-                        tonalElevation = 10.dp,
+                        tonalElevation = 0.dp,
                         modifier = Modifier
                             .height(72.dp)
                             .shadow(
