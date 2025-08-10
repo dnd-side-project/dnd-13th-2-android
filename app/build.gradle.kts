@@ -15,6 +15,7 @@ android {
 
 dependencies {
     implementation(project(":core:design"))
+    implementation(project(":feature:core"))
     implementation(libs.activity.compose)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.bundles.lifecycle)
