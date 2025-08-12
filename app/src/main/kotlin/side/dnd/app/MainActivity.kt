@@ -40,14 +40,14 @@ import side.dnd.app.navigation.NavigationGraph
 import side.dnd.app.navigation.rememberRouter
 import side.dnd.core.SnackBarMessage
 import side.dnd.core.compositionLocals.LocalShowSnackBar
-import side.dnd.design.theme.SideprojectTheme
+import side.dnd.design.theme.EodigoTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SideprojectTheme {
+            EodigoTheme {
                 Content()
             }
         }
@@ -129,7 +129,7 @@ class MainActivity : ComponentActivity() {
 
     @Preview
     @Composable
-    fun MainScreenPreview() = SideprojectTheme {
+    fun MainScreenPreview() = EodigoTheme {
         Content()
     }
 }
