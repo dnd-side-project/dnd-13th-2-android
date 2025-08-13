@@ -25,7 +25,7 @@ internal val Typography = EodigoType(
 )
 
 @Immutable
-data class  EodigoType(
+data class EodigoType(
     val tempFontR: TextStyle,
     val tempFontR50: TextStyle
 )
