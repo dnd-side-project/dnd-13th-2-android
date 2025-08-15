@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import side.dnd.app.navigation.BottomNavigationItems
@@ -42,6 +43,7 @@ import side.dnd.core.SnackBarMessage
 import side.dnd.core.compositionLocals.LocalShowSnackBar
 import side.dnd.design.theme.SideprojectTheme
 
+@HiltAndroidApp
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
