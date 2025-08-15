@@ -14,4 +14,5 @@ dependencies {
     implementation(libs.material)
     implementation(libs.coil)
     implementation(libs.foundation.layout)
+    implementation(libs.kotlinx.collections.immutable)
 }
