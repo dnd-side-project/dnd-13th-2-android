@@ -1,4 +1,4 @@
-package side.dnd.design.theme.component.text
+package side.dnd.design.component.text
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

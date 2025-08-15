@@ -20,4 +20,5 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.square)
+    implementation(libs.kotlinx.collections.immutable)
 }

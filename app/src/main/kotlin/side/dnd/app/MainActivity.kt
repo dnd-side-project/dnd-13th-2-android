@@ -4,12 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,9 +23,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.text.style.TextDirection.Companion.Content
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -40,6 +39,7 @@ import side.dnd.app.navigation.NavigationGraph
 import side.dnd.app.navigation.rememberRouter
 import side.dnd.core.SnackBarMessage
 import side.dnd.core.compositionLocals.LocalShowSnackBar
+import side.dnd.design.component.CircularFAB
 import side.dnd.design.theme.SideprojectTheme
 
 class MainActivity : ComponentActivity() {
@@ -91,25 +91,27 @@ class MainActivity : ComponentActivity() {
                         top = WindowInsets.statusBars.asPaddingValues()
                             .run { calculateTopPadding() + calculateBottomPadding() }),
                 bottomBar = {
-                    NavigationBar(
-                        containerColor = NavigationDefaults.containerColor(),
-                        contentColor = NavigationDefaults.contentColor(),
-                        tonalElevation = 0.dp,
-                        modifier = Modifier
-                            .height(72.dp)
-                            .shadow(
-                                10.dp, RoundedCornerShape(
-                                    topStart = 16.dp,
-                                    topEnd = 16.dp
+                    CircularFAB(modifier = Modifier.fillMaxWidth()) {
+                        NavigationBar(
+                            containerColor = NavigationDefaults.containerColor(),
+                            contentColor = NavigationDefaults.contentColor(),
+                            tonalElevation = 0.dp,
+                            modifier = Modifier
+                                .shadow(
+                                    10.dp, RoundedCornerShape(
+                                        topStart = 16.dp,
+                                        topEnd = 16.dp
+                                    )
                                 )
-                            ),
-                    ) {
-                        BottomNavigationItems(
-                            currentDestination = currentDestination,
-                            onClick = { topLevelRoute ->
-                                router.navigateTopLevelDestination(topLevelRoute)
-                            }
-                        )
+                                .align(Alignment.BottomCenter),
+                        ) {
+                            BottomNavigationItems(
+                                currentDestination = currentDestination,
+                                onClick = { topLevelRoute ->
+                                    router.navigateTopLevelDestination(topLevelRoute)
+                                }
+                            )
+                        }
                     }
                 }
             ) { paddingValues ->
