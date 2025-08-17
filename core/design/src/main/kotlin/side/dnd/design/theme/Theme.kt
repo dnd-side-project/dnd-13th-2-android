@@ -4,23 +4,23 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.StableMarker
 import androidx.compose.runtime.staticCompositionLocalOf
 
 
 @Composable
 fun EodigoTheme(
-    typography: EodigoType = EodigoTheme.typography,
-    colors: EodigoColor = EodigoTheme.colors,
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(
-        LocalTypography provides typography,
-        LocalColors provides colors
+        LocalTypography provides Typography,
+        LocalColors provides EodigoColor
     ) {
-        ProvideTextStyle(typography.tempFontR, content = content)
+        ProvideTextStyle(Typography.body1Medium, content = content)
     }
 }
 
+@StableMarker
 object EodigoTheme {
     val typography: EodigoType
         @Composable
