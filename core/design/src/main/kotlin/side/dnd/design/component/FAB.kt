@@ -53,14 +53,10 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import side.dnd.design.R
+import side.dnd.design.component.CircularFabState.SelectableItem
+import side.dnd.design.component.progress.ProgressIndicatorOffset
 import side.dnd.design.theme.SideprojectTheme
 import side.dnd.design.utils.OffsetUtils.clampOffsetInCircle
-
-enum class SelectableItem {
-    NONE,
-    LEFT,
-    RIGHT;
-}
 
 @Composable
 fun CircularFAB(
@@ -71,14 +67,13 @@ fun CircularFAB(
     enabled: Boolean = true,
     content: @Composable BoxScope.() -> Unit = {},
 ) {
-    var fabVisibility by remember { mutableStateOf(false) }
     val selectableItem by rememberUpdatedState(circularFabState.selectableItem)
 
     Box(modifier = modifier.size(161.dp)) {
         AnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.TopCenter),
-            visible = fabVisibility,
+            visible = circularFabState.optionVisibility,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
@@ -137,7 +132,7 @@ fun CircularFAB(
                         }
 
                         Image(
-                            imageVector = ImageVector.vectorResource(R.drawable.fa7_solid_won_sign),
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_won),
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(top = 26.dp, start = 34.dp)
@@ -184,7 +179,7 @@ fun CircularFAB(
                         }
 
                         Image(
-                            imageVector = ImageVector.vectorResource(R.drawable.tdesign_location),
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_location),
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(top = 26.dp, end = 34.dp)
@@ -203,23 +198,17 @@ fun CircularFAB(
                 .size(componentSize)
                 .align(Alignment.BottomCenter)
                 .shadow(17.dp, shape = CircleShape)
-                .pointerInput(Unit) {
+                .pointerInput(enabled) {
                     detectDragGestures(
-                        onDragStart = {
-                            if (enabled)
-                                fabVisibility = true
-                        },
                         onDrag = { change, dragAmount ->
                             if (enabled)
                                 circularFabState.drag(dragAmount)
 
                         },
                         onDragEnd = {
-                            if (enabled) {
-                                fabVisibility = false
-                                circularFabState.animateOffset(Offset.Unspecified)
-                            }
-                        }
+                            if (enabled)
+                                circularFabState.animateOnDragEnd()
+                        },
                     )
                 }
         ) {
@@ -269,26 +258,37 @@ class CircularFabState(
         private set
 
     val selectableItem by derivedStateOf {
-        if (currentInteractionOffset.x < center.x)
+        if (currentInteractionOffset.x < center.x && currentInteractionOffset.y < center.y)
             SelectableItem.LEFT
-        else
+        else if(currentInteractionOffset.x > center.x && currentInteractionOffset.y < center.y)
             SelectableItem.RIGHT
-
+        else
+            SelectableItem.NONE
     }
 
-    private val mutatorMutex = MutatorMutex()
+    val optionVisibility by derivedStateOf {
+        currentInteractionOffset.y < center.y
+    }
 
     val center: Offset get() = Offset(x = radius, y = radius)
     val radius: Float get() = maxSizePx / 2.0f
 
-    fun drag(offset: Offset, threshold: Float = 0.7f) {
-        val new = (currentInteractionOffset + (offset * threshold)).clampOffsetInCircle(
+    /**
+     * 주어진 offset 만큼 drag 처리하는 함수
+     *
+     * @param offset: drag 발생한 offset
+     */
+    fun drag(offset: Offset) {
+        val new = (currentInteractionOffset + (offset * THRESHOLD_DRAG)).clampOffsetInCircle(
             center = center,
-            radius = radius
+            radius = radius,
+            threshold = THRESHOLD_CLAMP_OFFSET
         )
 
         currentInteractionOffset = new
     }
+
+    private val mutatorMutex = MutatorMutex()
 
     /**
      * 주어진 targetOffset 으로 animate 처리하는 함수
@@ -309,18 +309,42 @@ class CircularFabState(
                         }
                     ),
                     initialValue = currentInteractionOffset,
-                    targetValue = if (targetOffset == Offset.Unspecified)
-                        center
-                    else
-                        targetOffset
+                    targetValue = targetOffset
                 ) { value, velocity ->
                     currentInteractionOffset = value.clampOffsetInCircle(
                         center = center,
-                        radius = radius
+                        radius = radius,
+                        threshold = THRESHOLD_CLAMP_OFFSET
                     )
                 }
             }
         }
+    }
+
+    fun animateOnDragEnd() {
+        val piOffset = ProgressIndicatorOffset(
+            centerOffset = center,
+            radius = radius
+        )
+
+        val target = when (selectableItem) {
+            SelectableItem.NONE -> center
+            SelectableItem.LEFT -> piOffset.getPoint(315.0)
+            SelectableItem.RIGHT -> piOffset.getPoint(45.0)
+        }
+
+        animateOffset(target)
+    }
+
+    enum class SelectableItem {
+        NONE,
+        LEFT,
+        RIGHT;
+    }
+
+    companion object {
+        const val THRESHOLD_DRAG = 0.7f
+        const val THRESHOLD_CLAMP_OFFSET = 0.7f
     }
 }
 
