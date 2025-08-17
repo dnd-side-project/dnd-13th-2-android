@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "side.dnd.core"
+    namespace = "side.dnd.feature.core"
 }
 
 dependencies {}

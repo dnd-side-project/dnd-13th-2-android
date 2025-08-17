@@ -13,6 +13,7 @@ composeFoundation = "1.7.0"
 dagger = "2.53.1"
 datastore = "1.1.0"
 espresso = "3.5.1"
+gms = "21.0.1"
 hilt = "1.2.0"
 junit = "4.13.2"
 junit-jupiter = "5.9.3"
@@ -26,6 +27,8 @@ lottie = "6.3.0"
 material = "1.12.0"
 mockk = "1.13.5"
 navigation = "2.8.7"
+naverMapCompose = "1.8.2"
+naverMapLocation = "21.0.2"
 okhttp = "4.12.0"
 protobuf = "3.25.0"
 retrofit = "3.0.0"
@@ -87,6 +90,9 @@ datastore = { group = "androidx.datastore", name = "datastore", version.ref = "d
 # Detekt
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
+# Gms
+gms-play-services-location = {module = "com.google.android.gms:play-services-location", version.ref = "gms"}
+
 # Hilt
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 
@@ -107,6 +113,10 @@ airbnb-android-lottie-compose = { group = "com.airbnb.android", name = "lottie-c
 
 # Navigation
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+
+# NaverMap
+naver-map-compose = { module = "io.github.fornewid:naver-map-compose", version.ref = "naverMapCompose"}
+naver-map-location = {module = "io.github.fornewid:naver-map-location", version.ref = "naverMapLocation"}
 
 # Protobuf
 protobuf = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "protobuf" }
