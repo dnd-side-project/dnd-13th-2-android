@@ -3,8 +3,8 @@ package side.dnd.design.theme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.StableMarker
 import androidx.compose.runtime.staticCompositionLocalOf
 
 
@@ -20,7 +20,7 @@ fun EodigoTheme(
     }
 }
 
-@StableMarker
+@Immutable
 object EodigoTheme {
     val typography: EodigoType
         @Composable

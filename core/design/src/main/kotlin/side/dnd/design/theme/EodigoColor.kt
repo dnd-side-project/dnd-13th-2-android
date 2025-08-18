@@ -1,10 +1,9 @@
 package side.dnd.design.theme
 
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.StableMarker
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
-@StableMarker
+@Immutable
 object EodigoColor {
 
     val White = Color(0xFFFFFFFF)
