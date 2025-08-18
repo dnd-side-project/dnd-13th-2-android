@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,16 +41,16 @@ import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberFusedLocationSource
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
 import side.dnd.core.compositionLocals.LocalNavigationActions
 import side.dnd.core.compositionLocals.LocalSharedElementTransitionScope
-import side.dnd.core.compositionLocals.NavigationAction
 import side.dnd.design.R
 import side.dnd.design.component.text.TextFieldWithSearchBar
-import side.dnd.design.theme.SideprojectTheme
+import side.dnd.design.theme.EodigoTheme
 import side.dnd.feature.home.BuildConfig
 import side.dnd.feature.home.HomeNavigationAction
-import side.dnd.feature.home.home.HomeViewModel.HomeEvent
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
@@ -70,6 +71,15 @@ fun HomeScreen(
                 fusedLocationSource
             else
                 null
+        }
+    }
+    val navActions = LocalNavigationActions.current
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.receiveAsFlow().collectLatest { effect ->
+            when (effect) {
+                is HomeSideEffect.Navigate -> navActions(HomeNavigationAction.NavigateToSearch)
+            }
         }
     }
 
@@ -106,15 +116,16 @@ fun HomeScreen(
 @Composable
 private fun HomeScreen(
     homeUiState: HomeUiState,
-    navActions: (NavigationAction) -> Unit = LocalNavigationActions.current,
     onEvent: (HomeEvent) -> Unit,
     mapComposable: @Composable () -> Unit,
 ) {
     val textFieldState = rememberTextFieldState()
 
-    Box(Modifier
-        .fillMaxSize()
-        .padding(bottom = 80.dp)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .padding(bottom = 80.dp)
+    ) {
         if (!LocalInspectionMode.current)
             mapComposable()
 
@@ -131,7 +142,7 @@ private fun HomeScreen(
                 hint = "오늘의 메뉴는?",
                 enabled = false,
                 onClickDisabled = {
-                    navActions(HomeNavigationAction.NavigateToSearch)
+                    onEvent(HomeEvent.OnSearch)
                 }
             )
         }
@@ -161,7 +172,7 @@ private fun HomeScreen(
 private fun HomeScreenPreview(
     @PreviewParameter(HomeUiStatePreviewParameter::class)
     uiState: HomeUiState
-) = SideprojectTheme {
+) = EodigoTheme {
     PreviewHomeScope {
         HomeScreen(
             homeUiState = uiState,

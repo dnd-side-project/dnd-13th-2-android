@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.serialization.Serializable
+import side.dnd.feature.home.HomeNavigationAction
 
 @Stable
 data class HomeUiState(
@@ -39,4 +40,14 @@ data class MapControl(
             isLocationTracking = false
         )
     }
+}
+
+sealed class HomeEvent {
+    data class OnLocationTracking(val isLocationTracking: Boolean) : HomeEvent()
+    data class SwitchContentLayout(val showSearch: Boolean) : HomeEvent()
+    data object OnSearch : HomeEvent()
+}
+
+sealed class HomeSideEffect {
+    data class Navigate(val action: HomeNavigationAction) : HomeSideEffect()
 }

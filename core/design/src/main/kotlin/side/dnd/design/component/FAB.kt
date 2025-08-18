@@ -55,7 +55,7 @@ import kotlinx.coroutines.launch
 import side.dnd.design.R
 import side.dnd.design.component.CircularFabState.SelectableItem
 import side.dnd.design.component.progress.ProgressIndicatorOffset
-import side.dnd.design.theme.SideprojectTheme
+import side.dnd.design.theme.EodigoTheme
 import side.dnd.design.utils.OffsetUtils.clampOffsetInCircle
 
 @Composable
@@ -350,7 +350,7 @@ class CircularFabState(
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewCircularFAB() = SideprojectTheme {
+private fun PreviewCircularFAB() = EodigoTheme {
     Column(
         modifier = Modifier.size(300.dp),
         verticalArrangement = Arrangement.Center,

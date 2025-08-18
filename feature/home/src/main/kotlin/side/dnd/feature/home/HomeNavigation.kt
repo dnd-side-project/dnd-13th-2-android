@@ -19,7 +19,7 @@ sealed class HomeRoute {
     object HomeGraph : HomeRoute()
 
     @Serializable
-    data object Home: HomeRoute(), TopLevelRoute {
+    data object Home : HomeRoute(), TopLevelRoute {
         override val icon: Int
             get() = side.dnd.design.R.drawable.ic_home
         override val description: String
@@ -27,7 +27,7 @@ sealed class HomeRoute {
     }
 
     @Serializable
-    data object Search: HomeRoute()
+    data object Search : HomeRoute()
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -55,8 +55,7 @@ fun NavController.navigateToHome() {
     navigate(HomeRoute.Home)
 }
 
-sealed class HomeNavigationAction: NavigationAction {
+sealed class HomeNavigationAction : NavigationAction {
     data object NavigateToSearch : HomeNavigationAction()
     data object NavigateToHome : HomeNavigationAction()
-    data object PopBackStack: NavigationAction
 }

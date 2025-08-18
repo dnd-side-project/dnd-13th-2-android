@@ -32,10 +32,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
 import side.dnd.design.R
 import side.dnd.design.component.text.tu
-import side.dnd.design.theme.SideprojectTheme
+import side.dnd.design.theme.EodigoTheme
 
 @Composable
 fun DefaultIconButton(
@@ -247,7 +246,7 @@ private class AvoidDuplicationClickEvent(
 
 @Preview
 @Composable
-private fun PreviewDefaultIconButton() = SideprojectTheme {
+private fun PreviewDefaultIconButton() = EodigoTheme {
     DefaultIconButton(
         icon = R.drawable.ic_arrow_left,
         onClick = {},
@@ -259,7 +258,7 @@ private fun PreviewDefaultIconButton() = SideprojectTheme {
 @Preview()
 @Composable
 private fun PreviewDefaultTextButton() =
-    SideprojectTheme {
+    EodigoTheme {
         TextButton(
             text = "버튼",
             onClick = {}
@@ -270,7 +269,7 @@ private fun PreviewDefaultTextButton() =
 @Preview()
 @Composable
 private fun PreviewDefaultButton() =
-    SideprojectTheme {
+    EodigoTheme {
         DefaultButton(
             onClick = {},
         ) {}

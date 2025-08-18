@@ -2,7 +2,6 @@ package side.dnd.design.component.text
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -47,8 +45,7 @@ import androidx.compose.ui.unit.dp
 import side.dnd.design.R
 import side.dnd.design.component.HorizontalSpacer
 import side.dnd.design.component.button.DefaultIconButton
-import side.dnd.design.component.button.clickableAvoidingDuplication
-import side.dnd.design.theme.SideprojectTheme
+import side.dnd.design.theme.EodigoTheme
 
 @Composable
 fun TextFieldWithSearchBar(
@@ -206,7 +203,7 @@ fun DefaultTextField(
 
 @Composable
 @Preview(showBackground = true, heightDp = 200)
-private fun PreviewSearchTextField() = SideprojectTheme {
+private fun PreviewSearchTextField() = EodigoTheme {
     TextFieldWithSearchBar(
         modifier = Modifier.fillMaxWidth(),
         textFieldState = rememberTextFieldState(),
@@ -215,7 +212,7 @@ private fun PreviewSearchTextField() = SideprojectTheme {
 
 @Composable
 @Preview(showBackground = true)
-private fun PreviewDefaultTextField() = SideprojectTheme {
+private fun PreviewDefaultTextField() = EodigoTheme {
     DefaultTextField(
         textFieldState = rememberTextFieldState(),
     )

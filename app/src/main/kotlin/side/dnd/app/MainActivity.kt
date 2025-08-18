@@ -105,17 +105,18 @@ class MainActivity : ComponentActivity() {
                     AnimatedVisibility(
                         router.currentDestination.isBarHasToBeShown(),
                         enter = slideInVertically(
-                            initialOffsetY = { it / 2}
+                            initialOffsetY = { it / 2 }
                         ) + fadeIn(),
                         exit = slideOutVertically(
-                            targetOffsetY = { it / 2}
-                        )  + fadeOut()
+                            targetOffsetY = { it / 2 }
+                        ) + fadeOut()
                     ) {
                         CircularFAB(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickableAvoidingDuplication {
-                                    navController.navigateToSearch()
+                                    if (!isFabEnabled)
+                                        navController.navigateToSearch()
                                 },
                             enabled = isFabEnabled,
                         ) {

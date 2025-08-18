@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import side.dnd.design.theme.SideprojectTheme
+import side.dnd.design.theme.EodigoTheme
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -152,7 +152,7 @@ internal class ProgressIndicatorOffset(
 
 @Composable
 @Preview(showBackground = true)
-private fun PreviewProgressIndicatorInfiniteRotating() = SideprojectTheme {
+private fun PreviewProgressIndicatorInfiniteRotating() = EodigoTheme {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -165,7 +165,7 @@ private fun PreviewProgressIndicatorInfiniteRotating() = SideprojectTheme {
 
 @Composable
 @Preview(showBackground = true)
-private fun PreviewProgressIndicatorRotatingWithTextByParam() = SideprojectTheme {
+private fun PreviewProgressIndicatorRotatingWithTextByParam() = EodigoTheme {
     Box(
         modifier = Modifier
             .fillMaxWidth()

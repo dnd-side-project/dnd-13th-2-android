@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
 import side.dnd.core.TopLevelRoute
+import side.dnd.core.compositionLocals.CommonNavigationAction
 import side.dnd.core.compositionLocals.NavigationAction
 import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.HomeRoute
@@ -54,7 +55,7 @@ internal class Router(val navController: NavHostController) {
 
     fun navigate(action: NavigationAction) {
         when(action) {
-            is HomeNavigationAction.PopBackStack -> navController.popBackStackIfCan()
+            is CommonNavigationAction.PopBackStack -> navController.popBackStackIfCan()
             is HomeNavigationAction.NavigateToHome -> navController.navigateToHome()
             is HomeNavigationAction.NavigateToSearch -> navController.navigateToSearch()
         }
