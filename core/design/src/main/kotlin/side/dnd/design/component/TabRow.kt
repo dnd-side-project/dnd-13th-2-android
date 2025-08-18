@@ -1,4 +1,4 @@
-package side.dnd.design.theme.component
+package side.dnd.design.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight

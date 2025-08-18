@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("side.dnd.android.application")
 }
@@ -13,11 +15,17 @@ android {
 
 }
 
+fun getLocalKey(propertyKey:String):String{
+    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
+}
+
 dependencies {
     implementation(project(":core:design"))
     implementation(project(":feature:core"))
+    implementation(project(":feature:home"))
     implementation(libs.activity.compose)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.square)
+    implementation(libs.kotlinx.collections.immutable)
 }

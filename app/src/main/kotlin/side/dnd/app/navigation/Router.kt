@@ -11,10 +11,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
 import side.dnd.core.TopLevelRoute
+import side.dnd.core.compositionLocals.CommonNavigationAction
+import side.dnd.core.compositionLocals.NavigationAction
+import side.dnd.feature.home.HomeNavigationAction
+import side.dnd.feature.home.HomeRoute
+import side.dnd.feature.home.navigateToHome
+import side.dnd.feature.home.navigateToSearch
 
 internal val TopLevelRoutes: List<TopLevelRoute> = listOf(
-    TempRoute.Temp,
-    TempRoute2.Temp,
+    HomeRoute.Home
 )
 
 @Composable
@@ -44,13 +49,15 @@ internal class Router(val navController: NavHostController) {
 
         when (topLevelRoute) {
             //TODO feature 모듈 생성 후 navigate 작성
-            is TempRoute.Temp -> {
-                navController.navigate(TempRoute.Temp, navOptions)
-            }
+            is HomeRoute.Home -> navController.navigate(HomeRoute.Home, navOptions)
+        }
+    }
 
-            is TempRoute2.Temp -> {
-                navController.navigate(TempRoute2.Temp, navOptions)
-            }
+    fun navigate(action: NavigationAction) {
+        when(action) {
+            is CommonNavigationAction.PopBackStack -> navController.popBackStackIfCan()
+            is HomeNavigationAction.NavigateToHome -> navController.navigateToHome()
+            is HomeNavigationAction.NavigateToSearch -> navController.navigateToSearch()
         }
     }
 

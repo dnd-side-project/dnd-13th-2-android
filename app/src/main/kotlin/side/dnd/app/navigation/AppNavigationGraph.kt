@@ -1,17 +1,20 @@
 package side.dnd.app.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,16 +22,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import kotlinx.serialization.Serializable
 import side.dnd.core.TopLevelRoute
-import side.dnd.design.R
-import side.dnd.design.theme.component.VerticalSpacer
-import side.dnd.design.theme.component.text.tu
+import side.dnd.core.compositionLocals.LocalNavigationActions
+import side.dnd.core.compositionLocals.LocalSharedElementTransitionScope
+import side.dnd.design.component.VerticalSpacer
+import side.dnd.design.component.text.tu
+import side.dnd.feature.home.HomeRoute
+import side.dnd.feature.home.homeGraph
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun NavigationGraph(
     modifier: Modifier = Modifier,
@@ -36,42 +40,19 @@ internal fun NavigationGraph(
 ) {
     val navController = router.navController
 
-    NavHost(
-        navController = navController,
-        startDestination = TempRoute.Temp, //TODO 지워야 함!!!
-        modifier = modifier
-    ) {
-        composable<TempRoute.Temp> {
-            Column {
-
-            }
-
-        }
-
-        composable<TempRoute2.Temp> {
-            Column {
-
+    SharedTransitionLayout(modifier = modifier) {
+        CompositionLocalProvider(
+            LocalSharedElementTransitionScope provides this@SharedTransitionLayout,
+            LocalNavigationActions provides router::navigate,
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = HomeRoute.HomeGraph,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                homeGraph()
             }
         }
-    }
-}
-
-//TODO 지워야 함!!!
-@Serializable
-sealed class TempRoute {
-    @Serializable
-    data object Temp : TempRoute(), TopLevelRoute {
-        override val icon: Int = R.drawable.ic_home
-        override val description: String = "홈"
-    }
-}
-//TODO 지워야 함!!!
-@Serializable
-sealed class TempRoute2 {
-    @Serializable
-    data object Temp : TempRoute(), TopLevelRoute {
-        override val icon: Int = R.drawable.ic_price_ranking
-        override val description: String = "가격 랭킹"
     }
 }
 
@@ -136,7 +117,7 @@ internal object NavigationDefaults {
     fun navigationIndicatorColor() = MaterialTheme.colorScheme.surface
 
     @Composable
-    fun containerColor() = MaterialTheme.colorScheme.surface
+    fun containerColor() = Color.White
 
     @Composable
     fun contentColor() = MaterialTheme.colorScheme.onSurface
