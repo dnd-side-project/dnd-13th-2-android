@@ -48,8 +48,9 @@ import side.dnd.core.compositionLocals.LocalFABControl
 import side.dnd.core.compositionLocals.LocalShowSnackBar
 import side.dnd.design.component.CircularFAB
 import side.dnd.design.component.button.clickableAvoidingDuplication
-import side.dnd.design.theme.SideprojectTheme
 import side.dnd.feature.home.navigateToSearch
+import side.dnd.design.theme.EodigoTheme
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -57,7 +58,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SideprojectTheme {
+            EodigoTheme {
                 Content()
             }
         }
@@ -158,7 +159,7 @@ class MainActivity : ComponentActivity() {
 
     @Preview
     @Composable
-    fun MainScreenPreview() = SideprojectTheme {
+    fun MainScreenPreview() = EodigoTheme {
         Content()
     }
 }
