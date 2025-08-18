@@ -50,9 +50,6 @@ import side.dnd.design.component.CircularFAB
 import side.dnd.design.component.button.clickableAvoidingDuplication
 import side.dnd.feature.home.navigateToSearch
 import side.dnd.design.theme.EodigoTheme
-import side.dnd.design.component.CircularFAB
-import side.dnd.design.component.button.clickableAvoidingDuplication
-import side.dnd.feature.home.navigateToSearch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
