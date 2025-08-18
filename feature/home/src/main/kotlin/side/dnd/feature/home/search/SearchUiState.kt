@@ -5,26 +5,31 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
+import side.dnd.feature.home.HomeNavigationAction
 
 @Stable
 data class SearchUiState(
     val isSearchReady: Boolean,
     val categoryPointer: String,
-    val categories: ImmutableMap<String, ImmutableList<String>>,
+    //TODO 선택된 탭에 따라, 카테고리와 선택된 카테고리가 범주화되야 함 - 서버단 api 나오는거 보고 결정
     val selectedTab: SearchTab,
-    val selectedCategories: LinkedHashMap<String, String> = linkedMapOf(),
+    val categories: ImmutableMap<String, ImmutableList<String>>,
+    val selectedCategories: LinkedHashMap<String, String>,
 ) {
     val pageCount: Int = 2
 
     companion object {
+        const val TOP_CATEGORY = "최상위"
+        val defaultCategory get() = linkedMapOf(TOP_CATEGORY to "")
         val EMPTY = SearchUiState(
             isSearchReady = false,
-            categoryPointer = "최상위",
+            categoryPointer = TOP_CATEGORY,
             categories = persistentMapOf(),
             selectedTab = SearchTab.CAFE,
+            selectedCategories = defaultCategory
         )
         val mockCategories = persistentMapOf(
-            "최상위" to persistentListOf("한식", "일식", "양식"),
+            TOP_CATEGORY to persistentListOf("한식", "일식", "양식"),
             "한식" to persistentListOf("찌개", "볶음밥", "탕"),
             "일식" to persistentListOf("돈까스", "라멘", "초밥"),
             "양식" to persistentListOf("피자", "파스타", "스테이크"),
@@ -42,16 +47,18 @@ data class SearchUiState(
 }
 
 sealed class SearchEvent {
-    data class SwitchPage(val page: Int) : SearchEvent()
+    data class SwitchPage(val searchTab: SearchTab) : SearchEvent()
     data class OnSelectChip(val idx: Int, val mainCategory: String, val subCategory: String) :
         SearchEvent()
+
+    data object onBrowse : SearchEvent()
+    data object ResetSelectedCategories : SearchEvent()
 }
 
-data class Category(
-    val label: String?,
-    val subCategory: ImmutableList<Category>,
-)
-
+sealed class SearchSideEffect {
+    data class SwitchPage(val page: Int) : SearchSideEffect()
+    data class Navigate(val action: HomeNavigationAction) : SearchSideEffect()
+}
 
 enum class SearchTab(val display: String) {
     CAFE("카페"),

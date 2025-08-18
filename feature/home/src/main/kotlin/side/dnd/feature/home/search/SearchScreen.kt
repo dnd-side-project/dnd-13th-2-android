@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,10 +26,10 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,8 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
 import side.dnd.core.compositionLocals.LocalFABControl
 import side.dnd.core.compositionLocals.LocalNavigationActions
@@ -50,9 +51,10 @@ import side.dnd.design.component.HorizontalSpacer
 import side.dnd.design.component.VerticalSpacer
 import side.dnd.design.component.VerticalWeightSpacer
 import side.dnd.design.component.button.TextButton
+import side.dnd.design.component.button.clickableAvoidingDuplication
 import side.dnd.design.component.text.TextFieldWithSearchBar
 import side.dnd.design.component.text.tu
-import side.dnd.design.theme.SideprojectTheme
+import side.dnd.design.theme.EodigoTheme
 import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.home.PreviewHomeScope
 
@@ -61,9 +63,29 @@ internal fun SearchScreen(
     viewModel: SearchViewModel = hiltViewModel<SearchViewModel>(),
 ) {
     val searchUiState by viewModel.searchUiState.collectAsStateWithLifecycle()
+    val pagerState = rememberPagerState { searchUiState.pageCount }
+    val localFABControl = LocalFABControl.current
+    val navActions = LocalNavigationActions.current
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.receiveAsFlow().collectLatest { effect ->
+            when (effect) {
+                is SearchSideEffect.SwitchPage -> pagerState.animateScrollToPage(effect.page)
+                is SearchSideEffect.Navigate -> {
+                    navActions(HomeNavigationAction.NavigateToHome)
+                    localFABControl(true)
+                }
+            }
+        }
+    }
+
+    BackHandler {
+        navActions(HomeNavigationAction.NavigateToHome)
+    }
 
     SearchContent(
         searchUiState = searchUiState,
+        pagerState = pagerState,
         onEvent = viewModel::onEvent,
     )
 }
@@ -72,21 +94,26 @@ internal fun SearchScreen(
 @Composable
 internal fun SearchContent(
     searchUiState: SearchUiState,
+    pagerState: PagerState,
     onEvent: (SearchEvent) -> Unit,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
     val textFieldState = rememberTextFieldState()
-    val pagerState = rememberPagerState { searchUiState.pageCount }
 
     val showBrowser by remember(searchUiState.categoryPointer) {
         derivedStateOf {
             searchUiState.categories.entries.find { it.key == searchUiState.categoryPointer } == null
         }
     }
-    val navActions = LocalNavigationActions.current
 
-    BackHandler {
-        navActions(HomeNavigationAction.NavigateToHome)
+    val selectedCategories by remember(
+        searchUiState.selectedCategories,
+        searchUiState.categoryPointer
+    ) {
+        derivedStateOf {
+            searchUiState.categories.filter {
+                it.key in searchUiState.selectedCategories.keys || it.key == searchUiState.categoryPointer
+            }.entries
+        }
     }
 
     Column(
@@ -124,11 +151,7 @@ internal fun SearchContent(
                 Tab(
                     selected = searchUiState.selectedTab.ordinal == idx,
                     onClick = {
-                        onEvent(SearchEvent.SwitchPage(idx))
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(idx)
-                        }
-
+                        onEvent(SearchEvent.SwitchPage(item))
                     },
                     text = {
                         Text(
@@ -157,63 +180,60 @@ internal fun SearchContent(
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
             ) {
-                searchUiState.categories.filter {
-                    it.key in searchUiState.selectedCategories.keys || it.key == searchUiState.categoryPointer
-                }.entries.forEachIndexed { mainCategoryIdx, mainCategory ->
-                        FlowRow(
-                            maxItemsInEachRow = 4,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            if (mainCategoryIdx != 0) {
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
-                            }
+                selectedCategories.forEachIndexed { mainCategoryIdx, mainCategory ->
+                    FlowRow(
+                        maxItemsInEachRow = 4,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        if (mainCategoryIdx != 0) {
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
+                        }
 
-                            mainCategory.value.forEachIndexed { subCategoryIdx, subCategory ->
-                                FilterChip(
+                        mainCategory.value.forEachIndexed { subCategoryIdx, subCategory ->
+                            FilterChip(
+                                selected = searchUiState.selectedCategories.containsValue(
+                                    subCategory
+                                ),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    containerColor = Color(0xFFF2F2F3),
+                                    labelColor = Color(0xFF67666A),
+                                    selectedContainerColor = Color(0xFF9B86FC),
+                                    selectedLabelColor = Color.White
+                                ),
+                                border = FilterChipDefaults.filterChipBorder(
+                                    true,
                                     selected = searchUiState.selectedCategories.containsValue(
                                         subCategory
                                     ),
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        containerColor = Color(0xFFF2F2F3),
-                                        labelColor = Color(0xFF67666A),
-                                        selectedContainerColor = Color(0xFF9B86FC),
-                                        selectedLabelColor = Color.White
-                                    ),
-                                    border = FilterChipDefaults.filterChipBorder(
-                                        true,
-                                        selected = searchUiState.selectedCategories.containsValue(
+                                    borderColor = Color.Transparent,
+                                    selectedBorderColor = Color.Transparent
+                                ),
+                                onClick = {
+                                    onEvent(
+                                        SearchEvent.OnSelectChip(
+                                            subCategoryIdx,
+                                            mainCategory.key,
                                             subCategory
-                                        ),
-                                        borderColor = Color.Transparent,
-                                        selectedBorderColor = Color.Transparent
-                                    ),
-                                    onClick = {
-                                        onEvent(
-                                            SearchEvent.OnSelectChip(
-                                                subCategoryIdx,
-                                                mainCategory.key,
-                                                subCategory
-                                            )
                                         )
-                                    },
-                                    label = {
-                                        Text(
-                                            text = subCategory,
-                                            fontSize = 16.tu,
-                                            fontWeight = FontWeight.W400,
-                                            letterSpacing = (-0.05).em,
-                                            lineHeight = 24.tu,
-                                        )
-                                    },
-                                )
-                            }
+                                    )
+                                },
+                                label = {
+                                    Text(
+                                        text = subCategory,
+                                        fontSize = 16.tu,
+                                        fontWeight = FontWeight.W400,
+                                        letterSpacing = (-0.05).em,
+                                        lineHeight = 24.tu,
+                                    )
+                                },
+                            )
                         }
                     }
+                }
 
                 VerticalWeightSpacer(1f)
 
-                val localFABControl = LocalFABControl.current
                 AnimatedVisibility(showBrowser) {
                     Row(
                         modifier = Modifier
@@ -221,7 +241,13 @@ internal fun SearchContent(
                             .padding(horizontal = 15.dp, vertical = 46.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Column(modifier = Modifier.width(60.dp)) {
+                        Column(
+                            modifier = Modifier
+                                .width(60.dp)
+                                .clickableAvoidingDuplication {
+                                    onEvent(SearchEvent.ResetSelectedCategories)
+                                }
+                        ) {
                             Text(
                                 text = "초기화",
                                 style = TextStyle(
@@ -238,8 +264,7 @@ internal fun SearchContent(
                         TextButton(
                             text = "찾아보기",
                             onClick = {
-                                navActions(HomeNavigationAction.NavigateToHome)
-                                localFABControl(true)
+                                onEvent(SearchEvent.onBrowse)
                             },
                             modifier = Modifier
                                 .height(48.dp)
@@ -247,11 +272,8 @@ internal fun SearchContent(
                         )
                     }
                 }
-
             }
-
         }
-
     }
 }
 
@@ -261,10 +283,11 @@ internal fun SearchContent(
 private fun PreviewSearchScreen(
     @PreviewParameter(SearchUiStatePreviewParameter::class)
     uiState: SearchUiState
-) = SideprojectTheme {
+) = EodigoTheme {
     PreviewHomeScope {
         SearchContent(
             searchUiState = uiState,
+            pagerState = rememberPagerState { 2 },
             onEvent = {},
         )
     }
