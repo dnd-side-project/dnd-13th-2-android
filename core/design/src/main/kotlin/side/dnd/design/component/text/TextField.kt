@@ -49,8 +49,8 @@ import side.dnd.design.theme.EodigoTheme
 
 @Composable
 fun TextFieldWithSearchBar(
-    modifier: Modifier = Modifier,
     textFieldState: TextFieldState,
+    modifier: Modifier = Modifier,
     textBackgroundColor: Color = Color.White,
     textBorderColor: Color = Color.White,
     textStyle: TextStyle = TextStyle(
@@ -77,7 +77,7 @@ fun TextFieldWithSearchBar(
             modifier = Modifier
                 .height(46.dp)
                 .onFocusChanged {
-                    if(!enabled && it.hasFocus) {
+                    if (!enabled && it.hasFocus) {
                         focusManager.clearFocus()
                         onClickDisabled()
                     }
@@ -102,7 +102,7 @@ fun TextFieldWithSearchBar(
                 .clip(RoundedCornerShape(12.dp)),
             icon = R.drawable.ic_search,
             onClick = {
-                if(enabled) {
+                if (enabled) {
                     textFieldState.clearText()
                     focusManager.clearFocus()
                 } else
@@ -118,8 +118,8 @@ fun TextFieldWithSearchBar(
 
 @Composable
 fun DefaultTextField(
-    modifier: Modifier = Modifier,
     textFieldState: TextFieldState,
+    modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     borderColor: Color = MaterialTheme.colorScheme.outline,
     enabled: Boolean = true,
