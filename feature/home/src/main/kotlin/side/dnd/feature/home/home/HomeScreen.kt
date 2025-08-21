@@ -30,6 +30,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -39,6 +40,8 @@ import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
 import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapUiSettings
+import com.naver.maps.map.compose.Marker
+import com.naver.maps.map.compose.MarkerComposable
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberFusedLocationSource
 import kotlinx.coroutines.flow.collectLatest
@@ -51,6 +54,7 @@ import side.dnd.design.component.text.TextFieldWithSearchBar
 import side.dnd.design.theme.EodigoTheme
 import side.dnd.feature.home.BuildConfig
 import side.dnd.feature.home.HomeNavigationAction
+import side.dnd.feature.home.home.component.StoreDetailCard
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
@@ -106,7 +110,11 @@ fun HomeScreen(
                 properties = mapProperties,
                 uiSettings = mapUiSettings,
                 locationSource = isTracking
-            )
+            ) {
+                MarkerComposable {
+
+                }
+            }
         },
         onEvent = viewModel::onEvent,
     )
@@ -120,6 +128,19 @@ private fun HomeScreen(
     mapComposable: @Composable () -> Unit,
 ) {
     val textFieldState = rememberTextFieldState()
+    var dialogVisibility by remember {
+        mutableStateOf(false)
+    }
+
+    if(dialogVisibility) {
+        Dialog(
+            onDismissRequest = { dialogVisibility = false }
+        ) {
+            StoreDetailCard(
+                homeUiState.stores.first()
+            )
+        }
+    }
 
     Box(
         Modifier
