@@ -71,7 +71,7 @@ internal val Typography = EodigoType(
         fontSize = 18.sp,
         lineHeight = 24.sp,
         fontWeight = FontWeight.Bold,
-    )
+    ),
 
     )
 
@@ -86,6 +86,6 @@ data class  EodigoType(
     val body4Medium: TextStyle,
     val body5Medium: TextStyle,
     val body6Medium: TextStyle,
-    val body6Bold: TextStyle
+    val body6Bold: TextStyle,
 )
 
