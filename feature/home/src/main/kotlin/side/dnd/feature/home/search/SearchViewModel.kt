@@ -47,9 +47,9 @@ class SearchViewModel @Inject constructor() : ViewModel() {
             is SearchEvent.SwitchPage -> {
                 viewModelScope.launch {
                     searchUiState.update { state ->
-                        state.copy(selectedTab = event.searchTab)
+                        state.copy(selectedTab = event.storeType)
                     }
-                    sideEffect.send(SwitchPage(event.searchTab.ordinal))
+                    sideEffect.send(SwitchPage(event.storeType.ordinal))
                 }
             }
 

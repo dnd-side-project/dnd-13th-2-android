@@ -147,7 +147,7 @@ internal fun SearchContent(
                 )
             }
         ) {
-            SearchTab.entries.forEachIndexed { idx, item ->
+            StoreType.entries.forEachIndexed { idx, item ->
                 Tab(
                     selected = searchUiState.selectedTab.ordinal == idx,
                     onClick = {

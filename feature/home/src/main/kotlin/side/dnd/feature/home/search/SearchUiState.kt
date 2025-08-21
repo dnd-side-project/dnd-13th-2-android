@@ -12,7 +12,7 @@ data class SearchUiState(
     val isSearchReady: Boolean,
     val categoryPointer: String,
     //TODO 선택된 탭에 따라, 카테고리와 선택된 카테고리가 범주화되야 함 - 서버단 api 나오는거 보고 결정
-    val selectedTab: SearchTab,
+    val selectedTab: StoreType,
     val categories: ImmutableMap<String, ImmutableList<String>>,
     val selectedCategories: LinkedHashMap<String, String>,
 ) {
@@ -25,7 +25,7 @@ data class SearchUiState(
             isSearchReady = false,
             categoryPointer = TOP_CATEGORY,
             categories = persistentMapOf(),
-            selectedTab = SearchTab.CAFE,
+            selectedTab = StoreType.CAFE,
             selectedCategories = defaultCategory
         )
         val mockCategories = persistentMapOf(
@@ -47,7 +47,7 @@ data class SearchUiState(
 }
 
 sealed class SearchEvent {
-    data class SwitchPage(val searchTab: SearchTab) : SearchEvent()
+    data class SwitchPage(val storeType: StoreType) : SearchEvent()
     data class OnSelectChip(val idx: Int, val mainCategory: String, val subCategory: String) :
         SearchEvent()
 
@@ -60,7 +60,7 @@ sealed class SearchSideEffect {
     data class Navigate(val action: HomeNavigationAction) : SearchSideEffect()
 }
 
-enum class SearchTab(val display: String) {
+enum class StoreType(val display: String) {
     CAFE("카페"),
     RESTAURANT("음식점");
 }
