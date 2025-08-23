@@ -27,3 +27,6 @@ protobuf {
         }
     }
 }
+dependencies {
+    implementation(libs.bundles.square)
+}

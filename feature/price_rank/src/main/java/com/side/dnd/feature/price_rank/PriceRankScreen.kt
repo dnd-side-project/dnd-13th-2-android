@@ -58,26 +58,19 @@ fun PriceRankScreen(
             .background(EodigoColor.White)
             .systemBarsPadding()
     ) {
-        when (uiState) {
-            NationWideUiState.Loading -> {
-
-            }
-            is NationWideUiState.UiDataSuccess -> {
-                CustomNavigationTab(
-                    tabs = listOf("전국팔도", "지역별"),
-                    content = { page ->
-                        when (page) {
-                            0 -> { NationwideScreen(uiState = uiState) }
-                            1 -> { RegionRankScreen() }
-                        }
-                    },
-                    pagerState = pagerState,
-                    modifier = Modifier
-                        .padding(it)
-                        .fillMaxSize()
-                )
-            }
-        }
+        CustomNavigationTab(
+            tabs = listOf("전국팔도", "지역별"),
+            content = { page ->
+                when (page) {
+                    0 -> { NationwideScreen(uiState = uiState) }
+                    1 -> { RegionRankScreen() }
+                }
+            },
+            pagerState = pagerState,
+            modifier = Modifier
+                .padding(it)
+                .fillMaxSize()
+        )
     }
 }
 
