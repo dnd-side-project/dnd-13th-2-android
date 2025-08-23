@@ -1,23 +1,20 @@
 package side.dnd.feature.home.search
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import side.dnd.feature.home.state.StoreType
 
 class SearchUiStatePreviewParameter : PreviewParameterProvider<SearchUiState> {
     override val values: Sequence<SearchUiState> = sequenceOf(
         SearchUiState.EMPTY.copy(
-            categoryPointer = "한식",
-            categories = SearchUiState.mockCategories,
-            selectedCategories = SearchUiState.defaultCategory,
+            selectedCategory = StoreType.CAFE.category.first(),
         ),
-        SearchUiState.EMPTY.copy(
-            categoryPointer = "찌개",
-            categories = SearchUiState.mockCategories,
-            selectedCategories = linkedMapOf("최상위" to "한식", "한식" to "찌개"),
-        ),
-        SearchUiState.EMPTY.copy(
-            categoryPointer = "김치찌개",
-            categories = SearchUiState.mockCategories,
-            selectedCategories = linkedMapOf("최상위" to "한식", "한식" to "찌개", "찌개" to "김치찌개"),
-        ),
+        run {
+            val category = StoreType.RESTAURANT
+
+            SearchUiState.EMPTY.copy(
+                selectedTab = category,
+                selectedCategory = category.category.first(),
+            )
+        },
     )
 }

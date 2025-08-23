@@ -57,6 +57,7 @@ import side.dnd.design.component.text.tu
 import side.dnd.design.theme.EodigoTheme
 import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.home.PreviewHomeScope
+import side.dnd.feature.home.state.StoreType
 
 @Composable
 internal fun SearchScreen(
@@ -99,20 +100,9 @@ internal fun SearchContent(
 ) {
     val textFieldState = rememberTextFieldState()
 
-    val showBrowser by remember(searchUiState.categoryPointer) {
+    val showBrowser by remember(searchUiState.selectedCategory) {
         derivedStateOf {
-            searchUiState.categories.entries.find { it.key == searchUiState.categoryPointer } == null
-        }
-    }
-
-    val selectedCategories by remember(
-        searchUiState.selectedCategories,
-        searchUiState.categoryPointer
-    ) {
-        derivedStateOf {
-            searchUiState.categories.filter {
-                it.key in searchUiState.selectedCategories.keys || it.key == searchUiState.categoryPointer
-            }.entries
+            searchUiState.selectedCategory.isNotBlank()
         }
     }
 
@@ -180,57 +170,44 @@ internal fun SearchContent(
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
             ) {
-                selectedCategories.forEachIndexed { mainCategoryIdx, mainCategory ->
-                    FlowRow(
-                        maxItemsInEachRow = 4,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        if (mainCategoryIdx != 0) {
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
-                        }
-
-                        mainCategory.value.forEachIndexed { subCategoryIdx, subCategory ->
-                            FilterChip(
-                                selected = searchUiState.selectedCategories.containsValue(
-                                    subCategory
-                                ),
-                                colors = FilterChipDefaults.filterChipColors(
-                                    containerColor = Color(0xFFF2F2F3),
-                                    labelColor = Color(0xFF67666A),
-                                    selectedContainerColor = Color(0xFF9B86FC),
-                                    selectedLabelColor = Color.White
-                                ),
-                                border = FilterChipDefaults.filterChipBorder(
-                                    true,
-                                    selected = searchUiState.selectedCategories.containsValue(
-                                        subCategory
-                                    ),
-                                    borderColor = Color.Transparent,
-                                    selectedBorderColor = Color.Transparent
-                                ),
-                                onClick = {
-                                    onEvent(
-                                        SearchEvent.OnSelectChip(
-                                            subCategoryIdx,
-                                            mainCategory.key,
-                                            subCategory
-                                        )
-                                    )
-                                },
-                                label = {
-                                    Text(
-                                        text = subCategory,
-                                        fontSize = 16.tu,
-                                        fontWeight = FontWeight.W400,
-                                        letterSpacing = (-0.05).em,
-                                        lineHeight = 24.tu,
-                                    )
-                                },
-                            )
-                        }
+                FlowRow(
+                    maxItemsInEachRow = 4,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    StoreType.getStoreTypeByOrdinal(page).category.forEachIndexed { idx, category ->
+                        FilterChip(
+                            selected = searchUiState.selectedCategory === category,
+                            colors = FilterChipDefaults.filterChipColors(
+                                containerColor = Color(0xFFF2F2F3),
+                                labelColor = Color(0xFF67666A),
+                                selectedContainerColor = Color(0xFF9B86FC),
+                                selectedLabelColor = Color.White
+                            ),
+                            border = FilterChipDefaults.filterChipBorder(
+                                true,
+                                selected = searchUiState.selectedCategory === category,
+                                borderColor = Color.Transparent,
+                                selectedBorderColor = Color.Transparent
+                            ),
+                            onClick = {
+                                onEvent(
+                                    SearchEvent.OnSelectChip(category)
+                                )
+                            },
+                            label = {
+                                Text(
+                                    text = category,
+                                    fontSize = 16.tu,
+                                    fontWeight = FontWeight.W400,
+                                    letterSpacing = (-0.05).em,
+                                    lineHeight = 24.tu,
+                                )
+                            },
+                        )
                     }
                 }
+
 
                 VerticalWeightSpacer(1f)
 
