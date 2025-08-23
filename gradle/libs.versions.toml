@@ -43,6 +43,10 @@ protobufPlugin = "0.9.4"
 foundationLayout = "1.9.0"
 playServicesLocation = "16.0.0"
 
+#chart
+vico = "2.1.3"
+
+
 [libraries]
 
 # Gradle Plugin
@@ -128,6 +132,11 @@ room-common = { module = "androidx.room:room-common", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+#chart
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
+
 
 # Square
 square-retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }

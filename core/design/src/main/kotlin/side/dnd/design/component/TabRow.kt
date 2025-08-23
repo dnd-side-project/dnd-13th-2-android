@@ -1,8 +1,12 @@
 package side.dnd.design.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Tab
@@ -18,12 +22,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import side.dnd.design.theme.EodigoColor
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomNavigationTab(
     tabs: List<String>,
+    pagerState: PagerState = rememberPagerState { tabs.size },
     initialPage: Int = 0,
     onPageChanged: (Int) -> Unit = {},
     content: @Composable (Int) -> Unit,
@@ -34,44 +40,50 @@ fun CustomNavigationTab(
         initialPage = initialPage
     ) { tabs.size }
 
-    TabRow(
-        selectedTabIndex = pagerState.currentPage,
-        divider = {},
-        indicator = { tabPositions ->
-            TabRowDefaults.SecondaryIndicator(
-                modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                height = 2.dp,
-                color = Color(0xFF9B86FC)
-            )
-        },
-        containerColor = Color(0xFFD8D7D9)
-    ) {
-        tabs.forEachIndexed { index, tab ->
-            Tab(
-                text = {
-                    Text(
-                        text = tab,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                },
-                selected = pagerState.currentPage == index,
-                selectedContentColor = Color(0xFF3A393B),
-                unselectedContentColor = Color(0xFFD8D7D9),
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(index)
-                        onPageChanged(index)
-                    }
-                }
-            )
-        }
-    }
+    Column(modifier = modifier) {
+        TabRow(
+            selectedTabIndex = pagerState.currentPage,
+            divider = {},
+            indicator = { tabPositions ->
+                TabRowDefaults.SecondaryIndicator(
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                    height = 2.dp,
+                    color = Color(0xFF9B86FC)
+                )
+            },
+            containerColor = Color(0xFFD8D7D9),
 
-    HorizontalPager(
-        state = pagerState,
-        modifier = modifier
-    ) { page ->
-        content(page)
+        ) {
+            tabs.forEachIndexed { index, tab ->
+                Tab(
+                    text = {
+                        Text(
+                            text = tab,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    },
+                    selected = pagerState.currentPage == index,
+                    selectedContentColor = Color(0xFF3A393B),
+                    unselectedContentColor = Color(0xFFD8D7D9),
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                            onPageChanged(index)
+                        }
+                    },
+                    modifier = Modifier
+                        .background(EodigoColor.White)
+                )
+            }
+        }
+
+        HorizontalPager(
+            state = pagerState,
+            userScrollEnabled = false,
+            modifier = Modifier.weight(1f)
+        ) { page ->
+            content(page)
+        }
     }
 }
 

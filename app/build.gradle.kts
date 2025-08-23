@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":core:design"))
     implementation(project(":feature:core"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:price_rank"))
     implementation(libs.activity.compose)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.bundles.lifecycle)
