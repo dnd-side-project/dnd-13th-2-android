@@ -30,9 +30,11 @@ import side.dnd.design.theme.EodigoTheme
 
 @Composable
 fun PriceMapScreen(
+    isEmptyKeyword: Boolean = false,
     productRanking: ProductRanking,
     modifier: Modifier = Modifier
 ) {
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -41,34 +43,66 @@ fun PriceMapScreen(
     ) {
         Spacer(modifier = Modifier.size(52.dp))
 
-        Text(
-            text = stringResource(id = R.string.price_map_title),
-            style = EodigoTheme.typography.body2Medium,
-            color = EodigoColor.Gray500,
-        )
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        if (isEmptyKeyword) {
             Text(
-                text = stringResource(id = R.string.price_map_content_first),
-                style = EodigoTheme.typography.title1Medium,
-                color = EodigoColor.Normal
+                text = stringResource(id = R.string.price_map_empty_title),
+                style = EodigoTheme.typography.body2Medium,
+                color = EodigoColor.Gray500,
             )
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(id = R.string.price_map_empty_content_first),
+                    style = EodigoTheme.typography.title1Medium,
+                    color = EodigoColor.Normal
+                )
+                Text(
+                    text = stringResource(id = R.string.price_map_empty_content_second),
+                    style = EodigoTheme.typography.title1Medium,
+                    color = EodigoColor.Gray900
+                )
+            }
+        } else {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(id = R.string.price_map_title_first),
+                    style = EodigoTheme.typography.title1Medium,
+                    color = EodigoColor.Normal
+                )
+                Text(
+                    text = "\"${productRanking.productName}\"",
+                    style = EodigoTheme.typography.title1Medium,
+                    color = EodigoColor.Gray900
+                )
+                Text(
+                    text = stringResource(id = R.string.price_map_title_second),
+                    style = EodigoTheme.typography.title1Medium,
+                    color = EodigoColor.Gray900
+                )
+            }
             Text(
-                text = stringResource(id = R.string.price_map_content_second),
-                style = EodigoTheme.typography.title1Medium,
-                color = EodigoColor.Gray900
+                text = productRanking.ranking.first().regionName,
+                style = EodigoTheme.typography.body2Medium,
+                color = EodigoColor.Gray500,
             )
         }
         Spacer(modifier = Modifier.height(52.dp))
-        MapScreen(productRanking = productRanking)
+        MapScreen(
+            isEmptyKeyword = isEmptyKeyword,
+            productRanking = productRanking
+        )
     }
 }
 
 @Composable
 fun MapScreen(
-    productRanking: com.side.dnd.feature.price_rank.model.ProductRanking?
+    isEmptyKeyword: Boolean = false,
+    productRanking: ProductRanking
 ) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth()
@@ -84,40 +118,43 @@ fun MapScreen(
                 .height(maxHeight)
         )
 
-        if (productRanking != null) {
-            val rankings = productRanking.ranking.take(5)
+        val rankings = if (isEmptyKeyword) MockProductRanking.sampleProductRanking.ranking else productRanking.ranking.take(3)
 
-            rankings.forEachIndexed { index, regionRanking ->
-                val isFirstRank = index == 0
-                val priceText = "${regionRanking.price}원"
+        rankings.forEachIndexed { index, regionRanking ->
+            val isFirstRank = index == 0
 
-                val (xOffset, yOffset) = when (index) {
-                    0 -> Pair(0.5f, 0.2f) // 서울 - 상단 중앙
-                    1 -> Pair(0.7f, 0.7f) // 부산 - 우하단
-                    2 -> Pair(0.6f, 0.5f) // 대구 - 중앙
-                    3 -> Pair(0.3f, 0.3f) // 인천 - 좌상단
-                    4 -> Pair(0.4f, 0.8f) // 광주 - 좌하단
-                    else -> Pair(0.5f, 0.5f)
-                }
-
-                PriceCircle(
-                    text = priceText,
-                    isFirstRank = isFirstRank,
-                    modifier = Modifier
-                        .offset(
-                            x = maxWidth * xOffset - (if (isFirstRank) 61.dp else 40.dp),
-                            y = maxHeight * yOffset - (if (isFirstRank) 61.dp else 40.dp)
-                        )
-                )
+            val (xOffset, yOffset) = when (regionRanking.regionName) {
+                "서울" -> Pair(0.5f, 0.2f)
+                "부산" -> Pair(0.7f, 0.7f)
+                "대구" -> Pair(0.6f, 0.5f)
+                "인천" -> Pair(0.3f, 0.3f)
+                "광주" -> Pair(0.4f, 0.8f)
+                "대전" -> Pair(0.45f, 0.6f)
+                "울산" -> Pair(0.75f, 0.6f)
+                "세종" -> Pair(0.4f, 0.5f)
+                "경기" -> Pair(0.4f, 0.25f)
+                "강원" -> Pair(0.6f, 0.15f)
+                "충북" -> Pair(0.5f, 0.4f)
+                "충남" -> Pair(0.35f, 0.55f)
+                "전북" -> Pair(0.35f, 0.7f)
+                "전남" -> Pair(0.35f, 0.85f)
+                "경북" -> Pair(0.65f, 0.4f)
+                "경남" -> Pair(0.65f, 0.75f)
+                "제주" -> Pair(0.3f, 0.95f)
+                else -> Pair(0.5f, 0.5f)
             }
-        } else {
-            Text(
-                text = "지도 데이터를 불러오는 중...",
-                style = EodigoTheme.typography.body2Medium,
-                color = EodigoColor.Gray500,
-                modifier = Modifier.align(Alignment.Center)
+
+            PriceCircle(
+                text = if (isEmptyKeyword) "???원" else "${regionRanking.price}원",
+                isFirstRank = isFirstRank,
+                modifier = Modifier
+                    .offset(
+                        x = maxWidth * xOffset - (if (isFirstRank) 61.dp else 40.dp),
+                        y = maxHeight * yOffset - (if (isFirstRank) 61.dp else 40.dp)
+                    )
             )
         }
+
     }
 }
 
@@ -128,12 +165,13 @@ fun PriceCircle(
     modifier: Modifier = Modifier
 ) {
     val size = if (isFirstRank) 122.dp else 80.dp
-    val bgResource = if (isFirstRank) painterResource(R.drawable.ic_first_price_bg) else painterResource(R.drawable.ic_second_price_bg)
+    val bgResource =
+        if (isFirstRank) painterResource(R.drawable.ic_first_price_bg) else painterResource(R.drawable.ic_second_price_bg)
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(size)
-            .clickable{}
+            .clickable {}
     ) {
         Image(
             painter = bgResource,
@@ -151,7 +189,7 @@ fun PriceCircle(
 @Composable
 fun PriceMapScreenPreview() {
     PriceMapScreen(
-        productRanking = com.side.dnd.feature.price_rank.model.MockProductRanking.sampleProductRanking
+        productRanking = MockProductRanking.sampleProductRanking
     )
 }
 

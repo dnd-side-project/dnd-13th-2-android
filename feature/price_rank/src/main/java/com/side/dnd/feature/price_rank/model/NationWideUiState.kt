@@ -4,14 +4,17 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 
 @Stable
-sealed interface NationWideUiState {
-    @Immutable
-    data object Loading : NationWideUiState
-
-    @Immutable
-    data class UiDataSuccess(
-        val productRanking: ProductRanking,
-        val chartData: ProductChartData
-    ) : NationWideUiState
+data class NationWideUiState(
+    val keyWord: String,
+    val productRanking: ProductRanking,
+    val chartData: ProductChartData
+) {
+   companion object {
+       val Empty = NationWideUiState(
+           keyWord = "",
+           productRanking = MockProductRanking.sampleProductRanking,
+           chartData = MockProductChartData.sampleChartData
+       )
+   }
 }
 
