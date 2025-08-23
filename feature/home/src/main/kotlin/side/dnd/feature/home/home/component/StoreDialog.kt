@@ -17,9 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +33,9 @@ import side.dnd.design.component.SubcomposeAsyncImageWithPreview
 import side.dnd.design.component.VerticalSpacer
 import side.dnd.design.component.text.tu
 import side.dnd.design.theme.EodigoTheme
-import side.dnd.feature.home.home.Store
+import side.dnd.design.theme.LocalTypography
+import side.dnd.feature.home.state.Store
+
 
 @Composable
 fun StoreDetailCard(
@@ -63,72 +68,76 @@ fun StoreDetailCard(
         ) {
             Text(
                 text = store.name,
-                style = TextStyle(
-                    fontSize = 20.tu,
-                    fontWeight = FontWeight.W400,
-                    color = Color.Black
-                )
+                style = LocalTypography.current.title2Medium
             )
             HorizontalSpacer(4.dp)
             Text(
                 text = store.type.display,
-                style = TextStyle(
-                    fontSize = 14.tu,
-                    fontWeight = FontWeight.W400,
-                    color = Color(0xFFA6A6A6)
-                )
+                style = LocalTypography.current.body4Medium,
+                color = Color(0xFFB8B7B9)
+            )
+
+            HorizontalWeightSpacer(1f)
+
+            Text(
+                text = store.menu,
+                style = LocalTypography.current.body2Medium,
+                modifier = Modifier.padding(6.dp)
             )
         }
 
-        VerticalSpacer(16.dp)
+        VerticalSpacer(6.dp)
 
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "${store.distance}m",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF868686)
-                    )
+            Text(
+                text = "${store.distance}m",
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF868686)
                 )
-                HorizontalSpacer(4.dp)
-                Canvas(Modifier.size(2.dp)) {
-                    drawCircle(
-                        color = Color(0xFF868686)
-                    )
-                }
-                HorizontalSpacer(4.dp)
-                Text(
-                    text = store.address,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF868686)
-                    )
+            )
+            HorizontalSpacer(4.dp)
+            Canvas(Modifier.size(2.dp)) {
+                drawCircle(
+                    color = Color(0xFF868686)
                 )
             }
+            HorizontalSpacer(4.dp)
+            Text(
+                text = store.address,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF868686)
+                )
+            )
 
             HorizontalWeightSpacer(1f)
             Text(
-                text = "${store.price}원",
-                modifier = Modifier
-                    .padding(bottom = 4.dp),
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color(0xFF7050FF),
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append("${store.price}")
+                    }
+                    append("원")
+                },
+                modifier = Modifier,
                 style = TextStyle(
                     fontSize = 20.tu,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.W400,
                     textAlign = TextAlign.End
-                )
+                ),
             )
         }
-
-        VerticalSpacer(8.dp)
     }
 }
 

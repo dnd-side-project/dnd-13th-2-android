@@ -1,5 +1,6 @@
 package side.dnd.feature.home.search
 
+import android.system.Os.remove
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,16 +12,12 @@ import kotlinx.coroutines.launch
 import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.search.SearchSideEffect.Navigate
 import side.dnd.feature.home.search.SearchSideEffect.SwitchPage
-import side.dnd.feature.home.search.SearchUiState.Companion.TOP_CATEGORY
-import side.dnd.feature.home.search.SearchUiState.Companion.defaultCategory
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor() : ViewModel() {
     val searchUiState: StateFlow<SearchUiState> field: MutableStateFlow<SearchUiState> = MutableStateFlow(
-        SearchUiState.EMPTY.copy(
-            categories = SearchUiState.mockCategories,
-        )
+        SearchUiState.EMPTY
     )
 
     val sideEffect: Channel<SearchSideEffect> = Channel()
@@ -29,18 +26,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         when (event) {
             is SearchEvent.OnSelectChip -> {
                 searchUiState.update { state ->
-                    state.copy(
-                        selectedCategories = state.selectedCategories.apply {
-                            if (state.selectedCategories.containsKey(event.mainCategory)) {
-                                repeat(keys.size - keys.indexOf(event.mainCategory) - 1) {
-                                    remove(keys.last())
-                                }
-                            }
-
-                            put(event.mainCategory, event.subCategory)
-                        },
-                        categoryPointer = event.subCategory
-                    )
+                    state.copy(selectedCategory = event.selectedCategory)
                 }
             }
 
@@ -61,10 +47,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
 
             SearchEvent.ResetSelectedCategories -> {
                 searchUiState.update { state ->
-                    state.copy(
-                        selectedCategories = defaultCategory,
-                        categoryPointer = TOP_CATEGORY,
-                    )
+                    state.copy(selectedCategory = "",)
                 }
             }
         }
