@@ -31,6 +31,7 @@ import side.dnd.design.component.VerticalSpacer
 import side.dnd.design.component.text.tu
 import side.dnd.feature.home.HomeRoute
 import side.dnd.feature.home.homeGraph
+import com.side.dnd.feature.price_rank.navigation.priceRankGraph
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -51,6 +52,7 @@ internal fun NavigationGraph(
                 modifier = Modifier.fillMaxSize()
             ) {
                 homeGraph()
+                priceRankGraph()
             }
         }
     }
