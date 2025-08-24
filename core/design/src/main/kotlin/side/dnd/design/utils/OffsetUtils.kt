@@ -8,20 +8,6 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 object OffsetUtils {
-    fun Offset.coerceIn(min: Float = 0f, max: Float): Offset {
-        return copy(
-            x = x.coerceIn(min, max),
-            y = y.coerceIn(min, max)
-        )
-    }
-
-    fun Offset.coerceIn(offset: Offset): Offset {
-        return copy(
-            x = x.coerceIn(0f, offset.x),
-            y = y.coerceIn(0f, offset.y),
-        )
-    }
-
     /**
      * Offset 에 대해 원의 중심과 반지름을 기반으로 가상의 원 공간 내에 위치시키도록 offset 을 보정하는 함수
      *

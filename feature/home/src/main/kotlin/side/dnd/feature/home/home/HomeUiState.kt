@@ -5,6 +5,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.serialization.Serializable
 import side.dnd.feature.home.HomeNavigationAction
+import side.dnd.feature.home.state.Store
 
 @Stable
 data class HomeUiState(
@@ -23,15 +24,6 @@ data class HomeUiState(
     }
 }
 
-@Serializable
-data class Store(
-    val name: String,
-    val address: String,
-    val price: Int,
-    val distance: Int,
-    val image: String
-)
-
 data class MapControl(
     val isLocationTracking: Boolean,
 ) {
@@ -46,6 +38,7 @@ sealed class HomeEvent {
     data class OnLocationTracking(val isLocationTracking: Boolean) : HomeEvent()
     data class SwitchContentLayout(val showSearch: Boolean) : HomeEvent()
     data object OnSearch : HomeEvent()
+    data object NavigateToStore: HomeEvent()
 }
 
 sealed class HomeSideEffect {

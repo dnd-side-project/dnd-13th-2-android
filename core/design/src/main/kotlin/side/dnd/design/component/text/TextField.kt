@@ -1,5 +1,6 @@
 package side.dnd.design.component.text
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -46,26 +48,26 @@ import side.dnd.design.R
 import side.dnd.design.component.HorizontalSpacer
 import side.dnd.design.component.button.DefaultIconButton
 import side.dnd.design.theme.EodigoTheme
+import side.dnd.design.theme.LocalTypography
+import side.dnd.design.utils.tu
 
 @Composable
-fun TextFieldWithSearchBar(
-    modifier: Modifier = Modifier,
+fun TextFieldWithActionBar(
     textFieldState: TextFieldState,
+    modifier: Modifier = Modifier,
     textBackgroundColor: Color = Color.White,
     textBorderColor: Color = Color.White,
-    textStyle: TextStyle = TextStyle(
-        fontWeight = FontWeight.W400,
-        fontSize = 16.tu,
-        letterSpacing = TextUnit(-0.05f, TextUnitType.Em),
-        lineHeight = 24.tu,
-        color = Color(0xFF817F84),
-    ),
+    textStyle: TextStyle = LocalTypography.current.body2Medium.copy(color = Color(0xFF817F84)),
     cursorBrush: Brush = SolidColor(Color(0xFF817F84)),
-    searchIconColor: Color = Color.White,
-    searchIconBackgroundColor: Color = Color(0xFF2D2C2E),
+    @DrawableRes actionIcon: Int = R.drawable.ic_search,
+    actionIconColor: Color = Color.White,
+    actionIconBackgroundColor: Color = Color(0xFF2D2C2E),
+    actionIconSize: Dp = 24.dp,
     hint: String = "텍스트를 입력해주세요.",
     enabled: Boolean = true,
+    onClickEnabled: () -> Unit = {},
     onClickDisabled: () -> Unit = {},
+    headerIcon: (@Composable () -> Unit)? = null,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -77,7 +79,7 @@ fun TextFieldWithSearchBar(
             modifier = Modifier
                 .height(46.dp)
                 .onFocusChanged {
-                    if(!enabled && it.hasFocus) {
+                    if (!enabled && it.hasFocus) {
                         focusManager.clearFocus()
                         onClickDisabled()
                     }
@@ -91,6 +93,7 @@ fun TextFieldWithSearchBar(
             cursorBrush = cursorBrush,
             lineLimits = TextFieldLineLimits.SingleLine,
             hint = hint,
+            headerIcon = headerIcon,
         )
 
         HorizontalSpacer(15.dp)
@@ -100,17 +103,18 @@ fun TextFieldWithSearchBar(
                 .size(46.dp)
                 .shadow(12.dp, RoundedCornerShape(12.dp))
                 .clip(RoundedCornerShape(12.dp)),
-            icon = R.drawable.ic_search,
+            icon = actionIcon,
             onClick = {
-                if(enabled) {
+                if (enabled) {
                     textFieldState.clearText()
                     focusManager.clearFocus()
+                    onClickEnabled()
                 } else
                     onClickDisabled()
             },
-            iconSize = 24.dp,
-            iconTint = searchIconColor,
-            backgroundTint = searchIconBackgroundColor,
+            iconSize = actionIconSize,
+            iconTint = actionIconColor,
+            backgroundTint = actionIconBackgroundColor,
             interactionSource = remember { MutableInteractionSource() },
         )
     }
@@ -118,8 +122,8 @@ fun TextFieldWithSearchBar(
 
 @Composable
 fun DefaultTextField(
-    modifier: Modifier = Modifier,
     textFieldState: TextFieldState,
+    modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     borderColor: Color = MaterialTheme.colorScheme.outline,
     enabled: Boolean = true,
@@ -172,12 +176,7 @@ fun DefaultTextField(
                     if (textFieldState.text.isEmpty())
                         Text(
                             text = if (isFocused) "" else hint,
-                            style = TextStyle(
-                                fontWeight = FontWeight.W400,
-                                fontSize = 16.tu,
-                                letterSpacing = TextUnit(-0.05f, TextUnitType.Em),
-                                lineHeight = 24.tu
-                            ),
+                            style = LocalTypography.current.body2Medium,
                             color = MaterialTheme.colorScheme.outlineVariant,
                             modifier = Modifier
                                 .align(Alignment.CenterStart),
@@ -204,7 +203,7 @@ fun DefaultTextField(
 @Composable
 @Preview(showBackground = true, heightDp = 200)
 private fun PreviewSearchTextField() = EodigoTheme {
-    TextFieldWithSearchBar(
+    TextFieldWithActionBar(
         modifier = Modifier.fillMaxWidth(),
         textFieldState = rememberTextFieldState(),
     )

@@ -28,7 +28,7 @@ import side.dnd.core.TopLevelRoute
 import side.dnd.core.compositionLocals.LocalNavigationActions
 import side.dnd.core.compositionLocals.LocalSharedElementTransitionScope
 import side.dnd.design.component.VerticalSpacer
-import side.dnd.design.component.text.tu
+import side.dnd.design.utils.tu
 import side.dnd.feature.home.HomeRoute
 import side.dnd.feature.home.homeGraph
 
