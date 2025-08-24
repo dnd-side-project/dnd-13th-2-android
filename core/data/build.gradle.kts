@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("side.dnd.android.library")
     id("side.dnd.hilt")
@@ -8,7 +10,7 @@ android {
     namespace = "side.dnd.data"
 
     defaultConfig {
-        buildConfigField("String", "BASE_URL", "\"http://3.34.117.255:8080/api/v1/\"")
+        buildConfigField("String", "BASE_URL", getLocalKey("BASE_URL"))
     }
 }
 
@@ -32,4 +34,8 @@ protobuf {
             }
         }
     }
+}
+
+fun getLocalKey(propertyKey:String):String{
+    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
