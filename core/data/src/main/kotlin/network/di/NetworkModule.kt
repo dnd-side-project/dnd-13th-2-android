@@ -12,7 +12,16 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import side.dnd.data.BuildConfig
 import java.util.concurrent.TimeUnit
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class DefaultRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class PriceRankRetrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -46,8 +55,23 @@ internal object NetworkModule {
     }
 
     @Provides
+    @DefaultRetrofit
     @Singleton
-    fun provideRetrofit(
+    fun provideDefaultRetrofit(
+        okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(gsonConverterFactory)
+            .build()
+    }
+
+    @Provides
+    @PriceRankRetrofit
+    @Singleton
+    fun providePriceRankRetrofit(
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
@@ -60,7 +84,7 @@ internal object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideEodigoApi(retrofit: Retrofit): EodigoApi {
+    fun provideEodigoApi(@DefaultRetrofit retrofit: Retrofit): EodigoApi {
         return retrofit.create(EodigoApi::class.java)
     }
 }

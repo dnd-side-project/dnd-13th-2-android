@@ -11,6 +11,8 @@ android {
         applicationId = "side.dnd.app"
         versionCode = 1
         versionName = "1.0.0"
+        
+        buildConfigField("String", "BASE_URL", "\"${project.findProperty("API_BASE_URL") ?: "https://api.eodigo.com/"}\"")
     }
 
 }

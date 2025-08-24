@@ -13,18 +13,27 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.side.dnd.feature.price_rank.PriceRankViewModel
 import com.side.dnd.feature.price_rank.model.NationWideUiState
 import side.dnd.design.theme.EodigoColor
 
 
 @Composable
 fun NationwideScreen(
-    uiState: NationWideUiState
+    uiState: NationWideUiState,
+    viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>()
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
+
+    LaunchedEffect(Unit) {
+        viewModel.loadProductData(1, "김치")
+        viewModel.loadProductTrendData(1, "김치")
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

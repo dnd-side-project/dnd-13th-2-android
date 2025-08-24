@@ -62,8 +62,8 @@ fun PriceRankScreen(
             tabs = listOf("전국팔도", "지역별"),
             content = { page ->
                 when (page) {
-                    0 -> { NationwideScreen(uiState = uiState) }
-                    1 -> { RegionRankScreen() }
+                    0 -> { NationwideScreen(uiState = uiState, viewModel = viewModel) }
+                    1 -> { RegionRankScreen(uiState = uiState, viewModel = viewModel) }
                 }
             },
             pagerState = pagerState,
