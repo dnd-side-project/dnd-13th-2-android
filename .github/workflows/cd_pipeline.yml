@@ -40,25 +40,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: gradle
-
-    - name: Increment versionCode
-      run: |
-          FILE_PATH="app/build.gradle.kts"
-          VERSION_CODE=$(grep -oP 'versionCode\s*=\s*\K\d+' $FILE_PATH)
-          NEW_VERSION_CODE=$((VERSION_CODE + 1))
-          VERSION_NAME="${{ needs.extract_version.outputs.version_name }}"
-          sed -i "s/versionCode = $VERSION_CODE/versionCode = $NEW_VERSION_CODE/" $FILE_PATH
-          sed -i 's/versionName = "[0-9]\+\.[0-9]\+\.[0-9]\+"/versionName = "'"$VERSION_NAME"'"/' $FILE_PATH
-     
-          echo "Updated versionCode to $NEW_VERSION_CODE"
-          echo "Updated versionName to $VERSION_NAME"
-          echo "VERSION_CODE=$NEW_VERSION_CODE" >> $GITHUB_ENV
       
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
 
     - name: Release App Bundle
-      run: ./gradlew assembleRelease -Duser.language=ko -Duser.country=KR
+      run: ./gradlew assembleDebug -Duser.language=ko -Duser.country=KR
 
     - name: Send artifact to slack channel
       uses: slackapi/slack-github-action@v2.1.1
@@ -68,8 +55,8 @@ jobs:
         payload: |
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           initial_comment: "짠! 따끈따끈한 APK 한잔 나왔어요~! 새로운 기능들이 담겨 있으니 꼭 설치하셔서 테스트해 주세요!"
-          file: "app/build/outputs/apk/release/app-release.apk"
-          filename: "app-release.apk"
+          file: "app/build/outputs/apk/release/app-debug.apk"
+          filename: "app-debug.apk"
           fileType: "apk"
 
     - name: Create Github Release
@@ -79,7 +66,7 @@ jobs:
         release_name: "Release: ${{ needs.extract_version.outputs.version_name }}"
         generate_release_notes: true
         files: |
-               app/build/outputs/bundle/release/app-release.apk
+               app/build/outputs/bundle/release/app-debug.apk
 
     - name: Extract Version Information
       run: |
