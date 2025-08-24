@@ -6,6 +6,10 @@ plugins {
 
 android {
     namespace = "side.dnd.data"
+
+    defaultConfig {
+        buildConfigField("String", "BASE_URL", "\"http://3.34.117.255:8080/api/v1/\"")
+    }
 }
 
 dependencies {
