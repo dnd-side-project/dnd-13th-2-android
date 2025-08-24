@@ -1,5 +1,3 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-
 plugins {
     id("side.dnd.android.application")
 }
@@ -13,10 +11,6 @@ android {
         versionName = "1.0.0"
     }
 
-}
-
-fun getLocalKey(propertyKey:String):String{
-    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
 
 dependencies {
