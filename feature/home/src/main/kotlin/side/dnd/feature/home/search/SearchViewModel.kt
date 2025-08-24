@@ -1,6 +1,5 @@
 package side.dnd.feature.home.search
 
-import android.system.Os.remove
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import side.dnd.core.compositionLocals.CommonNavigationAction
 import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.search.SearchSideEffect.Navigate
 import side.dnd.feature.home.search.SearchSideEffect.SwitchPage
@@ -32,22 +32,26 @@ class SearchViewModel @Inject constructor() : ViewModel() {
 
             is SearchEvent.SwitchPage -> {
                 viewModelScope.launch {
-                    searchUiState.update { state ->
-                        state.copy(selectedTab = event.storeType)
-                    }
                     sideEffect.send(SwitchPage(event.storeType.ordinal))
                 }
             }
 
-            SearchEvent.onBrowse -> {
+            is SearchEvent.onBrowse -> {
+                //TODO 검색어로 위치 기반 가게 리스트 api 요청
                 viewModelScope.launch {
-                    sideEffect.send(Navigate(HomeNavigationAction.NavigateToHome))
+                    sideEffect.send(Navigate(HomeNavigationAction.NavigateToHome(event.searchWord)))
                 }
             }
 
             SearchEvent.ResetSelectedCategories -> {
                 searchUiState.update { state ->
-                    state.copy(selectedCategory = "",)
+                    state.copy(selectedCategory = "")
+                }
+            }
+
+            SearchEvent.PopBackStack -> {
+                viewModelScope.launch {
+                    sideEffect.send(Navigate(CommonNavigationAction.PopBackStack))
                 }
             }
         }

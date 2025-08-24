@@ -4,7 +4,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import side.dnd.feature.home.state.StoreType
 
 class SearchUiStatePreviewParameter : PreviewParameterProvider<SearchUiState> {
-    override val values: Sequence<SearchUiState> = sequenceOf(
+    override val values: Sequence<SearchUiState> get() = sequenceOf(
         SearchUiState.EMPTY.copy(
             selectedCategory = StoreType.CAFE.category.first(),
         ),
@@ -12,7 +12,6 @@ class SearchUiStatePreviewParameter : PreviewParameterProvider<SearchUiState> {
             val category = StoreType.RESTAURANT
 
             SearchUiState.EMPTY.copy(
-                selectedTab = category,
                 selectedCategory = category.category.first(),
             )
         },
