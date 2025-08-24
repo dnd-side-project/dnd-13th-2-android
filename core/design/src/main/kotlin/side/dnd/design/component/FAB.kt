@@ -13,6 +13,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.MutatorMutex
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -65,6 +66,7 @@ fun CircularFAB(
     colors: ImmutableList<Color> = persistentListOf(Color(0xFFA87DFF), Color(0xFF4F28FF)),
     circularFabState: CircularFabState = rememberCircularFabState(size = componentSize),
     enabled: Boolean = true,
+    onClickWhenDisabled: () -> Unit = {},
     content: @Composable BoxScope.() -> Unit = {},
 ) {
     val selectableItem by rememberUpdatedState(circularFabState.selectableItem)
@@ -199,11 +201,18 @@ fun CircularFAB(
                 .align(Alignment.BottomCenter)
                 .shadow(17.dp, shape = CircleShape)
                 .pointerInput(enabled) {
+                    detectTapGestures(
+                        onTap = {
+                            if(!enabled)
+                                onClickWhenDisabled()
+                        }
+                    )
+                }
+                .pointerInput(enabled) {
                     detectDragGestures(
                         onDrag = { change, dragAmount ->
                             if (enabled)
                                 circularFabState.drag(dragAmount)
-
                         },
                         onDragEnd = {
                             if (enabled)

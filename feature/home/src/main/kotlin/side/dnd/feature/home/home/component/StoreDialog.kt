@@ -25,15 +25,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import side.dnd.design.R
 import side.dnd.design.component.HorizontalSpacer
 import side.dnd.design.component.HorizontalWeightSpacer
 import side.dnd.design.component.SubcomposeAsyncImageWithPreview
 import side.dnd.design.component.VerticalSpacer
-import side.dnd.design.component.text.tu
 import side.dnd.design.theme.EodigoTheme
 import side.dnd.design.theme.LocalTypography
+import side.dnd.design.utils.tu
 import side.dnd.feature.home.state.Store
 
 
@@ -95,11 +94,8 @@ fun StoreDetailCard(
         ) {
             Text(
                 text = "${store.distance}m",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF868686)
-                )
+                style = LocalTypography.current.body4Medium,
+                color = Color(0xFF868686),
             )
             HorizontalSpacer(4.dp)
             Canvas(Modifier.size(2.dp)) {
@@ -110,11 +106,8 @@ fun StoreDetailCard(
             HorizontalSpacer(4.dp)
             Text(
                 text = store.address,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF868686)
-                )
+                style = LocalTypography.current.body4Medium,
+                color = Color(0xFF868686),
             )
 
             HorizontalWeightSpacer(1f)

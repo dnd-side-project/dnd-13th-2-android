@@ -12,6 +12,7 @@ import side.dnd.core.compositionLocals.LocalAnimatedContentScope
 import side.dnd.core.compositionLocals.NavigationAction
 import side.dnd.feature.home.home.HomeScreen
 import side.dnd.feature.home.search.SearchScreen
+import side.dnd.feature.home.store.StoreScreen
 
 @Serializable
 sealed class HomeRoute {
@@ -19,7 +20,7 @@ sealed class HomeRoute {
     object HomeGraph : HomeRoute()
 
     @Serializable
-    data object Home : HomeRoute(), TopLevelRoute {
+    data class Home(val searchWord: String) : HomeRoute(), TopLevelRoute {
         override val icon: Int
             get() = side.dnd.design.R.drawable.ic_home
         override val description: String
@@ -28,11 +29,14 @@ sealed class HomeRoute {
 
     @Serializable
     data object Search : HomeRoute()
+
+    @Serializable
+    data class Store(val searchWord: String) : HomeRoute()
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.homeGraph() {
-    navigation<HomeRoute.HomeGraph>(startDestination = HomeRoute.Home) {
+    navigation<HomeRoute.HomeGraph>(startDestination = HomeRoute.Home("")) {
         composable<HomeRoute.Home> {
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
                 HomeScreen()
@@ -44,6 +48,12 @@ fun NavGraphBuilder.homeGraph() {
                 SearchScreen()
             }
         }
+
+        composable<HomeRoute.Store> {
+            CompositionLocalProvider(LocalAnimatedContentScope provides this) {
+                StoreScreen()
+            }
+        }
     }
 }
 
@@ -51,11 +61,18 @@ fun NavController.navigateToSearch() {
     navigate(HomeRoute.Search)
 }
 
-fun NavController.navigateToHome() {
-    navigate(HomeRoute.Home)
+fun NavController.navigateToHome(searchWord: String) {
+    navigate(route = HomeRoute.Home(searchWord)) {
+        popUpTo(HomeRoute.HomeGraph)
+    }
+}
+
+fun NavController.navigateToStore(searchWord: String) {
+    navigate(HomeRoute.Store(searchWord))
 }
 
 sealed class HomeNavigationAction : NavigationAction {
     data object NavigateToSearch : HomeNavigationAction()
-    data object NavigateToHome : HomeNavigationAction()
+    data class NavigateToHome(val searchWord: String) : HomeNavigationAction()
+    data class NavigateToStore(val searchWord: String) : HomeNavigationAction()
 }

@@ -3,6 +3,7 @@ package side.dnd.feature.home.home
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.serialization.Serializable
 import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.state.Store
 
@@ -37,6 +38,7 @@ sealed class HomeEvent {
     data class OnLocationTracking(val isLocationTracking: Boolean) : HomeEvent()
     data class SwitchContentLayout(val showSearch: Boolean) : HomeEvent()
     data object OnSearch : HomeEvent()
+    data object NavigateToStore: HomeEvent()
 }
 
 sealed class HomeSideEffect {

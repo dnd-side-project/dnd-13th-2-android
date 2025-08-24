@@ -33,8 +33,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import side.dnd.design.R
-import side.dnd.design.component.text.tu
 import side.dnd.design.theme.EodigoTheme
+import side.dnd.design.theme.LocalTypography
+import side.dnd.design.utils.tu
 
 @Composable
 fun DefaultIconButton(
@@ -89,11 +90,7 @@ fun TextButton(
     ) {
         Text(
             text = text,
-            style = TextStyle(
-                fontWeight = FontWeight.W400,
-                fontSize = 20.tu,
-                letterSpacing = 0.em
-            ),
+            style = LocalTypography.current.title3Medium,
             color = Color.White
         )
     }
