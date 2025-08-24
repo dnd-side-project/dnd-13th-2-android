@@ -58,7 +58,7 @@ jobs:
         payload: |
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           initial_comment: "짠! 따끈따끈한 APK 한잔 나왔어요~! 새로운 기능들이 담겨 있으니 꼭 설치하셔서 테스트해 주세요!"
-          file: "app/build/outputs/apk/release/app-debug.apk"
+          file: "app/build/outputs/apk/debug/app-debug.apk"
           filename: "app-debug.apk"
           fileType: "apk"
 
@@ -69,25 +69,29 @@ jobs:
         release_name: "Release: ${{ needs.extract_version.outputs.version_name }}"
         generate_release_notes: true
         files: |
-               app/build/outputs/bundle/release/app-debug.apk
+               app/build/outputs/bundle/debug/app-debug.apk
 
     - name: Extract Version Information
       run: |
-          TARGET_SDK=$(grep -oP 'targetSdk\s*=\s*\K\d+' app/build.gradle.kts)
+          TARGET_SDK=$(grep -oP 'targetSdk\s*=\s*\K\d+' buildSrc/src/main/kotlin/gradle/convention/plugin/const/VersionConst.kt)
+          MIN_SDK=$(grep -oP 'minSdk\s*=\s*\K\d+' buildSrc/src/main/kotlin/gradle/convention/plugin/const/VersionConst.kt)
           KOTLIN_VERSION=$(grep -oP 'kotlin\s*=\s*"\K[0-9]+\.[0-9]+\.[0-9]+' gradle/libs.versions.toml)
           AGP_VERSION=$(grep -oP 'agp\s*=\s*"\K[0-9]+\.[0-9]+\.[0-9]+' gradle/libs.versions.toml)
 
           echo "Extracted targetSdk: $TARGET_SDK"
+          echo "Extracted minSdk: $MIN_SDK"
           echo "Extracted Kotlin version: $KOTLIN_VERSION"
           echo "Extracted AGP version: $AGP_VERSION"
           
           echo "TARGET_SDK=$TARGET_SDK" >> $GITHUB_ENV
+          echo "MIN_SDK=$MIN_SDK" >> $GITHUB_ENV
           echo "KOTLIN_VERSION=$KOTLIN_VERSION" >> $GITHUB_ENV
           echo "AGP_VERSION=$AGP_VERSION" >> $GITHUB_ENV
 
     - name: Update README.md
       run: |
           sed -i "s/targetSdkVersion-[0-9]\+/targetSdkVersion-$TARGET_SDK/" README.md
+          sed -i "s/minSdkVersion-[0-9]\+/minSdkVersion-$MIN_SDK/" README.md
           sed -i "s/Kotlin-[0-9]\+\.[0-9]\+\.[0-9]\+/Kotlin-$KOTLIN_VERSION/" README.md
           sed -i "s/AGP-[0-9]\+\.[0-9]\+\.[0-9]\+/AGP-$AGP_VERSION/" README.md
 
