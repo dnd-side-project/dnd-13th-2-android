@@ -8,7 +8,7 @@ android {
     namespace = "side.dnd.feature.home"
 
     defaultConfig {
-        buildConfigField("String","NAVER_MAP_KEY",getLocalKey("NCP_KEY_ID"))
+        buildConfigField("String", "NAVER_MAP_KEY", getLocalKey("NCP_KEY_ID"))
     }
 }
 
@@ -18,6 +18,6 @@ dependencies {
     implementation(libs.naver.map.location)
 }
 
-fun getLocalKey(propertyKey:String):String{
+fun getLocalKey(propertyKey: String): String {
     return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
