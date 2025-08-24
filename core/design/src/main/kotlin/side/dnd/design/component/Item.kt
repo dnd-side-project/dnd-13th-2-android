@@ -41,7 +41,7 @@ fun LocalRankRow(
     locationName: String,
     price: Int,
     modifier: Modifier = Modifier,
-    visible: Boolean = true,
+    maxScreen: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     Row(
@@ -61,24 +61,31 @@ fun LocalRankRow(
                 .padding(horizontal = 14.dp, vertical = 7.dp),
             contentAlignment = Alignment.Center
         ) {
-            if (visible) {
+            if (rank <=3 ) {
+                val  resource = when (rank) {
+                    1 -> R.drawable.ic_first_grade
+                    2 -> R.drawable.ic_second_grad
+                    3 -> R.drawable.ic_third_grade
+                    else -> R.drawable.ic_third_grade
+                }
                 Image(
-                    painter = painterResource(R.drawable.ic_rank_bg),
+                    painter = painterResource(resource),
                     contentDescription = null,
-                    modifier = Modifier.size(40.dp)
+//                    modifier = Modifier.size(40.dp)
+                )
+            }else {
+                Text(
+                    text = rank.toString(),
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF9B86FC),
+                        textAlign = TextAlign.Center,
+                        letterSpacing = (-0.75).sp
+                    )
                 )
             }
-            Text(
-                text = rank.toString(),
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF9B86FC),
-                    textAlign = TextAlign.Center,
-                    letterSpacing = (-0.75).sp
-                )
-            )
         }
 
         Row(
