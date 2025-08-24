@@ -47,7 +47,6 @@ import side.dnd.core.SnackBarMessage
 import side.dnd.core.compositionLocals.LocalFABControl
 import side.dnd.core.compositionLocals.LocalShowSnackBar
 import side.dnd.design.component.CircularFAB
-import side.dnd.design.component.button.clickableAvoidingDuplication
 import side.dnd.design.theme.EodigoTheme
 import side.dnd.feature.home.navigateToSearch
 
@@ -113,12 +112,11 @@ class MainActivity : ComponentActivity() {
                     ) {
                         CircularFAB(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .clickableAvoidingDuplication {
-                                    if (!isFabEnabled)
-                                        navController.navigateToSearch()
-                                },
+                                .fillMaxWidth(),
                             enabled = isFabEnabled,
+                            onClickWhenDisabled = {
+                                navController.navigateToSearch()
+                            }
                         ) {
                             NavigationBar(
                                 containerColor = NavigationDefaults.containerColor(),

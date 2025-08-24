@@ -10,12 +10,25 @@ import kotlinx.collections.immutable.persistentListOf
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
 import side.dnd.core.compositionLocals.LocalNavigationActions
 import side.dnd.core.compositionLocals.LocalSharedElementTransitionScope
+import side.dnd.feature.home.state.Store
 
 internal class HomeUiStatePreviewParameter: PreviewParameterProvider<HomeUiState> {
-    override val values: Sequence<HomeUiState> = sequenceOf(
+    override val values: Sequence<HomeUiState> get() = sequenceOf(
         HomeUiState(
-            searchWord = "검색어",
+            searchWord = "",
             stores = persistentListOf(),
+            mapControl = MapControl.Empty,
+            showSearchContent = false
+        ),
+        HomeUiState(
+            searchWord = "카페 테인",
+            stores = persistentListOf(
+                Store.DEFAULT,
+                Store.DEFAULT,
+                Store.DEFAULT,
+                Store.DEFAULT,
+                Store.DEFAULT,
+            ),
             mapControl = MapControl.Empty,
             showSearchContent = false
         ),
