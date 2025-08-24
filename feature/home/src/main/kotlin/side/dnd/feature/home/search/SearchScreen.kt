@@ -1,6 +1,5 @@
 package side.dnd.feature.home.search
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
@@ -21,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -33,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,21 +45,25 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import side.dnd.core.compositionLocals.CommonNavigationAction
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
 import side.dnd.core.compositionLocals.LocalFABControl
 import side.dnd.core.compositionLocals.LocalNavigationActions
 import side.dnd.core.compositionLocals.LocalSharedElementTransitionScope
+import side.dnd.design.R
 import side.dnd.design.component.HorizontalSpacer
 import side.dnd.design.component.VerticalSpacer
 import side.dnd.design.component.VerticalWeightSpacer
 import side.dnd.design.component.button.TextButton
 import side.dnd.design.component.button.clickableAvoidingDuplication
-import side.dnd.design.component.text.TextFieldWithSearchBar
-import side.dnd.design.component.text.tu
+import side.dnd.design.component.text.TextFieldWithActionBar
 import side.dnd.design.theme.EodigoTheme
+import side.dnd.design.theme.LocalTypography
+import side.dnd.design.utils.tu
 import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.home.PreviewHomeScope
 import side.dnd.feature.home.state.StoreType
+import side.dnd.feature.home.store.StoreEvent
 
 @Composable
 internal fun SearchScreen(
@@ -73,15 +79,11 @@ internal fun SearchScreen(
             when (effect) {
                 is SearchSideEffect.SwitchPage -> pagerState.animateScrollToPage(effect.page)
                 is SearchSideEffect.Navigate -> {
-                    navActions(HomeNavigationAction.NavigateToHome)
+                    navActions(effect.action)
                     localFABControl(true)
                 }
             }
         }
-    }
-
-    BackHandler {
-        navActions(HomeNavigationAction.NavigateToHome)
     }
 
     SearchContent(
@@ -112,7 +114,7 @@ internal fun SearchContent(
             .background(Color.White)
     ) {
         with(LocalSharedElementTransitionScope.current) {
-            TextFieldWithSearchBar(
+            TextFieldWithActionBar(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 78.dp, start = 24.dp, end = 24.dp)
@@ -122,36 +124,44 @@ internal fun SearchContent(
                     ),
                 textFieldState = textFieldState,
                 hint = "오늘의 메뉴는?",
-                searchIconBackgroundColor = Color(0xFF9B86FC)
+                actionIconBackgroundColor = Color(0xFF9B86FC),
+                onClickEnabled = {
+                    onEvent(SearchEvent.onBrowse(textFieldState.text.toString()))
+                },
+                headerIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left),
+                        contentDescription = "Pop BackStack",
+                        modifier = Modifier.clickableAvoidingDuplication {
+                            onEvent(SearchEvent.PopBackStack)
+                        }
+                    )
+                },
             )
         }
 
         VerticalSpacer(28.dp)
 
         SecondaryTabRow(
-            selectedTabIndex = searchUiState.selectedTab.ordinal,
+            selectedTabIndex = pagerState.currentPage,
             containerColor = Color.White,
-            indicator = @Composable {
+            indicator = {
                 TabRowDefaults.SecondaryIndicator(
+                    modifier = Modifier.tabIndicatorOffset(pagerState.currentPage, matchContentSize = false),
                     color = Color(0xFF9B86FC)
                 )
             }
         ) {
             StoreType.entries.forEachIndexed { idx, item ->
                 Tab(
-                    selected = searchUiState.selectedTab.ordinal == idx,
+                    selected = pagerState.currentPage == idx,
                     onClick = {
                         onEvent(SearchEvent.SwitchPage(item))
                     },
                     text = {
                         Text(
                             text = item.display,
-                            style = TextStyle(
-                                fontWeight = FontWeight.W400,
-                                fontSize = 20.tu,
-                                letterSpacing = (-0.05).em,
-                                lineHeight = 24.tu,
-                            )
+                            style = LocalTypography.current.title3Medium
                         )
                     },
                     selectedContentColor = Color(0xFF4D4C4F),
@@ -198,10 +208,7 @@ internal fun SearchContent(
                             label = {
                                 Text(
                                     text = category,
-                                    fontSize = 16.tu,
-                                    fontWeight = FontWeight.W400,
-                                    letterSpacing = (-0.05).em,
-                                    lineHeight = 24.tu,
+                                    style = LocalTypography.current.body2Medium
                                 )
                             },
                         )
@@ -220,20 +227,18 @@ internal fun SearchContent(
                     ) {
                         Column(
                             modifier = Modifier
-                                .width(60.dp)
                                 .clickableAvoidingDuplication {
                                     onEvent(SearchEvent.ResetSelectedCategories)
-                                }
+                                },
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
                                 text = "초기화",
-                                style = TextStyle(
-                                    fontSize = 20.tu,
-                                    fontWeight = FontWeight.W400
-                                ),
+                                style = LocalTypography.current.title2Medium,
                                 color = Color(0xFF848484)
                             )
                             HorizontalDivider(
+                                modifier = Modifier.width(56.dp),
                                 color = Color(0xFF848484),
                             )
                         }
@@ -241,7 +246,7 @@ internal fun SearchContent(
                         TextButton(
                             text = "찾아보기",
                             onClick = {
-                                onEvent(SearchEvent.onBrowse)
+                                onEvent(SearchEvent.onBrowse(searchUiState.selectedCategory))
                             },
                             modifier = Modifier
                                 .height(48.dp)

@@ -11,6 +11,7 @@ data class Store(
     val image: String,
     val type: StoreType,
     val menu: String,
+    val latLng: LatLng
 ) {
     companion object {
         val DEFAULT = Store(
@@ -21,7 +22,15 @@ data class Store(
             price = 2500,
             image = "https://picsum.photos/200",
             menu = "카페 라떼",
+            latLng = LatLng(37.5665, 126.9780)
         )
+    }
+}
+
+@Serializable
+data class LatLng(val latitude: Double, val longitude: Double) {
+    fun toNaverLatLng(): com.naver.maps.geometry.LatLng {
+        return com.naver.maps.geometry.LatLng(latitude, longitude)
     }
 }
 

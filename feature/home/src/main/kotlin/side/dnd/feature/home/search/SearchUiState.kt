@@ -1,13 +1,13 @@
 package side.dnd.feature.home.search
 
 import androidx.compose.runtime.Stable
+import side.dnd.core.compositionLocals.NavigationAction
 import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.state.StoreType
 
 @Stable
 data class SearchUiState(
     val isSearchReady: Boolean,
-    val selectedTab: StoreType,
     val selectedCategory: String
 ) {
     val pageCount: Int = 2
@@ -15,7 +15,6 @@ data class SearchUiState(
     companion object {
         val EMPTY = SearchUiState(
             isSearchReady = false,
-            selectedTab = StoreType.CAFE,
             selectedCategory = ""
         )
     }
@@ -23,14 +22,13 @@ data class SearchUiState(
 
 sealed class SearchEvent {
     data class SwitchPage(val storeType: StoreType) : SearchEvent()
-    data class OnSelectChip(val selectedCategory: String) :
-        SearchEvent()
-
-    data object onBrowse : SearchEvent()
+    data class OnSelectChip(val selectedCategory: String) : SearchEvent()
+    data class onBrowse(val searchWord: String) : SearchEvent()
     data object ResetSelectedCategories : SearchEvent()
+    data object PopBackStack : SearchEvent()
 }
 
 sealed class SearchSideEffect {
     data class SwitchPage(val page: Int) : SearchSideEffect()
-    data class Navigate(val action: HomeNavigationAction) : SearchSideEffect()
+    data class Navigate(val action: NavigationAction) : SearchSideEffect()
 }
