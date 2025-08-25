@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,15 +41,16 @@ fun PriceChartScreen(
         ) {
             Text(
                 text = "\"${chartData.productName}\"",
-                style = EodigoTheme.typography.title1Medium,
-                color = EodigoColor.Normal
+                style = EodigoTheme.typography.body3Medium,
+                color = EodigoColor.Black
             )
             Text(
                 text = stringResource(id = R.string.price_chart_title),
-                style = EodigoTheme.typography.body2Medium,
-                color = EodigoColor.Gray500,
+                style = EodigoTheme.typography.body3Medium,
+                color = EodigoColor.Gray900,
             )
         }
+        Spacer(modifier = Modifier.height(10.dp))
 
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -57,7 +59,7 @@ fun PriceChartScreen(
             val formattedRate = String.format("%.3f", chartData.inflationRate)
 
             Text(
-                text = "+${formattedRate}%",
+                text = "+${formattedRate}% ",
                 style = EodigoTheme.typography.title1Medium,
                 color = EodigoColor.Normal,
 
