@@ -1,5 +1,6 @@
 package side.dnd.app
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,7 +10,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,13 +33,16 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -49,9 +55,12 @@ import side.dnd.core.SnackBarMessage
 import side.dnd.core.compositionLocals.LocalFABControl
 import side.dnd.core.compositionLocals.LocalShowSnackBar
 import side.dnd.design.component.CircularFAB
+import side.dnd.design.component.CategoryBottomSheet
 import side.dnd.design.component.button.clickableAvoidingDuplication
 import side.dnd.feature.home.navigateToSearch
 import side.dnd.design.theme.EodigoTheme
+import com.side.dnd.feature.price_rank.navigation.PriceRankRoute
+import com.side.dnd.feature.price_rank.navigation.navigateToCategorySearch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -65,6 +74,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Composable
     private fun Content(
         navController: NavHostController = rememberNavController(),
@@ -92,6 +102,9 @@ class MainActivity : ComponentActivity() {
         var isFabEnabled by remember {
             mutableStateOf(false)
         }
+        var isFabClicked by remember {
+            mutableStateOf(false)
+        }
 
         CompositionLocalProvider(
             LocalTonalElevationEnabled provides false,
@@ -117,10 +130,21 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickableAvoidingDuplication {
-                                    if (!isFabEnabled)
-                                        navController.navigateToSearch()
+                                    if (!isFabEnabled) {
+                                        if (currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true) {
+                                            if (isFabClicked) {
+                                                isFabClicked = false
+                                            } else {
+                                                isFabClicked = true
+                                            }
+                                        } else {
+                                            navController.navigateToSearch()
+                                        }
+                                    }
                                 },
                             enabled = isFabEnabled,
+                            isCategorySearch = currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true && isFabClicked,
+                            isPriceRankActive = currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true,
                         ) {
                             NavigationBar(
                                 containerColor = NavigationDefaults.containerColor(),
@@ -147,15 +171,40 @@ class MainActivity : ComponentActivity() {
 
                 }
             ) { paddingValues ->
-                NavigationGraph(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            start = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
-                            end = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
-                        ),
-                    router = router,
-                )
+                Box(modifier = Modifier.fillMaxSize()) {
+                    NavigationGraph(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                start = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
+                                end = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
+                            ),
+                        router = router,
+                    )
+                    
+                    if (isFabClicked && currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.7f))
+                                .clickableAvoidingDuplication {
+                                    isFabClicked = false
+                                }
+                        )
+                    }
+                    
+                    CategoryBottomSheet(
+                        visible = isFabClicked && currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true,
+                        onCategoryClick = { categoryName ->
+                            isFabClicked = false
+                            navController.navigateToCategorySearch()
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .padding(bottom = 120.dp)
+                    )
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.side.dnd.feature.price_rank.PriceRankScreen
+import com.side.dnd.feature.price_rank.component.find.FindCategoryScreen
 import kotlinx.serialization.Serializable
 import side.dnd.core.TopLevelRoute
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
@@ -40,7 +41,7 @@ fun NavGraphBuilder.priceRankGraph() {
 
         composable<PriceRankRoute.CategorySearch> {
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
-//                CategorySearchScreen()
+                FindCategoryScreen()
             }
         }
     }

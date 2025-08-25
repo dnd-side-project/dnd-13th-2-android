@@ -124,7 +124,7 @@ fun CircleCategoryItem(
     title: String,
     icon: Painter,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: (title: String) -> Unit = {}
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -137,7 +137,9 @@ fun CircleCategoryItem(
                     shape = CircleShape,
                     spotColor = Color.Black.copy(alpha = 0.1f)
                 )
-                .clickable(onClick = onClick)
+                .clickable{
+                    onClick(title)
+                }
                 .size(56.dp)
                 .background(
                     color = Color.White,
@@ -164,7 +166,7 @@ fun CircleCategoryItem(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFFF5F3FF),
+                color = EodigoColor.White,
                 textAlign = TextAlign.Center,
                 letterSpacing = (-0.7).sp
             )
