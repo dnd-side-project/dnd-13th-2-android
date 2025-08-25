@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import side.dnd.design.R
+import side.dnd.design.theme.EodigoColor
 
 @Composable
 fun LocalRankRow(
@@ -171,6 +172,56 @@ fun CircleCategoryItem(
     }
 }
 
+
+@Composable
+fun SquareCategoryItem(
+    title: String,
+    icon: Painter,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .clickable(onClick = onClick)
+    ) {
+        Box(
+            modifier = Modifier
+                .clickable(onClick = onClick)
+                .size(64.dp)
+                .background(
+                    color = EodigoColor.Gray100,
+                    shape = RoundedCornerShape(15.dp)
+                )
+
+        ) {
+            Image(
+                painter = icon,
+                contentDescription = title,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(56.dp)
+                    .align(Alignment.Center)
+
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = title,
+            style = TextStyle(
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.Medium,
+                color = EodigoColor.Black,
+                textAlign = TextAlign.Center,
+                letterSpacing = (-0.7).sp
+            )
+        )
+    }
+}
+
 @Composable
 fun StoreItem(
     storeName: String,
@@ -291,6 +342,15 @@ fun StoreItemPreview() {
 fun CategoryItemPreview() {
     CircleCategoryItem(
         title = "찾아보기",
+        icon = painterResource(R.drawable.ic_home)
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF9B86FC)
+@Composable
+fun SquareCategoryItem() {
+    SquareCategoryItem(
+        title = "이삭이삭",
         icon = painterResource(R.drawable.ic_home)
     )
 }
