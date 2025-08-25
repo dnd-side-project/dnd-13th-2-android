@@ -25,13 +25,14 @@ import androidx.compose.ui.unit.dp
 import com.side.dnd.feature.price_rank.R
 import com.side.dnd.feature.price_rank.model.MockProductRanking
 import com.side.dnd.feature.price_rank.model.ProductRanking
+import com.side.dnd.feature.price_rank.model.RegionRanking
 import side.dnd.design.theme.EodigoColor
 import side.dnd.design.theme.EodigoTheme
 
 @Composable
 fun PriceMapScreen(
-    isEmptyKeyword: Boolean = false,
     productRanking: ProductRanking,
+    isEmptyKeyword: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -120,43 +121,44 @@ fun MapScreen(
                 .height(maxHeight)
         )
 
-        val rankings = if (isEmptyKeyword) MockProductRanking.sampleProductRanking.ranking else productRanking.ranking.take(3)
+        if (!isEmptyKeyword && productRanking.ranking.isNotEmpty()) {
+            val rankings = productRanking.ranking.take(3)
 
-        rankings.forEachIndexed { index, regionRanking ->
-            val isFirstRank = index == 0
+            rankings.forEachIndexed { index, regionRanking ->
+                val isFirstRank = index == 0
 
-            val (xOffset, yOffset) = when (regionRanking.regionName) {
-                "서울" -> Pair(0.5f, 0.2f)
-                "부산" -> Pair(0.7f, 0.7f)
-                "대구" -> Pair(0.6f, 0.5f)
-                "인천" -> Pair(0.3f, 0.3f)
-                "광주" -> Pair(0.4f, 0.8f)
-                "대전" -> Pair(0.45f, 0.6f)
-                "울산" -> Pair(0.75f, 0.6f)
-                "세종" -> Pair(0.4f, 0.5f)
-                "경기" -> Pair(0.4f, 0.25f)
-                "강원" -> Pair(0.6f, 0.15f)
-                "충북" -> Pair(0.5f, 0.4f)
-                "충남" -> Pair(0.35f, 0.55f)
-                "전북" -> Pair(0.35f, 0.7f)
-                "전남" -> Pair(0.35f, 0.85f)
-                "경북" -> Pair(0.65f, 0.4f)
-                "경남" -> Pair(0.65f, 0.75f)
-                "제주" -> Pair(0.3f, 0.95f)
-                else -> Pair(0.5f, 0.5f)
+                val (xOffset, yOffset) = when (regionRanking.regionName) {
+                    "서울" -> Pair(0.5f, 0.2f)
+                    "부산" -> Pair(0.7f, 0.7f)
+                    "대구" -> Pair(0.6f, 0.5f)
+                    "인천" -> Pair(0.3f, 0.3f)
+                    "광주" -> Pair(0.4f, 0.8f)
+                    "대전" -> Pair(0.45f, 0.6f)
+                    "울산" -> Pair(0.75f, 0.6f)
+                    "세종" -> Pair(0.4f, 0.5f)
+                    "경기" -> Pair(0.4f, 0.25f)
+                    "강원" -> Pair(0.6f, 0.15f)
+                    "충북" -> Pair(0.5f, 0.4f)
+                    "충남" -> Pair(0.35f, 0.55f)
+                    "전북" -> Pair(0.35f, 0.7f)
+                    "전남" -> Pair(0.35f, 0.85f)
+                    "경북" -> Pair(0.65f, 0.4f)
+                    "경남" -> Pair(0.65f, 0.75f)
+                    "제주" -> Pair(0.3f, 0.95f)
+                    else -> Pair(0.5f, 0.5f)
+                }
+
+                PriceCircle(
+                    text = "${regionRanking.price}원",
+                    isFirstRank = isFirstRank,
+                    modifier = Modifier
+                        .offset(
+                            x = maxWidth * xOffset - (if (isFirstRank) 61.dp else 40.dp),
+                            y = maxHeight * yOffset - (if (isFirstRank) 61.dp else 40.dp)
+                        )
+                )
             }
-
-            PriceCircle(
-                text = if (isEmptyKeyword) "???원" else "${regionRanking.price}원",
-                isFirstRank = isFirstRank,
-                modifier = Modifier
-                    .offset(
-                        x = maxWidth * xOffset - (if (isFirstRank) 61.dp else 40.dp),
-                        y = maxHeight * yOffset - (if (isFirstRank) 61.dp else 40.dp)
-                    )
-            )
         }
-
     }
 }
 
@@ -191,7 +193,16 @@ fun PriceCircle(
 @Composable
 fun PriceMapScreenPreview() {
     PriceMapScreen(
-        productRanking = MockProductRanking.sampleProductRanking
+        productRanking = ProductRanking(
+            productId = 1,
+            productName = "테스트",
+            surveyDate = "2024-01-01",
+            ranking = listOf(
+                RegionRanking(1, "서울", 1000),
+                RegionRanking(2, "부산", 1200),
+                RegionRanking(3, "대구", 1100)
+            )
+        )
     )
 }
 
@@ -199,7 +210,13 @@ fun PriceMapScreenPreview() {
 @Composable
 fun PriceMapScreenLoadingPreview() {
     PriceMapScreen(
-        productRanking = MockProductRanking.sampleProductRanking
+        isEmptyKeyword = true,
+        productRanking = ProductRanking(
+            productId = 1,
+            productName = "테스트",
+            surveyDate = "2024-01-01",
+            ranking = emptyList()
+        )
     )
 }
 

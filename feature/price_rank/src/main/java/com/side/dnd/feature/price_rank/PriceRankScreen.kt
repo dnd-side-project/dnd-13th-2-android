@@ -59,7 +59,7 @@ fun PriceRankScreen(
             .systemBarsPadding()
     ) {
         CustomNavigationTab(
-            tabs = listOf("전국팔도", "지역별"),
+            tabs = tabs,
             content = { page ->
                 when (page) {
                     0 -> { NationwideScreen(uiState = uiState, viewModel = viewModel) }

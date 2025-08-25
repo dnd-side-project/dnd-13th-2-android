@@ -13,6 +13,7 @@ android {
 dependencies {
     implementation(project(":feature:core"))
     implementation(project(":core:data"))
+    implementation(project(":core:local"))
 
     implementation(libs.bundles.square)
 

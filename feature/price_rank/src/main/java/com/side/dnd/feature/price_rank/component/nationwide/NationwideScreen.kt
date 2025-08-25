@@ -13,7 +13,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,11 +29,6 @@ fun NationwideScreen(
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
 
-    LaunchedEffect(Unit) {
-        viewModel.loadProductData(1, "김치")
-        viewModel.loadProductTrendData(1, "김치")
-    }
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -47,8 +41,8 @@ fun NationwideScreen(
         ) { page ->
             when (page) {
                 0 -> PriceMapScreen(
-                    isEmptyKeyword = uiState.keyWord.isEmpty(),
                     productRanking = uiState.productRanking,
+                    isEmptyKeyword = uiState.isEmptyKeyword
                 )
 
                 1 -> PriceChartScreen(

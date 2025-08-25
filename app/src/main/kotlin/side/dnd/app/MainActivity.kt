@@ -10,9 +10,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,6 +43,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -64,6 +65,7 @@ import side.dnd.feature.home.navigateToSearch
 import side.dnd.design.theme.EodigoTheme
 import com.side.dnd.feature.price_rank.navigation.PriceRankRoute
 import com.side.dnd.feature.price_rank.navigation.navigateToCategorySearch
+import com.side.dnd.feature.price_rank.PriceRankViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -81,6 +83,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun Content(
         navController: NavHostController = rememberNavController(),
+        priceRankViewModel: PriceRankViewModel = hiltViewModel()
     ) {
         val snackBarHostState = remember { SnackbarHostState() }
 
@@ -214,7 +217,14 @@ class MainActivity : ComponentActivity() {
                         visible = isFabClicked && currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true,
                         onCategoryClick = { categoryName ->
                             isFabClicked = false
-                            navController.navigateToCategorySearch()
+                            when (categoryName) {
+                                "찾아보기" -> {
+                                    navController.navigateToCategorySearch()
+                                }
+                                else -> {
+                                    priceRankViewModel.selectCategory(categoryName)
+                                }
+                            }
                         },
                         modifier = Modifier
                             .align(Alignment.BottomCenter)

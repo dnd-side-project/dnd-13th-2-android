@@ -24,6 +24,7 @@ internal class AndroidFeaturePlugin : Plugin<Project> {
             "implementation"(project(":core:domain"))
             "implementation"(project(":core:data"))
             "implementation"(project(":core:design"))
+            "implementation"(project(":core:local"))
 
             "implementation"(libs.findLibrary("hilt.navigation.compose").get())
             "implementation"(libs.findBundle("lifecycle").get())

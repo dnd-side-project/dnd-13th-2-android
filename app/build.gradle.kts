@@ -10,7 +10,7 @@ android {
         versionCode = 1
         versionName = "1.0.0"
         
-        buildConfigField("String", "BASE_URL", "\"${project.findProperty("API_BASE_URL") ?: "https://api.eodigo.com/"}\"")
+        buildConfigField("String", "BASE_URL", "\"${project.findProperty("API_BASE_URL") ?: "\"http://3.34.117.255:8080\""}\"")
     }
 
 }

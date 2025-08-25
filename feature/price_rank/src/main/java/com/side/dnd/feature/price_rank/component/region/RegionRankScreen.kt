@@ -44,7 +44,7 @@ fun RegionRankScreen(
 ) {
     val listingState = rememberLazyListState()
     
-    val isEmptyKeyword = uiState.keyWord.isEmpty()
+    val isEmptyKeyword = uiState.isEmptyKeyword
     val productRanking = uiState.productRanking
 
     LazyColumn(
@@ -133,7 +133,7 @@ fun RegionRankScreen(
                 Spacer(modifier = Modifier.height(15.dp))
 
                 RankingBarComponent(
-                    rankItems = MockProductRanking.sampleProductRanking.ranking,
+                    rankItems = if (productRanking.ranking.isNotEmpty()) productRanking.ranking else emptyList(),
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 
@@ -141,18 +141,20 @@ fun RegionRankScreen(
             }
         }
         
-        items(MockProductRanking.sampleProductRanking.ranking.subList(3, 10)) { product ->
-            LocalRankRow(
-                rank = product.rank,
-                locationName = product.regionName,
-                price = product.price,
-                maxScreen = false,
-                modifier = Modifier
-                    .padding(start = 22.dp, end = 22.dp, top = 10.dp, bottom = 10.dp)
-                    .fillMaxWidth()
-                    .background(EodigoColor.Light),
-                onClick = {}
-            )
+        if (productRanking.ranking.size > 3) {
+            items(productRanking.ranking.subList(3, minOf(10, productRanking.ranking.size))) { product ->
+                LocalRankRow(
+                    rank = product.rank,
+                    locationName = product.regionName,
+                    price = product.price,
+                    maxScreen = false,
+                    modifier = Modifier
+                        .padding(start = 22.dp, end = 22.dp, top = 10.dp, bottom = 10.dp)
+                        .fillMaxWidth()
+                        .background(EodigoColor.Light),
+                    onClick = {}
+                )
+            }
         }
     }
 }
@@ -191,7 +193,11 @@ fun RankingBarComponent(
 @Composable
 fun RankingBarComponentPreview() {
     RankingBarComponent(
-        rankItems = MockProductRanking.sampleProductRanking.ranking,
+        rankItems = listOf(
+            RegionRanking(1, "서울", 1000),
+            RegionRanking(2, "부산", 1200),
+            RegionRanking(3, "대구", 1100)
+        ),
         modifier = Modifier.padding(16.dp)
     )
 }

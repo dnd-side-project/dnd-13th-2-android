@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import side.dnd.design.R
 import side.dnd.design.theme.EodigoColor
+import side.dnd.design.theme.EodigoTheme
 
 @Composable
 fun LocalRankRow(
@@ -325,6 +326,67 @@ fun StoreItem(
             }
         }
     }
+}
+
+@Composable
+fun CategoryText(
+    text: String,
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    val backgroundColor = if (isSelected) {
+        EodigoColor.Normal
+    } else {
+        EodigoColor.Gray100
+    }
+
+    val textColor = if (isSelected) {
+        EodigoColor.White
+    } else {
+        EodigoColor.Gray600
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 15.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = EodigoTheme.typography.body1Medium.copy(
+                color = textColor,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CategoryTextSelectedPreview() {
+    CategoryText(
+        text = "쌀",
+        isSelected = true,
+        modifier = Modifier.padding(16.dp)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CategoryTextUnselectedPreview() {
+    CategoryText(
+        text = "찹쌀",
+        isSelected = false,
+        modifier = Modifier.padding(16.dp)
+    )
 }
 
 @Preview(showBackground = true)
