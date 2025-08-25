@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.side.dnd.feature.price_rank.PriceRankScreen
 import com.side.dnd.feature.price_rank.component.find.FindCategoryScreen
+import com.side.dnd.feature.price_rank.component.find.DetailCategoryScreen
 import kotlinx.serialization.Serializable
 import side.dnd.core.TopLevelRoute
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
@@ -28,6 +29,12 @@ sealed class PriceRankRoute {
 
     @Serializable
     data object CategorySearch : PriceRankRoute()
+    
+    @Serializable
+    data class DetailCategory(
+        val categoryCode: String = "",
+        val categoryName: String = ""
+    ) : PriceRankRoute()
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -44,11 +51,29 @@ fun NavGraphBuilder.priceRankGraph() {
                 FindCategoryScreen()
             }
         }
+        
+        composable<PriceRankRoute.DetailCategory> { backStackEntry ->
+            val categoryCode = backStackEntry.arguments?.getString("categoryCode") ?: ""
+            val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
+            CompositionLocalProvider(LocalAnimatedContentScope provides this) {
+                DetailCategoryScreen(
+                    category = side.dnd.core.local.model.CategoryResponse(
+                        categoryName = categoryName,
+                        categoryCode = categoryCode,
+                        items = emptyList()
+                    )
+                )
+            }
+        }
     }
 }
 
 fun NavController.navigateToCategorySearch() {
     navigate(PriceRankRoute.CategorySearch)
+}
+
+fun NavController.navigateToDetailCategory(categoryCode: String, categoryName: String) {
+    navigate("${PriceRankRoute.DetailCategory}?categoryCode=$categoryCode&categoryName=$categoryName")
 }
 
 fun NavController.navigateToPriceRank() {
@@ -57,5 +82,6 @@ fun NavController.navigateToPriceRank() {
 
 sealed class PriceRankNavigationAction : NavigationAction {
     data object NavigateToCategorySearch : PriceRankNavigationAction()
+    data object NavigateToDetailCategory : PriceRankNavigationAction()
     data object NavigateToPriceRank : PriceRankNavigationAction()
 }

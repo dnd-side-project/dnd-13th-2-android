@@ -7,13 +7,15 @@ import androidx.compose.runtime.Stable
 data class NationWideUiState(
     val keyWord: String,
     val productRanking: ProductRanking,
-    val chartData: ProductChartData
+    val chartData: ProductChartData,
+    val isEmptyKeyword: Boolean = true
 ) {
    companion object {
        val Empty = NationWideUiState(
            keyWord = "",
            productRanking = MockProductRanking.sampleProductRanking,
-           chartData = MockProductChartData.sampleChartData
+           chartData = MockProductChartData.sampleChartData,
+           isEmptyKeyword = true
        )
    }
 }
