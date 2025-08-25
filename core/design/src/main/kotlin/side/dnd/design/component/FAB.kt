@@ -12,12 +12,14 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.MutatorMutex
+import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -70,6 +72,8 @@ fun CircularFAB(
     circularFabState: CircularFabState = rememberCircularFabState(size = componentSize),
     enabled: Boolean = true,
     onClickWhenDisabled: () -> Unit = {},
+    isCategorySearch: Boolean = false,
+    isPriceRankActive: Boolean = false,
     content: @Composable BoxScope.() -> Unit = {},
 ) {
     val selectableItem by rememberUpdatedState(circularFabState.selectableItem)
@@ -197,8 +201,8 @@ fun CircularFAB(
 
         content()
 
-        Canvas(
-            Modifier
+        Box(
+            modifier = Modifier
                 .padding(bottom = 42.dp)
                 .size(componentSize)
                 .align(Alignment.BottomCenter)
@@ -224,23 +228,47 @@ fun CircularFAB(
                     )
                 }
         ) {
-            val brush = Brush.linearGradient(
-                colors = colors,
-                start = Offset(center.x, 0f),
-                end = Offset(center.x, size.height)
-            )
-            drawCircle(
-                brush = brush,
-                radius = componentSize.toPx() / 2.0f
-            )
-            translate(
-                left = circularFabState.currentInteractionOffset.x,
-                top = circularFabState.currentInteractionOffset.y
+            Canvas(
+                modifier = Modifier.fillMaxSize()
             ) {
+                val brush = Brush.linearGradient(
+                    colors = colors,
+                    start = Offset(center.x, 0f),
+                    end = Offset(center.x, size.height)
+                )
                 drawCircle(
-                    color = Color.White,
-                    radius = (componentSize / 7).toPx() / 2.0f,
-                    center = Offset.Zero
+                    brush = brush,
+                    radius = componentSize.toPx() / 2.0f
+                )
+                if (!isPriceRankActive) {
+                    translate(
+                        left = circularFabState.currentInteractionOffset.x,
+                        top = circularFabState.currentInteractionOffset.y
+                    ) {
+                        drawCircle(
+                            color = Color.White,
+                            radius = (componentSize / 7).toPx() / 2.0f,
+                            center = Offset.Zero
+                        )
+                    }
+                }
+            }
+            
+            if (isCategorySearch) {
+                Image(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_x),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(24.dp)
+                )
+            } else if (isPriceRankActive) {
+                Image(
+                    painter = painterResource(R.drawable.ic_plus),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(24.dp)
                 )
             }
         }
