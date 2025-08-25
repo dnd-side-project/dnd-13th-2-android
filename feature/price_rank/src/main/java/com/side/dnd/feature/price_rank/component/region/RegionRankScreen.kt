@@ -89,23 +89,25 @@ fun RegionRankScreen(
                         Text(
                             text = stringResource(id = R.string.price_map_title_first),
                             style = EodigoTheme.typography.body3Medium,
-                            color = EodigoColor.Normal
+                            color = EodigoColor.Gray900,
                         )
                         Text(
-                            text = "\"${productRanking.productName}\"",
+                            text = " \"${productRanking.productName}\" ",
                             style = EodigoTheme.typography.body3Medium,
-                            color = EodigoColor.Gray900
+                            color = EodigoColor.Primary
                         )
                         Text(
                             text = stringResource(id = R.string.price_map_title_second),
                             style = EodigoTheme.typography.body3Medium,
-                            color = EodigoColor.Gray900
+                            color = EodigoColor.Gray900,
                         )
                     }
+                    Spacer(modifier = Modifier.size(5.dp))
+
                     Text(
                         text = productRanking.ranking.first().regionName,
-                        style = EodigoTheme.typography.body3Medium,
-                        color = EodigoColor.Gray500,
+                        style = EodigoTheme.typography.title1Medium,
+                        color = EodigoColor.Black,
                     )
                 }
                 

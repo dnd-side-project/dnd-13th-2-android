@@ -16,7 +16,7 @@ data class RegionRanking(
 object MockProductRanking {
     val sampleProductRanking = ProductRanking(
         productId = 1,
-        productName = "",
+        productName = "감자",
         surveyDate = "",
         ranking = listOf(
             RegionRanking(1, "울산", 1000),

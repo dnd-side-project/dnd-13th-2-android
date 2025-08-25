@@ -34,7 +34,6 @@ fun PriceMapScreen(
     productRanking: ProductRanking,
     modifier: Modifier = Modifier
 ) {
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -49,6 +48,8 @@ fun PriceMapScreen(
                 style = EodigoTheme.typography.body2Medium,
                 color = EodigoColor.Gray500,
             )
+            Spacer(modifier = Modifier.size(5.dp))
+
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -71,24 +72,25 @@ fun PriceMapScreen(
             ) {
                 Text(
                     text = stringResource(id = R.string.price_map_title_first),
-                    style = EodigoTheme.typography.title1Medium,
-                    color = EodigoColor.Normal
+                    style = EodigoTheme.typography.body3Medium,
+                    color = EodigoColor.Gray500
                 )
                 Text(
-                    text = "\"${productRanking.productName}\"",
-                    style = EodigoTheme.typography.title1Medium,
+                    text = " \"${productRanking.productName}\" ",
+                    style = EodigoTheme.typography.body3Medium,
                     color = EodigoColor.Gray900
                 )
                 Text(
                     text = stringResource(id = R.string.price_map_title_second),
-                    style = EodigoTheme.typography.title1Medium,
-                    color = EodigoColor.Gray900
+                    style = EodigoTheme.typography.body3Medium,
+                    color = EodigoColor.Gray500
                 )
             }
+            Spacer(modifier = Modifier.height(5.dp))
             Text(
                 text = productRanking.ranking.first().regionName,
-                style = EodigoTheme.typography.body2Medium,
-                color = EodigoColor.Gray500,
+                style = EodigoTheme.typography.title1Medium,
+                color = EodigoColor.Normal,
             )
         }
         Spacer(modifier = Modifier.height(52.dp))

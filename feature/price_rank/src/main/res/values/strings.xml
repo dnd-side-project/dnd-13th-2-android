@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="price_map_title_first">전국에서 </string>
-    <string name="price_map_title_second">이 제일 저렴한 지역</string>
+    <string name="price_map_title_second">이(가) 제일 저렴한 지역</string>
 
 
     <string name="price_map_empty_title">혹시 우리 동네가 1등일지도?</string>
@@ -9,5 +9,5 @@
     <string name="price_map_empty_content_second">를 알아보세요!</string>
 
     <string name="price_chart_title">의 가격은 지난 10년간...</string>
-    <string name="price_chart_content_first">증가했어요</string>
+    <string name="price_chart_content_first">증가했어요  🥶</string>
 </resources>
