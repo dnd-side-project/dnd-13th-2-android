@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,19 +31,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.side.dnd.feature.price_rank.PriceRankViewModel
 import com.side.dnd.feature.price_rank.R
-import com.side.dnd.feature.price_rank.SearchResult
 import side.dnd.design.component.SquareCategoryItem
 import side.dnd.design.theme.EodigoColor
 import side.dnd.design.theme.EodigoTheme
-import side.dnd.core.local.model.CategoryResponse
 
 data class SearchCategory(
     val title: String,
@@ -54,12 +47,18 @@ data class SearchCategory(
 @Composable
 fun FindCategoryScreen(
     onCategoryClick: (String) -> Unit = {},
-    onDetailCategoryClick: (side.dnd.core.local.model.CategoryResponse) -> Unit = {},
-    viewModel: PriceRankViewModel = hiltViewModel()
+    onDetailCategoryClick: (SearchCategory) -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
-    val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
-    val categories by viewModel.categories.collectAsStateWithLifecycle()
+    
+    val searchCategories = listOf(
+        SearchCategory("채소류", R.drawable.ic_category_vegetable),
+        SearchCategory("과일류", R.drawable.ic_category_fruit),
+        SearchCategory("곡물류", R.drawable.ic_category_food_crops),
+        SearchCategory("수산물", R.drawable.ic_category_seafood),
+        SearchCategory("축산물", R.drawable.ic_category_livestock_products),
+        SearchCategory("특용작물", R.drawable.ic_category_special_crop)
+    )
     
     Scaffold(
         modifier = Modifier
@@ -71,7 +70,6 @@ fun FindCategoryScreen(
                 query = searchQuery,
                 onQueryChange = { query ->
                     searchQuery = query
-                    viewModel.searchProducts(query)
                 },
                 modifier = Modifier
                     .padding(vertical = 24.dp)
@@ -79,91 +77,27 @@ fun FindCategoryScreen(
             )
         }
     ) { paddingValues ->
-        if (searchQuery.isNotBlank() && searchResults.isNotEmpty()) {
-            SearchResultsList(
-                searchResults = searchResults,
-                onSearchResultClick = { searchResult ->
-                    viewModel.selectSearchResult(searchResult)
-                    searchQuery = ""
-                },
-                modifier = Modifier
-                    .background(EodigoColor.White)
-                    .padding(paddingValues)
-            )
-        } else {
-            CategoryList(
-                categories = categories,
-                onCategoryClick = { categoryName ->
-                    onCategoryClick(categoryName)
-                },
-                onDetailCategoryClick = { category ->
-                    onDetailCategoryClick(category)
-                },
-                modifier = Modifier
-                    .background(EodigoColor.White)
-                    .padding(paddingValues)
-                    .padding(top = 32.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun SearchResultsList(
-    searchResults: List<SearchResult>,
-    onSearchResultClick: (SearchResult) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(searchResults) { searchResult ->
-            SearchResultItem(
-                searchResult = searchResult,
-                onClick = { onSearchResultClick(searchResult) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = EodigoColor.Gray100,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .clickable { onSearchResultClick(searchResult) }
-                    .padding(16.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun SearchResultItem(
-    searchResult: SearchResult,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = searchResult.name,
-            style = EodigoTheme.typography.body1Medium,
-            color = EodigoColor.Black
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "ddd",
-            style = EodigoTheme.typography.body3Medium,
-            color = EodigoColor.Gray500
+        CategoryList(
+            categories = searchCategories,
+            onCategoryClick = { categoryName ->
+                onCategoryClick(categoryName)
+            },
+            onDetailCategoryClick = { category ->
+                onDetailCategoryClick(category)
+            },
+            modifier = Modifier
+                .background(EodigoColor.White)
+                .padding(paddingValues)
+                .padding(top = 32.dp)
         )
     }
 }
 
 @Composable
 fun CategoryList(
-    categories: List<CategoryResponse>,
+    categories: List<SearchCategory>,
     onCategoryClick: (String) -> Unit,
-    onDetailCategoryClick: (CategoryResponse) -> Unit,
+    onDetailCategoryClick: (SearchCategory) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -180,24 +114,12 @@ fun CategoryList(
         ) {
             items(categories) { category ->
                 SquareCategoryItem(
-                    title = category.categoryName,
-                    icon = painterResource(getCategoryIcon(category.categoryCode)),
+                    title = category.title,
+                    icon = painterResource(category.icon),
                     onClick = { onDetailCategoryClick(category) }
                 )
             }
         }
-    }
-}
-
-private fun getCategoryIcon(categoryCode: String): Int {
-    return when (categoryCode) {
-        "100" -> R.drawable.ic_category_food_crops
-        "200" -> R.drawable.ic_category_vegetable
-        "300" -> R.drawable.ic_category_special_crop
-        "400" -> R.drawable.ic_category_fruit
-        "500" -> R.drawable.ic_category_seafood
-        "600" -> R.drawable.ic_category_livestock_products
-        else -> R.drawable.ic_category_food_crops
     }
 }
 
