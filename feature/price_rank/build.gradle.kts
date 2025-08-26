@@ -13,13 +13,9 @@ android {
 dependencies {
     implementation(project(":feature:core"))
     implementation(project(":core:data"))
-    implementation(project(":core:local"))
 
     implementation(libs.bundles.square)
 
-    implementation(libs.vico.core)
-    implementation(libs.vico.compose)
-    implementation(libs.vico.compose.m2)
     implementation(libs.vico.compose.m3)
 
 }

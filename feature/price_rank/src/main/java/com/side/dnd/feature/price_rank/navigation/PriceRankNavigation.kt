@@ -56,13 +56,7 @@ fun NavGraphBuilder.priceRankGraph() {
             val categoryCode = backStackEntry.arguments?.getString("categoryCode") ?: ""
             val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
-                DetailCategoryScreen(
-                    category = side.dnd.core.local.model.CategoryResponse(
-                        categoryName = categoryName,
-                        categoryCode = categoryCode,
-                        items = emptyList()
-                    )
-                )
+                DetailCategoryScreen()
             }
         }
     }

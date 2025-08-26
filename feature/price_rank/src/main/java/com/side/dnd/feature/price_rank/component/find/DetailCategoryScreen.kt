@@ -28,33 +28,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.side.dnd.feature.price_rank.PriceRankViewModel
 import com.side.dnd.feature.price_rank.R
-import side.dnd.core.local.model.CategoryResponse
 import side.dnd.design.component.CategoryText
 import side.dnd.design.theme.EodigoColor
 import side.dnd.design.theme.EodigoTheme
 
-
 @Composable
 fun DetailCategoryScreen(
-    category: CategoryResponse? = null,
     onCategorySelect: (String) -> Unit = {},
-    onSearchClick: () -> Unit = {},
-    viewModel: PriceRankViewModel = hiltViewModel()
+    onSearchClick: () -> Unit = {}
 ) {
     var selectedCategory by remember { mutableStateOf("") }
-    val categories by viewModel.categories.collectAsStateWithLifecycle()
     
-    // 선택된 카테고리의 실제 데이터 찾기
-    val selectedCategoryData = categories.find { it.categoryCode == category?.categoryCode }
+    val categoryName = "채소류"
+    val categoryIcon = R.drawable.ic_category_vegetable
     
-    val categoryName = selectedCategoryData?.categoryName ?: category?.categoryName ?: "식량작물"
-    val categoryIcon = getCategoryIcon(selectedCategoryData?.categoryCode ?: category?.categoryCode ?: "100")
-    val items = selectedCategoryData?.items ?: category?.items ?: emptyList()
-    
+    val items = listOf(
+        "배추", "양배추", "상추", "시금치",
+        "당근", "무", "양파", "마늘",
+        "고추", "토마토", "오이", "가지"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,7 +68,6 @@ fun DetailCategoryScreen(
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 아이템들을 4개씩 그룹으로 나누어 표시
             items.chunked(4).forEach { rowItems ->
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -82,18 +75,14 @@ fun DetailCategoryScreen(
                 ) {
                     rowItems.forEach { item ->
                         CategoryText(
-                            text = item.itemName,
-                            isSelected = selectedCategory == item.itemName,
+                            text = item,
+                            isSelected = selectedCategory == item,
                             onClick = {
-                                selectedCategory = item.itemName
-                                onCategorySelect(item.itemName)
+                                selectedCategory = item
+                                onCategorySelect(item)
                             },
                             modifier = Modifier.weight(1f)
                         )
-                    }
-                    // 빈 공간 채우기
-                    repeat(4 - rowItems.size) {
-                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }
@@ -162,19 +151,6 @@ fun CategoryHeader(
         )
     }
 }
-
-private fun getCategoryIcon(categoryCode: String): Int {
-    return when (categoryCode) {
-        "100" -> R.drawable.ic_category_food_crops
-        "200" -> R.drawable.ic_category_vegetable
-        "300" -> R.drawable.ic_category_special_crop
-        "400" -> R.drawable.ic_category_fruit
-        "500" -> R.drawable.ic_category_seafood
-        "600" -> R.drawable.ic_category_livestock_products
-        else -> R.drawable.ic_category_food_crops
-    }
-}
-
 
 @Preview(showBackground = true)
 @Composable

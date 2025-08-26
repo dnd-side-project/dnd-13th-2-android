@@ -7,11 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -72,15 +71,107 @@ fun PriceChartScreen(
         }
 
         Spacer(modifier = Modifier.size(40.dp))
-
-        ChartContent(chartData = chartData)
+        PriceChart(
+            data = MockProductChartData.sampleChartData.annualData,
+            modifier = Modifier.padding(16.dp)
+        )
+//        ChartContent(chartData = chartData)
 
     }
 }
-
-@Composable
-fun ChartContent(
-    chartData: ProductChartData = MockProductChartData.sampleChartData
-) {
-
-}
+//
+//@Composable
+//fun ChartContent(
+//    chartData: ProductChartData
+//) {
+//    val chartEntryModel = remember(chartData) {
+//        entryModelOf(*chartData.annualData.mapIndexed { index, price ->
+//            index.toFloat() to price.toFloat()
+//        }.toTypedArray())
+//    }
+//
+//    val currentYear = 2024
+//    val years = (currentYear - 9..currentYear).map { it.toString() }
+//
+//    val bottomAxisValueFormatter = remember {
+//        AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, _ ->
+//            val index = value.toInt()
+//            if (index < years.size) {
+//                years[index]
+//            } else ""
+//        }
+//    }
+//
+//    val startAxisValueFormatter = remember {
+//        AxisValueFormatter<AxisPosition.Vertical.Start> { value, _ ->
+//            when {
+//                value >= 10000 -> "${(value / 10000).toInt()}만원"
+//                value >= 1000 -> "${(value / 1000).toInt()}천원"
+//                value >= 100 -> "${(value / 100).toInt()}백원"
+//                value >= 10 -> "${(value / 10).toInt()}십원"
+//                else -> "${value.toInt()}원"
+//            }
+//        }
+//    }
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(horizontal = 16.dp)
+//    ) {
+//
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(300.dp)
+//                .background(EodigoColor.Light.copy(alpha = 0.1f))
+//        ) {
+//            Chart(
+//                chart = lineChart(),
+//                model = chartEntryModel,
+//                startAxis = startAxis(
+//                    valueFormatter = startAxisValueFormatter,
+//                    guideline = null,
+//                    tick = null,
+//                    axis = null
+//                ),
+//                bottomAxis = bottomAxis(
+//                    valueFormatter = bottomAxisValueFormatter,
+//                    guideline = null,
+//                    tick = null,
+//                    axis = null
+//                ),
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .padding(16.dp)
+//            )
+//        }
+//
+//    }
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun PriceChartScreenPreview() {
+//    PriceChartScreen(
+//        chartData = ProductChartData(
+//            productId = 1,
+//            productName = "쌀",
+//            inflationRate = 15.3,
+//            priceHistory = listOf(2500, 2800, 3200, 3500, 3800, 4200, 4500, 4800, 5200, 5500)
+//        )
+//    )
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun ChartContentPreview() {
+//    ChartContent(
+//        chartData = ProductChartData(
+//            productId = 1,
+//            productName = "쌀",
+//            inflationRate = 15.3,
+//            priceHistory = listOf(2500, 2800, 3200, 3500, 3800, 4200, 4500, 4800, 5200, 5500)
+//        )
+//    )
+//}

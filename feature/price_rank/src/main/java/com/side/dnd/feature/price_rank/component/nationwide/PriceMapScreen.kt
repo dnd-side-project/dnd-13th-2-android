@@ -121,8 +121,8 @@ fun MapScreen(
                 .height(maxHeight)
         )
 
-        if (!isEmptyKeyword && productRanking.ranking.isNotEmpty()) {
-            val rankings = productRanking.ranking.take(3)
+        if (isEmptyKeyword && productRanking.ranking.isNotEmpty()) {
+            val rankings = if(isEmptyKeyword) MockProductRanking.sampleProductRanking.ranking else productRanking.ranking
 
             rankings.forEachIndexed { index, regionRanking ->
                 val isFirstRank = index == 0
@@ -147,9 +147,9 @@ fun MapScreen(
                     "제주" -> Pair(0.3f, 0.95f)
                     else -> Pair(0.5f, 0.5f)
                 }
-
+                val priceData = if (isEmptyKeyword) "???원" else "${regionRanking.price}원"
                 PriceCircle(
-                    text = "${regionRanking.price}원",
+                    text = priceData,
                     isFirstRank = isFirstRank,
                     modifier = Modifier
                         .offset(

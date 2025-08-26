@@ -222,7 +222,7 @@ class MainActivity : ComponentActivity() {
                                     navController.navigateToCategorySearch()
                                 }
                                 else -> {
-                                    priceRankViewModel.selectCategory(categoryName)
+//                                    priceRankViewModel.selectCategory(categoryName)
                                 }
                             }
                         },
