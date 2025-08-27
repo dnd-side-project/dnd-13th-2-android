@@ -12,26 +12,21 @@ data class StoreUiState(
 ) {
     companion object {
         val DEFAULT = StoreUiState(
-            searchWord = "카페 테인",
-            stores = persistentListOf(
-                Store.DEFAULT,
-                Store.DEFAULT,
-                Store.DEFAULT,
-                Store.DEFAULT,
-                Store.DEFAULT,
-            ),
+            searchWord = "",
+            stores = persistentListOf(),
             selectedSortType = SortType.PRICE,
         )
     }
 }
 
 sealed class StoreEvent {
-    data class Navigation(val action: NavigationAction) : StoreEvent()
+    data object PopBackStack : StoreEvent()
+    data object OnSearch : StoreEvent()
     data class SelectSortType(val sortType: SortType) : StoreEvent()
 }
 
 sealed class StoreSideEffect {
-    data class Navigation(val action: NavigationAction): StoreSideEffect()
+    data class Navigation(val action: NavigationAction) : StoreSideEffect()
 }
 
 enum class SortType(val display: String) {
@@ -39,6 +34,9 @@ enum class SortType(val display: String) {
     DISTANCE("거리순");
 
     companion object {
-        fun findByDisplay(display: String): SortType = entries.first { it.display == display }
+        fun getSortTypeByDisplay(display: String): SortType =
+            entries.first { it.display === display }
+
+        fun getSortTypeByName(name: String): SortType = entries.first { it.name === name }
     }
 }

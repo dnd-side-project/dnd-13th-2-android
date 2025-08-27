@@ -1,4 +1,4 @@
-package network.constants
+package side.dnd.data.network.constants
 
 object NetworkConstants {
     const val CONNECT_TIMEOUT = 30L

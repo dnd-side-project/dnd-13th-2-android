@@ -20,7 +20,7 @@ import side.dnd.feature.home.navigateToSearch
 import side.dnd.feature.home.navigateToStore
 
 internal val TopLevelRoutes: List<TopLevelRoute> = listOf(
-    HomeRoute.Home("")
+    HomeRoute.Home
 )
 
 @Composable
@@ -50,16 +50,16 @@ internal class Router(val navController: NavHostController) {
 
         when (topLevelRoute) {
             //TODO feature 모듈 생성 후 navigate 작성
-            is HomeRoute.Home -> navController.navigate(HomeRoute.Home(""), navOptions)
+            is HomeRoute.Home -> navController.navigate(HomeRoute.Home, navOptions)
         }
     }
 
     fun navigate(action: NavigationAction) {
-        when(action) {
+        when (action) {
             is CommonNavigationAction.PopBackStack -> navController.popBackStackIfCan()
-            is HomeNavigationAction.NavigateToHome -> navController.navigateToHome(action.searchWord)
-            is HomeNavigationAction.NavigateToSearch -> navController.navigateToSearch()
-            is HomeNavigationAction.NavigateToStore -> navController.navigateToStore(action.searchWord)
+            is HomeNavigationAction.NavigateToHome -> navController.navigateToHome()
+            is HomeNavigationAction.NavigateToSearch -> navController.navigateToSearch(action.userMapState)
+            is HomeNavigationAction.NavigateToStore -> navController.navigateToStore(userMapState = action.userMapState)
         }
     }
 
@@ -70,7 +70,7 @@ fun NavDestination?.isBarHasToBeShown(): Boolean =
         TopLevelRoutes.any { topLevelRoute -> hasRoute(route = topLevelRoute::class) }
     } == true
 
-fun <T: Any> NavDestination?.isDestinationInHierarchy(destination: T) =
+fun <T : Any> NavDestination?.isDestinationInHierarchy(destination: T) =
     this?.hierarchy?.any {
         it.hasRoute(destination::class)
     } == true

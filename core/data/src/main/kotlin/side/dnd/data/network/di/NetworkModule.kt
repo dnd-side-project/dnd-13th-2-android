@@ -1,11 +1,13 @@
-package network.di
+package side.dnd.data.network.di
 
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import network.constants.NetworkConstants
-import network.service.EodigoApi
+import side.dnd.data.network.constants.NetworkConstants
+import side.dnd.data.network.service.EodigoApi
+import side.dnd.data.network.service.HomeApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -42,7 +44,7 @@ internal object NetworkModule {
     @Provides
     @Singleton
     fun provideGsonConverterFactory(): GsonConverterFactory {
-        return GsonConverterFactory.create()
+        return GsonConverterFactory.create(GsonBuilder().serializeNulls().create())
     }
 
     @Provides
@@ -63,4 +65,9 @@ internal object NetworkModule {
     fun provideEodigoApi(retrofit: Retrofit): EodigoApi {
         return retrofit.create(EodigoApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideHomeApi(retrofit: Retrofit): HomeApi =
+        retrofit.create(HomeApi::class.java)
 }

@@ -13,7 +13,6 @@ composeFoundation = "1.7.0"
 dagger = "2.53.1"
 datastore = "1.1.0"
 espresso = "3.5.1"
-gms = "21.0.1"
 hilt = "1.2.0"
 junit = "4.13.2"
 junit-jupiter = "5.9.3"
@@ -42,6 +41,7 @@ kotlin = "2.1.20"
 kotlinKsp = "2.1.20-1.0.31"
 protobufPlugin = "0.9.4"
 foundationLayout = "1.9.0"
+playServicesLocation = "16.0.0"
 
 [libraries]
 
@@ -92,7 +92,7 @@ datastore = { group = "androidx.datastore", name = "datastore", version.ref = "d
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 # Gms
-gms-play-services-location = {module = "com.google.android.gms:play-services-location", version.ref = "gms"}
+gms-play-services-location = {module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation"}
 
 # Hilt
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }

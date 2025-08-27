@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -35,17 +34,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
-import side.dnd.core.compositionLocals.CommonNavigationAction
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
 import side.dnd.core.compositionLocals.LocalFABControl
 import side.dnd.core.compositionLocals.LocalNavigationActions
@@ -59,11 +54,8 @@ import side.dnd.design.component.button.clickableAvoidingDuplication
 import side.dnd.design.component.text.TextFieldWithActionBar
 import side.dnd.design.theme.EodigoTheme
 import side.dnd.design.theme.LocalTypography
-import side.dnd.design.utils.tu
-import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.home.PreviewHomeScope
 import side.dnd.feature.home.state.StoreType
-import side.dnd.feature.home.store.StoreEvent
 
 @Composable
 internal fun SearchScreen(
@@ -100,8 +92,6 @@ internal fun SearchContent(
     pagerState: PagerState,
     onEvent: (SearchEvent) -> Unit,
 ) {
-    val textFieldState = rememberTextFieldState()
-
     val showBrowser by remember(searchUiState.selectedCategory) {
         derivedStateOf {
             searchUiState.selectedCategory.isNotBlank()
@@ -122,11 +112,11 @@ internal fun SearchContent(
                         sharedContentState = rememberSharedContentState("Search"),
                         animatedVisibilityScope = LocalAnimatedContentScope.current,
                     ),
-                textFieldState = textFieldState,
+                textFieldState = searchUiState.textFieldState,
                 hint = "오늘의 메뉴는?",
                 actionIconBackgroundColor = Color(0xFF9B86FC),
                 onClickEnabled = {
-                    onEvent(SearchEvent.onBrowse(textFieldState.text.toString()))
+                    onEvent(SearchEvent.OnSearch)
                 },
                 headerIcon = {
                     Icon(
@@ -147,7 +137,10 @@ internal fun SearchContent(
             containerColor = Color.White,
             indicator = {
                 TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(pagerState.currentPage, matchContentSize = false),
+                    modifier = Modifier.tabIndicatorOffset(
+                        pagerState.currentPage,
+                        matchContentSize = false
+                    ),
                     color = Color(0xFF9B86FC)
                 )
             }
@@ -246,7 +239,7 @@ internal fun SearchContent(
                         TextButton(
                             text = "찾아보기",
                             onClick = {
-                                onEvent(SearchEvent.onBrowse(searchUiState.selectedCategory))
+                                onEvent(SearchEvent.OnBrowse)
                             },
                             modifier = Modifier
                                 .height(48.dp)

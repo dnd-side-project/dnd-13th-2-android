@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -37,7 +36,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
-import side.dnd.core.compositionLocals.CommonNavigationAction
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
 import side.dnd.core.compositionLocals.LocalNavigationActions
 import side.dnd.core.compositionLocals.LocalSharedElementTransitionScope
@@ -45,10 +43,10 @@ import side.dnd.design.R
 import side.dnd.design.component.HorizontalSpacer
 import side.dnd.design.component.VerticalSpacer
 import side.dnd.design.component.button.clickableAvoidingDuplication
+import side.dnd.design.component.effect.RememberEffect
 import side.dnd.design.component.text.TextFieldWithActionBar
 import side.dnd.design.theme.EodigoTheme
 import side.dnd.design.theme.LocalTypography
-import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.home.PreviewHomeScope
 import side.dnd.feature.home.store.component.StoreBottomSheet
 import side.dnd.feature.home.store.component.StoreList
@@ -89,11 +87,17 @@ private fun StoreScreen(
     }
     val bottomSheetState = rememberModalBottomSheetState()
 
+    RememberEffect(uiState.searchWord) {
+        textFieldState.edit {
+            replace(0, length, uiState.searchWord)
+        }
+    }
+
     StoreBottomSheet(
         visibility = bottomSheetVisibility,
         sheetState = bottomSheetState,
         selectedItem = uiState.selectedSortType.display,
-        selectItem = { item -> onEvent(StoreEvent.SelectSortType(SortType.findByDisplay(item))) },
+        selectItem = { item -> onEvent(StoreEvent.SelectSortType(SortType.getSortTypeByDisplay(item))) },
         updateSheetVisibility = { visibility -> bottomSheetVisibility = visibility }
     )
 
@@ -119,14 +123,14 @@ private fun StoreScreen(
                 actionIconSize = 14.dp,
                 enabled = false,
                 onClickDisabled = {
-                    onEvent(StoreEvent.Navigation(HomeNavigationAction.NavigateToSearch))
+                    onEvent(StoreEvent.OnSearch)
                 },
                 headerIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left),
                         contentDescription = "Pop BackStack",
                         modifier = Modifier.clickableAvoidingDuplication {
-                            onEvent(StoreEvent.Navigation(CommonNavigationAction.PopBackStack))
+                            onEvent(StoreEvent.PopBackStack)
                         }
                     )
                 },
@@ -147,7 +151,7 @@ private fun StoreScreen(
             horizontalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "가격순",
+                text = uiState.selectedSortType.display,
                 style = LocalTypography.current.body2Medium,
                 color = Color(0xFF362F58)
             )
@@ -155,14 +159,17 @@ private fun StoreScreen(
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_under),
                 contentDescription = "Sort by price",
-                modifier = Modifier.size(24.dp).wrapContentSize(),
+                modifier = Modifier
+                    .size(24.dp)
+                    .wrapContentSize(),
             )
         }
 
         VerticalSpacer(24.dp)
 
         StoreList(
-            stores = uiState.stores
+            stores = uiState.stores,
+            sortType = uiState.selectedSortType,
         )
     }
 }
