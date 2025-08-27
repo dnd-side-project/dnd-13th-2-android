@@ -16,6 +16,8 @@ dependencies {
     implementation(project(":feature:core"))
     implementation(libs.naver.map.compose)
     implementation(libs.naver.map.location)
+    implementation(libs.gms.play.services.location)
+    implementation(libs.airbnb.android.lottie.compose)
 }
 
 fun getLocalKey(propertyKey: String): String {
