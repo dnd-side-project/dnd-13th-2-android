@@ -110,7 +110,7 @@ fun PriceRankScreen(
                     .fillMaxSize()
             )
         }
-        
+
         if (isFabClicked) {
             Box(
                 modifier = Modifier

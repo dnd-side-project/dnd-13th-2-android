@@ -33,7 +33,8 @@ fun CategoryBottomSheet(
         CategoryItem("삼겹살", R.drawable.ic_search_meat),
         CategoryItem("계란", R.drawable.ic_search_egg),
         CategoryItem("쌀", R.drawable.ic_search_rice),
-        CategoryItem("흰우유", R.drawable.ic_search_milk)
+        CategoryItem("흰우유", R.drawable.ic_search_milk),
+        CategoryItem("상추", R.drawable.img_lettuce),
     )
 
     AnimatedVisibility(
