@@ -1,6 +1,9 @@
 package side.dnd.feature.home.home
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
@@ -11,17 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -34,11 +36,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.naver.maps.geometry.LatLng
+import com.google.android.gms.location.CurrentLocationRequest
+import com.google.android.gms.location.LocationServices
+import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.NaverMapSdk
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
@@ -47,22 +52,34 @@ import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.MarkerComposable
 import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMap
+import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.compose.rememberFusedLocationSource
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.receiveAsFlow
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
-import side.dnd.core.compositionLocals.LocalFABControl
+import side.dnd.core.compositionLocals.LocalFabOnClickedListener
 import side.dnd.core.compositionLocals.LocalNavigationActions
 import side.dnd.core.compositionLocals.LocalSharedElementTransitionScope
 import side.dnd.design.R
+import side.dnd.design.component.CircularFabState
+import side.dnd.design.component.LocalCircularFabState
+import side.dnd.design.component.button.clickableAvoidingDuplication
+import side.dnd.design.component.effect.RememberEffect
 import side.dnd.design.component.text.TextFieldWithActionBar
 import side.dnd.design.theme.EodigoTheme
 import side.dnd.feature.home.BuildConfig
 import side.dnd.feature.home.HomeNavigationAction
 import side.dnd.feature.home.home.component.MapMarker
 import side.dnd.feature.home.home.component.StoreDetailCard
+import side.dnd.feature.home.state.LatLng
+import side.dnd.feature.home.state.Store
+import side.dnd.feature.home.store.SortType
 
-@OptIn(ExperimentalNaverMapApi::class)
+@SuppressLint("MissingPermission")
+@OptIn(ExperimentalNaverMapApi::class, FlowPreview::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel<HomeViewModel>(),
@@ -74,17 +91,52 @@ fun HomeScreen(
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val fusedLocationSource = rememberFusedLocationSource()
-    val isTracking by remember(uiState.mapControl.isLocationTracking) {
-        derivedStateOf {
-            Log.d("test","a: ${uiState.mapControl.isLocationTracking}")
-            if (uiState.mapControl.isLocationTracking)
-                fusedLocationSource
-            else
-                null
+    val navActions = LocalNavigationActions.current
+    var dialogVisibility by remember {
+        mutableStateOf(false)
+    }
+    var selectedStore by remember {
+        mutableStateOf(Store.DEFAULT)
+    }
+    val cameraPositionState = rememberCameraPositionState("cameraPositionState") {
+        Log.d("test", "abc: $position")
+        if (!BuildConfig.DEBUG && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            LocationServices.getFusedLocationProviderClient(context).getCurrentLocation(
+                CurrentLocationRequest.Builder().build(), null
+            ).addOnSuccessListener {
+                position = CameraPosition(com.naver.maps.geometry.LatLng(it), 15.0)
+            }
         }
     }
-    val navActions = LocalNavigationActions.current
+    val localFABOnClickedListener = LocalFabOnClickedListener.current
+    val locationSource = rememberFusedLocationSource()
+    val fabState = LocalCircularFabState.current
+
+    LaunchedEffect(Unit) {
+        snapshotFlow {
+            cameraPositionState.position
+        }.filter {
+            cameraPositionState.contentBounds != null
+        }.distinctUntilChanged().collectLatest {
+            UserMapState(
+                currentLocation = LatLng.fromNaverLatLng(cameraPositionState.position.target),
+                southWestLimit = LatLng.fromNaverLatLng(cameraPositionState.contentBounds!!.southWest),
+                northEastLimit = LatLng.fromNaverLatLng(cameraPositionState.contentBounds!!.northEast),
+            ).also { userMapState ->
+                viewModel.onEvent(HomeEvent.OnChangedUserMapState(userMapState))
+                localFABOnClickedListener {
+                    navActions(HomeNavigationAction.NavigateToSearch(userMapState))
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.receiveAsFlow().collectLatest { effect ->
@@ -94,48 +146,68 @@ fun HomeScreen(
         }
     }
 
+    RememberEffect(fabState.selectableItem) {
+        val sortType = when (fabState.selectableItem) {
+            CircularFabState.SelectableItem.RIGHT -> SortType.DISTANCE
+            CircularFabState.SelectableItem.LEFT -> SortType.PRICE
+            CircularFabState.SelectableItem.NONE -> null
+        }
+
+        sortType?.let {
+            viewModel.onEvent(HomeEvent.RequestStoresBySortType(it))
+        }
+    }
+
+    if (dialogVisibility) {
+        Dialog(
+            onDismissRequest = { dialogVisibility = false }
+        ) {
+            StoreDetailCard(
+                selectedStore
+            )
+        }
+    }
+
+    val mapProperties by remember(uiState.isLocationTracking) {
+        mutableStateOf(
+            MapProperties(
+                maxZoom = 15.0,
+                minZoom = 15.0,
+                locationTrackingMode = if (uiState.isLocationTracking)
+                    LocationTrackingMode.Follow
+                else
+                    LocationTrackingMode.None,
+            )
+        )
+    }
+
     HomeScreen(
         homeUiState = uiState,
         mapComposable = {
-            var mapProperties by remember {
-                mutableStateOf(
-                    MapProperties(
-                        maxZoom = 17.0,
-                        minZoom = 17.0,
-                        locationTrackingMode = LocationTrackingMode.Follow,
-                    )
-                )
-            }
-            var mapUiSettings by remember {
-                mutableStateOf(
-                    MapUiSettings(isLocationButtonEnabled = false)
-                )
-            }
-
             NaverMap(
                 modifier = Modifier.fillMaxSize(),
                 properties = mapProperties,
-                uiSettings = mapUiSettings,
-                locationSource = isTracking,
+                uiSettings = MapUiSettings(isLocationButtonEnabled = false),
+                locationSource = locationSource,
+                cameraPositionState = cameraPositionState,
             ) {
                 uiState.stores.forEachIndexed { idx, store ->
-                    key(store.name) {
-                        MarkerComposable(
-                            state = MarkerState(
-                                position = store.latLng.copy(
-                                    latitude = store.latLng.latitude + 0.0003 * idx,
-                                    longitude = store.latLng.longitude + 0.0003 * idx
-                                ).toNaverLatLng()
-                            ),
-                        ) {
-                            MapMarker(
-                                store = store,
-                                selected = idx == 0
-                            )
-                        }
+                    MarkerComposable(
+                        keys = arrayOf(uiState.sortType, uiState.searchWord),
+                        state = MarkerState(
+                            position = store.latLng.toNaverLatLng()
+                        ),
+                    ) {
+                        MapMarker(
+                            store = store,
+                            selected = idx == 0,
+                            modifier = Modifier.clickableAvoidingDuplication {
+                                selectedStore = store
+                            },
+                            sortType = uiState.sortType,
+                        )
                     }
                 }
-
             }
         },
         onEvent = viewModel::onEvent,
@@ -149,21 +221,6 @@ private fun HomeScreen(
     onEvent: (HomeEvent) -> Unit,
     mapComposable: @Composable () -> Unit,
 ) {
-    val textFieldState = rememberTextFieldState(initialText = homeUiState.searchWord)
-    var dialogVisibility by remember {
-        mutableStateOf(false)
-    }
-
-    if (dialogVisibility) {
-        Dialog(
-            onDismissRequest = { dialogVisibility = false }
-        ) {
-            StoreDetailCard(
-                homeUiState.stores.first()
-            )
-        }
-    }
-
     Box(
         Modifier
             .fillMaxSize()
@@ -181,7 +238,7 @@ private fun HomeScreen(
                         sharedContentState = rememberSharedContentState("Search"),
                         animatedVisibilityScope = LocalAnimatedContentScope.current,
                     ),
-                textFieldState = textFieldState,
+                textFieldState = homeUiState.searchWord,
                 hint = "오늘의 메뉴는?",
                 enabled = false,
                 onClickDisabled = {
@@ -209,7 +266,7 @@ private fun HomeScreen(
             )
         }
 
-        if (homeUiState.searchWord.isNotBlank())
+        if (homeUiState.searchWord.text.isNotBlank())
             IconButton(
                 onClick = {
                     onEvent(HomeEvent.NavigateToStore)

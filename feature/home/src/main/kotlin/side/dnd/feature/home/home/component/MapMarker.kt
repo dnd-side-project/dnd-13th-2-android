@@ -39,11 +39,13 @@ import side.dnd.design.theme.LocalTypography
 import side.dnd.design.utils.tu
 import side.dnd.feature.home.state.Store
 import side.dnd.feature.home.state.StoreType
+import side.dnd.feature.home.store.SortType
 import java.text.DecimalFormat
 
 @Composable
 fun MapMarker(
     store: Store,
+    sortType: SortType,
     selected: Boolean,
     modifier: Modifier = Modifier,
     markerColor: Color = Color(0xFF7050FF),
@@ -77,13 +79,22 @@ fun MapMarker(
         lineHeight = fontSize,
     )
     val textResult = textMeasurer.measure(
-        text = "${DecimalFormat("#,###").format(store.price)}원",
+        text = when (sortType) {
+            SortType.PRICE -> "${DecimalFormat("#,###").format(store.price)}원"
+            SortType.DISTANCE -> "${store.distance}M"
+        },
         style = textStyle
     )
     val image = ImageVector.vectorResource(
-        when (store.type) {
-            StoreType.CAFE -> R.drawable.ic_coffee
-            StoreType.RESTAURANT -> R.drawable.ic_coffee
+        when (sortType) {
+            SortType.PRICE -> {
+                when (store.type) {
+                    StoreType.CAFE -> R.drawable.ic_coffee
+                    StoreType.RESTAURANT -> R.drawable.ic_restaurant
+                }
+            }
+
+            SortType.DISTANCE -> R.drawable.ic_location_selected
         }
     )
     val painter = rememberVectorPainter(image)
@@ -92,13 +103,14 @@ fun MapMarker(
 
     val animateWidthDp by selectedTransition.animateDp {
         if (it)
-            iconCircleSize + circlePadding.calculateHorizontalPadding()
+            iconCircleSize + circlePadding.calculateStartPadding()
         else
             0.dp
     }
 
+    val textPadding = 6.dp
     val markerWidth = with(density) {
-        textResult.size.width.toDp() + animateWidthDp + 12.dp
+        textResult.size.width.toDp() + animateWidthDp + 6.dp + textPadding
     }
 
     Canvas(
@@ -143,7 +155,27 @@ fun MapMarker(
                 )
             }
             with(painter) {
-                translate(left = 9.92.dp.toPx(), top = 10.6.dp.toPx()) {
+                val (left, top) = when (sortType) {
+                    SortType.PRICE -> {
+                        when (store.type) {
+                            StoreType.CAFE -> LeftTopPadding(
+                                left = 9.92.dp.toPx(),
+                                top = 10.6.dp.toPx()
+                            )
+
+                            StoreType.RESTAURANT -> LeftTopPadding(
+                                left = 9.59.dp.toPx(),
+                                top = 10.63.dp.toPx()
+                            )
+                        }
+                    }
+
+                    SortType.DISTANCE -> LeftTopPadding(
+                        left = 10.55.dp.toPx(),
+                        top = 10.73.dp.toPx()
+                    )
+                }
+                translate(left = left, top = top) {
                     draw(size = intrinsicSize)
                 }
             }
@@ -152,7 +184,7 @@ fun MapMarker(
             drawText(
                 textResult,
                 topLeft = Offset(
-                    x = 6.dp.toPx(),
+                    x = textPadding.toPx(),
                     y = 12.23.dp.toPx()
                 ),
                 color = animateTextColor,
@@ -161,17 +193,34 @@ fun MapMarker(
     }
 }
 
+private data class LeftTopPadding(val left: Float, val top: Float)
+
 @Composable
 @Preview(showBackground = true)
-private fun PreviewSelectedMapMarker() = EodigoTheme {
+private fun PreviewSelectedMapMarkerPrice() = EodigoTheme {
     Box(Modifier.size(150.dp)) {
         MapMarker(
             modifier = Modifier.align(Alignment.Center),
             store = Store.DEFAULT,
-            selected = true
+            selected = true,
+            sortType = SortType.PRICE,
         )
     }
 }
+
+@Composable
+@Preview(showBackground = true)
+private fun PreviewSelectedMapMarkerDistance() = EodigoTheme {
+    Box(Modifier.size(150.dp)) {
+        MapMarker(
+            modifier = Modifier.align(Alignment.Center),
+            store = Store.DEFAULT,
+            selected = true,
+            sortType = SortType.DISTANCE,
+        )
+    }
+}
+
 
 @Composable
 @Preview(showBackground = true)
@@ -180,7 +229,8 @@ private fun PreviewUnselectedMapMarker() = EodigoTheme {
         MapMarker(
             modifier = Modifier.align(Alignment.Center),
             store = Store.DEFAULT,
-            selected = false
+            selected = false,
+            sortType = SortType.PRICE,
         )
     }
 }

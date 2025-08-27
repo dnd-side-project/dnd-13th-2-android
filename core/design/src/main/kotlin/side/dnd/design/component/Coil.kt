@@ -12,12 +12,13 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImagePainter
-import coil.compose.LocalImageLoader
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageScope
+import coil.imageLoader
 
 @Composable
 fun SubcomposeAsyncImageWithPreview(
@@ -37,7 +38,7 @@ fun SubcomposeAsyncImageWithPreview(
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ) {
-    if(LocalInspectionMode.current && placeHolderPreview != 0) {
+    if (LocalInspectionMode.current && placeHolderPreview != 0) {
         Image(
             painter = painterResource(id = placeHolderPreview),
             contentDescription = contentDescription,
@@ -54,7 +55,7 @@ fun SubcomposeAsyncImageWithPreview(
     SubcomposeAsyncImage(
         model = model,
         contentDescription = contentDescription,
-        imageLoader = LocalImageLoader.current,
+        imageLoader = LocalContext.current.imageLoader,
         modifier = modifier,
         loading = loading,
         success = success,
@@ -88,7 +89,7 @@ fun SubcomposeAsyncImageWithPreview(
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ) {
-    if(LocalInspectionMode.current && placeHolderPreview != null) {
+    if (LocalInspectionMode.current && placeHolderPreview != null) {
         Image(
             bitmap = placeHolderPreview.asImageBitmap(),
             contentDescription = contentDescription,
@@ -105,7 +106,7 @@ fun SubcomposeAsyncImageWithPreview(
     SubcomposeAsyncImage(
         model = model,
         contentDescription = contentDescription,
-        imageLoader = LocalImageLoader.current,
+        imageLoader = LocalContext.current.imageLoader,
         modifier = modifier,
         loading = loading,
         success = success,

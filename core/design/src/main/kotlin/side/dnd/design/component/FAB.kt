@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +59,8 @@ import side.dnd.design.component.CircularFabState.SelectableItem
 import side.dnd.design.component.progress.ProgressIndicatorOffset
 import side.dnd.design.theme.EodigoTheme
 import side.dnd.design.utils.OffsetUtils.clampOffsetInCircle
+
+val LocalCircularFabState = compositionLocalOf<CircularFabState> { error("No FABState provided") }
 
 @Composable
 fun CircularFAB(
@@ -203,7 +206,7 @@ fun CircularFAB(
                 .pointerInput(enabled) {
                     detectTapGestures(
                         onTap = {
-                            if(!enabled)
+                            if (!enabled)
                                 onClickWhenDisabled()
                         }
                     )
@@ -269,7 +272,7 @@ class CircularFabState(
     val selectableItem by derivedStateOf {
         if (currentInteractionOffset.x < center.x && currentInteractionOffset.y < center.y)
             SelectableItem.LEFT
-        else if(currentInteractionOffset.x > center.x && currentInteractionOffset.y < center.y)
+        else if (currentInteractionOffset.x > center.x && currentInteractionOffset.y < center.y)
             SelectableItem.RIGHT
         else
             SelectableItem.NONE
@@ -345,6 +348,7 @@ class CircularFabState(
         animateOffset(target)
     }
 
+    @Stable
     enum class SelectableItem {
         NONE,
         LEFT,

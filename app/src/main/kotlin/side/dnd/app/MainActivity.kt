@@ -45,10 +45,12 @@ import side.dnd.app.navigation.isBarHasToBeShown
 import side.dnd.app.navigation.rememberRouter
 import side.dnd.core.SnackBarMessage
 import side.dnd.core.compositionLocals.LocalFABControl
+import side.dnd.core.compositionLocals.LocalFabOnClickedListener
 import side.dnd.core.compositionLocals.LocalShowSnackBar
 import side.dnd.design.component.CircularFAB
+import side.dnd.design.component.LocalCircularFabState
+import side.dnd.design.component.rememberCircularFabState
 import side.dnd.design.theme.EodigoTheme
-import side.dnd.feature.home.navigateToSearch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -89,13 +91,21 @@ class MainActivity : ComponentActivity() {
         var isFabEnabled by remember {
             mutableStateOf(false)
         }
+        var onClickedFAB by remember {
+            mutableStateOf({})
+        }
+        val fabSize = 77.dp
 
         CompositionLocalProvider(
             LocalTonalElevationEnabled provides false,
             LocalShowSnackBar provides { snackBarMessage: SnackBarMessage ->
                 snackBarChannel.trySend(snackBarMessage)
             },
-            LocalFABControl provides { bool -> isFabEnabled = bool }
+            LocalFABControl provides { bool -> isFabEnabled = bool },
+            LocalFabOnClickedListener provides {
+                onClickedFAB = it
+            },
+            LocalCircularFabState provides rememberCircularFabState(size = fabSize),
         ) {
             Scaffold(
                 modifier = Modifier
@@ -113,9 +123,11 @@ class MainActivity : ComponentActivity() {
                         CircularFAB(
                             modifier = Modifier
                                 .fillMaxWidth(),
+                            componentSize = fabSize,
+                            circularFabState = LocalCircularFabState.current,
                             enabled = isFabEnabled,
                             onClickWhenDisabled = {
-                                navController.navigateToSearch()
+                                onClickedFAB()
                             }
                         ) {
                             NavigationBar(

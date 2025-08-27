@@ -11,6 +11,7 @@ import side.dnd.core.TopLevelRoute
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
 import side.dnd.core.compositionLocals.NavigationAction
 import side.dnd.feature.home.home.HomeScreen
+import side.dnd.feature.home.home.UserMapState
 import side.dnd.feature.home.search.SearchScreen
 import side.dnd.feature.home.store.StoreScreen
 
@@ -20,7 +21,7 @@ sealed class HomeRoute {
     object HomeGraph : HomeRoute()
 
     @Serializable
-    data class Home(val searchWord: String) : HomeRoute(), TopLevelRoute {
+    data object Home : HomeRoute(), TopLevelRoute {
         override val icon: Int
             get() = side.dnd.design.R.drawable.ic_home
         override val description: String
@@ -28,28 +29,32 @@ sealed class HomeRoute {
     }
 
     @Serializable
-    data object Search : HomeRoute()
+    data class Search(val userMapState: UserMapState) : HomeRoute()
 
     @Serializable
-    data class Store(val searchWord: String) : HomeRoute()
+    data class Store(val userMapState: UserMapState) : HomeRoute()
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.homeGraph() {
-    navigation<HomeRoute.HomeGraph>(startDestination = HomeRoute.Home("")) {
+    navigation<HomeRoute.HomeGraph>(startDestination = HomeRoute.Home) {
         composable<HomeRoute.Home> {
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
                 HomeScreen()
             }
         }
 
-        composable<HomeRoute.Search> {
+        composable<HomeRoute.Search>(
+            typeMap = UserMapState.navType
+        ) {
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
                 SearchScreen()
             }
         }
 
-        composable<HomeRoute.Store> {
+        composable<HomeRoute.Store>(
+            typeMap = UserMapState.navType
+        ) {
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
                 StoreScreen()
             }
@@ -57,22 +62,20 @@ fun NavGraphBuilder.homeGraph() {
     }
 }
 
-fun NavController.navigateToSearch() {
-    navigate(HomeRoute.Search)
+fun NavController.navigateToSearch(userMapState: UserMapState) {
+    navigate(HomeRoute.Search(userMapState))
 }
 
-fun NavController.navigateToHome(searchWord: String) {
-    navigate(route = HomeRoute.Home(searchWord)) {
-        popUpTo(HomeRoute.HomeGraph)
-    }
+fun NavController.navigateToHome() {
+    popBackStack(HomeRoute.Home, inclusive = false)
 }
 
-fun NavController.navigateToStore(searchWord: String) {
-    navigate(HomeRoute.Store(searchWord))
+fun NavController.navigateToStore(userMapState: UserMapState) {
+    navigate(HomeRoute.Store(userMapState = userMapState))
 }
 
 sealed class HomeNavigationAction : NavigationAction {
-    data object NavigateToSearch : HomeNavigationAction()
-    data class NavigateToHome(val searchWord: String) : HomeNavigationAction()
-    data class NavigateToStore(val searchWord: String) : HomeNavigationAction()
+    data class NavigateToSearch(val userMapState: UserMapState) : HomeNavigationAction()
+    data object NavigateToHome : HomeNavigationAction()
+    data class NavigateToStore(val userMapState: UserMapState) : HomeNavigationAction()
 }
