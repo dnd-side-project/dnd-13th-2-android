@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import side.dnd.design.R
+import side.dnd.design.theme.EodigoColor
+import side.dnd.design.theme.EodigoTheme
 
 @Composable
 fun LocalRankRow(
@@ -41,7 +43,7 @@ fun LocalRankRow(
     locationName: String,
     price: Int,
     modifier: Modifier = Modifier,
-    visible: Boolean = true,
+    maxScreen: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     Row(
@@ -61,24 +63,31 @@ fun LocalRankRow(
                 .padding(horizontal = 14.dp, vertical = 7.dp),
             contentAlignment = Alignment.Center
         ) {
-            if (visible) {
+            if (rank <=3 ) {
+                val  resource = when (rank) {
+                    1 -> R.drawable.ic_first_grade
+                    2 -> R.drawable.ic_second_grad
+                    3 -> R.drawable.ic_third_grade
+                    else -> R.drawable.ic_third_grade
+                }
                 Image(
-                    painter = painterResource(R.drawable.ic_rank_bg),
+                    painter = painterResource(resource),
                     contentDescription = null,
-                    modifier = Modifier.size(40.dp)
+//                    modifier = Modifier.size(40.dp)
+                )
+            }else {
+                Text(
+                    text = rank.toString(),
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF9B86FC),
+                        textAlign = TextAlign.Center,
+                        letterSpacing = (-0.75).sp
+                    )
                 )
             }
-            Text(
-                text = rank.toString(),
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF9B86FC),
-                    textAlign = TextAlign.Center,
-                    letterSpacing = (-0.75).sp
-                )
-            )
         }
 
         Row(
@@ -116,7 +125,7 @@ fun CircleCategoryItem(
     title: String,
     icon: Painter,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: (title: String) -> Unit = {}
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -129,7 +138,9 @@ fun CircleCategoryItem(
                     shape = CircleShape,
                     spotColor = Color.Black.copy(alpha = 0.1f)
                 )
-                .clickable(onClick = onClick)
+                .clickable{
+                    onClick(title)
+                }
                 .size(56.dp)
                 .background(
                     color = Color.White,
@@ -156,7 +167,57 @@ fun CircleCategoryItem(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFFF5F3FF),
+                color = EodigoColor.White,
+                textAlign = TextAlign.Center,
+                letterSpacing = (-0.7).sp
+            )
+        )
+    }
+}
+
+
+@Composable
+fun SquareCategoryItem(
+    title: String,
+    icon: Painter,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .clickable(onClick = onClick)
+    ) {
+        Box(
+            modifier = Modifier
+                .clickable(onClick = onClick)
+                .size(64.dp)
+                .background(
+                    color = EodigoColor.Gray100,
+                    shape = RoundedCornerShape(15.dp)
+                )
+
+        ) {
+            Image(
+                painter = icon,
+                contentDescription = title,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(56.dp)
+                    .align(Alignment.Center)
+
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = title,
+            style = TextStyle(
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.Medium,
+                color = EodigoColor.Black,
                 textAlign = TextAlign.Center,
                 letterSpacing = (-0.7).sp
             )
@@ -267,6 +328,67 @@ fun StoreItem(
     }
 }
 
+@Composable
+fun CategoryText(
+    text: String,
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    val backgroundColor = if (isSelected) {
+        EodigoColor.Normal
+    } else {
+        EodigoColor.Gray100
+    }
+
+    val textColor = if (isSelected) {
+        EodigoColor.White
+    } else {
+        EodigoColor.Gray600
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 15.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = EodigoTheme.typography.body1Medium.copy(
+                color = textColor,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CategoryTextSelectedPreview() {
+    CategoryText(
+        text = "쌀",
+        isSelected = true,
+        modifier = Modifier.padding(16.dp)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CategoryTextUnselectedPreview() {
+    CategoryText(
+        text = "찹쌀",
+        isSelected = false,
+        modifier = Modifier.padding(16.dp)
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun StoreItemPreview() {
@@ -284,6 +406,15 @@ fun StoreItemPreview() {
 fun CategoryItemPreview() {
     CircleCategoryItem(
         title = "찾아보기",
+        icon = painterResource(R.drawable.ic_home)
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF9B86FC)
+@Composable
+fun SquareCategoryItem() {
+    SquareCategoryItem(
+        title = "이삭이삭",
         icon = painterResource(R.drawable.ic_home)
     )
 }

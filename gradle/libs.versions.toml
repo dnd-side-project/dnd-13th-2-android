@@ -43,6 +43,8 @@ protobufPlugin = "0.9.4"
 foundationLayout = "1.9.0"
 playServicesLocation = "16.0.0"
 
+uiGraphics = "1.9.0"
+
 [libraries]
 
 # Gradle Plugin
@@ -129,6 +131,7 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
+
 # Square
 square-retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 square-retrofit2-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
@@ -146,6 +149,7 @@ junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engi
 test-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 test-ext = { group = "androidx.test.ext", name = "junit", version.ref = "android-test-ext" }
 foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
