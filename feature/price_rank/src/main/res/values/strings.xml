@@ -10,4 +10,9 @@
 
     <string name="price_chart_title">의 가격은 지난 10년간...</string>
     <string name="price_chart_content_first">증가했어요  🥶</string>
+
+
+    <string name="price_chart_empty_title">지난 10년간 얼마나 올랐을까?</string>
+    <string name="price_chart_content_empty_first">가격 변화를 한 눈에 </string>
+    <string name="price_chart_content_empty_second"> 확인해보세요!</string>
 </resources>

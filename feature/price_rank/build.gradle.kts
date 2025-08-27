@@ -16,6 +16,4 @@ dependencies {
 
     implementation(libs.bundles.square)
 
-    implementation(libs.vico.compose.m3)
-
 }
