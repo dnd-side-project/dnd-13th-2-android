@@ -67,6 +67,7 @@ import side.dnd.design.theme.EodigoTheme
 import com.side.dnd.feature.price_rank.navigation.PriceRankRoute
 import com.side.dnd.feature.price_rank.navigation.navigateToCategorySearch
 import com.side.dnd.feature.price_rank.PriceRankViewModel
+import side.dnd.design.component.SnackBarHostCustom
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -84,7 +85,6 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun Content(
         navController: NavHostController = rememberNavController(),
-        priceRankViewModel: PriceRankViewModel = hiltViewModel()
     ) {
         val snackBarHostState = remember { SnackbarHostState() }
 
@@ -170,7 +170,15 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-
+                },
+                snackbarHost = {
+                    SnackBarHostCustom(
+                        headerMessage = snackBarHostState.currentSnackbarData?.visuals?.message
+                            ?: "",
+                        contentMessage = snackBarHostState.currentSnackbarData?.visuals?.actionLabel
+                            ?: "",
+                        snackBarHostState = snackBarHostState,
+                        disMissSnackBar = { snackBarHostState.currentSnackbarData?.dismiss() })
                 }
             ) { paddingValues ->
                 NavigationGraph(

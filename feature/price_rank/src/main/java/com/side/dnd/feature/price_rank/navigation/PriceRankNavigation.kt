@@ -22,9 +22,9 @@ sealed class PriceRankRoute {
     @Serializable
     data object PriceRank : PriceRankRoute(), TopLevelRoute {
         override val icon: Int
-            get() = side.dnd.design.R.drawable.ic_price_ranking
+            get() = side.dnd.design.R.drawable.ic_search_ranking
         override val description: String
-            get() = "가격 랭킹"
+            get() = "가격 탐색"
     }
 
     @Serializable
