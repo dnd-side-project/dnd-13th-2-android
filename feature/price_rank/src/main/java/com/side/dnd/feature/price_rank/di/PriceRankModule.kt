@@ -5,7 +5,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import network.di.PriceRankRetrofit
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -16,7 +15,7 @@ object PriceRankModule {
     @Provides
     @Singleton
     fun providePriceRankApi(
-        @PriceRankRetrofit retrofit: Retrofit
+        retrofit: Retrofit
     ): PriceRankApi {
         return retrofit.create(PriceRankApi::class.java)
     }

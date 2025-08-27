@@ -12,7 +12,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.MutatorMutex
-import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -42,9 +41,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
@@ -61,6 +63,8 @@ import side.dnd.design.component.CircularFabState.SelectableItem
 import side.dnd.design.component.progress.ProgressIndicatorOffset
 import side.dnd.design.theme.EodigoTheme
 import side.dnd.design.utils.OffsetUtils.clampOffsetInCircle
+import side.dnd.design.utils.fillBounds
+import kotlin.math.roundToInt
 
 val LocalCircularFabState = compositionLocalOf<CircularFabState> { error("No FABState provided") }
 
@@ -72,8 +76,6 @@ fun CircularFAB(
     circularFabState: CircularFabState = rememberCircularFabState(size = componentSize),
     enabled: Boolean = true,
     onClickWhenDisabled: () -> Unit = {},
-    isCategorySearch: Boolean = false,
-    isPriceRankActive: Boolean = false,
     content: @Composable BoxScope.() -> Unit = {},
 ) {
     val selectableItem by rememberUpdatedState(circularFabState.selectableItem)
@@ -240,36 +242,15 @@ fun CircularFAB(
                     brush = brush,
                     radius = componentSize.toPx() / 2.0f
                 )
-                if (!isPriceRankActive) {
+
+                with(circularFabState.fabType) {
                     translate(
                         left = circularFabState.currentInteractionOffset.x,
-                        top = circularFabState.currentInteractionOffset.y
+                        top = circularFabState.currentInteractionOffset.y,
                     ) {
-                        drawCircle(
-                            color = Color.White,
-                            radius = (componentSize / 7).toPx() / 2.0f,
-                            center = Offset.Zero
-                        )
+                        draw()
                     }
                 }
-            }
-            
-            if (isCategorySearch) {
-                Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_x),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(24.dp)
-                )
-            } else if (isPriceRankActive) {
-                Image(
-                    painter = painterResource(R.drawable.ic_plus),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(24.dp)
-                )
             }
         }
     }
@@ -312,6 +293,9 @@ class CircularFabState(
 
     val center: Offset get() = Offset(x = radius, y = radius)
     val radius: Float get() = maxSizePx / 2.0f
+
+    var fabType: FabType by mutableStateOf(FabType.Circle)
+        private set
 
     /**
      * 주어진 offset 만큼 drag 처리하는 함수
@@ -376,6 +360,10 @@ class CircularFabState(
         animateOffset(target)
     }
 
+    fun updateFabType(fabType: FabType) {
+        this.fabType = fabType
+    }
+
     @Stable
     enum class SelectableItem {
         NONE,
@@ -389,6 +377,51 @@ class CircularFabState(
     }
 }
 
+@Stable
+sealed interface FabType {
+    @Stable
+    data object Circle : FabType {
+        override fun DrawScope.draw() {
+            drawCircle(
+                color = Color.White,
+                radius = 11.dp.toPx() / 2.0f,
+                center = Offset.Zero
+            )
+        }
+    }
+
+    data object Plus : FabType {
+        override fun DrawScope.draw() {
+            with(Multiply) {
+                rotate(degrees = 45f, pivot = Offset.Zero) {
+                    draw()
+                }
+            }
+        }
+    }
+
+    data object Multiply : FabType {
+        override fun DrawScope.draw() {
+            val pathData =
+                "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+            val width = 14.dp.toPx()
+            val height = 14.dp.toPx()
+            val path = PathParser().parsePathString(pathData).toPath().apply {
+                fillBounds(
+                    strokeWidthPx = 1f,
+                    maxWidth = width.roundToInt(),
+                    maxHeight = height.roundToInt(),
+                )
+                translate(Offset(x= -(width/2), y= -(height/2)))
+            }
+
+            drawPath(path, Color.White)
+        }
+    }
+
+    fun DrawScope.draw()
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun PreviewCircularFAB() = EodigoTheme {
@@ -397,8 +430,10 @@ private fun PreviewCircularFAB() = EodigoTheme {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        val state = rememberCircularFabState(77.dp)
         CircularFAB(
-            modifier = Modifier.size(163.dp)
+            modifier = Modifier.size(163.dp),
+            circularFabState = state,
         )
     }
 }

@@ -1,5 +1,6 @@
 package side.dnd.app
 
+import android.R.attr.enabled
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -112,9 +113,6 @@ class MainActivity : ComponentActivity() {
             mutableStateOf({})
         }
         val fabSize = 77.dp
-        var isFabClicked by remember {
-            mutableStateOf(false)
-        }
 
         CompositionLocalProvider(
             LocalTonalElevationEnabled provides false,
@@ -145,26 +143,10 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxWidth(),
                             componentSize = fabSize,
                             circularFabState = LocalCircularFabState.current,
-                                .fillMaxWidth()
-                                .clickableAvoidingDuplication {
-                                    if (!isFabEnabled) {
-                                        if (currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true) {
-                                            if (isFabClicked) {
-                                                isFabClicked = false
-                                            } else {
-                                                isFabClicked = true
-                                            }
-                                        } else {
-                                            navController.navigateToSearch()
-                                        }
-                                    }
-                                },
                             enabled = isFabEnabled,
                             onClickWhenDisabled = {
                                 onClickedFAB()
-                            }
-                            isCategorySearch = currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true && isFabClicked,
-                            isPriceRankActive = currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true,
+                            },
                         ) {
                             NavigationBar(
                                 containerColor = NavigationDefaults.containerColor(),
@@ -191,47 +173,15 @@ class MainActivity : ComponentActivity() {
 
                 }
             ) { paddingValues ->
-                Box(modifier = Modifier.fillMaxSize()) {
-                    NavigationGraph(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(
-                                start = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
-                                end = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
-                            ),
-                        router = router,
-                    )
-                    
-                    if (isFabClicked && currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.7f))
-                                .clickableAvoidingDuplication {
-                                    isFabClicked = false
-                                }
-                        )
-                    }
-                    
-                    CategoryBottomSheet(
-                        visible = isFabClicked && currentDestination?.hasRoute(PriceRankRoute.PriceRank::class) == true,
-                        onCategoryClick = { categoryName ->
-                            isFabClicked = false
-                            when (categoryName) {
-                                "찾아보기" -> {
-                                    navController.navigateToCategorySearch()
-                                }
-                                else -> {
-//                                    priceRankViewModel.selectCategory(categoryName)
-                                }
-                            }
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .padding(bottom = 120.dp)
-                    )
-                }
+                NavigationGraph(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            start = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
+                            end = paddingValues.calculateStartPadding(LayoutDirection.Rtl),
+                        ),
+                    router = router,
+                )
             }
         }
     }
