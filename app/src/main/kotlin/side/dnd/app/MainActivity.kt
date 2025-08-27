@@ -1,5 +1,7 @@
 package side.dnd.app
 
+import android.R.attr.enabled
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +11,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +23,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -29,12 +34,17 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -50,7 +60,14 @@ import side.dnd.core.compositionLocals.LocalShowSnackBar
 import side.dnd.design.component.CircularFAB
 import side.dnd.design.component.LocalCircularFabState
 import side.dnd.design.component.rememberCircularFabState
+import side.dnd.design.component.CategoryBottomSheet
+import side.dnd.design.component.button.clickableAvoidingDuplication
+import side.dnd.feature.home.navigateToSearch
 import side.dnd.design.theme.EodigoTheme
+import com.side.dnd.feature.price_rank.navigation.PriceRankRoute
+import com.side.dnd.feature.price_rank.navigation.navigateToCategorySearch
+import com.side.dnd.feature.price_rank.PriceRankViewModel
+import side.dnd.design.component.SnackBarHostCustom
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -64,6 +81,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Composable
     private fun Content(
         navController: NavHostController = rememberNavController(),
@@ -128,7 +146,7 @@ class MainActivity : ComponentActivity() {
                             enabled = isFabEnabled,
                             onClickWhenDisabled = {
                                 onClickedFAB()
-                            }
+                            },
                         ) {
                             NavigationBar(
                                 containerColor = NavigationDefaults.containerColor(),
@@ -152,6 +170,15 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
+                },
+                snackbarHost = {
+                    SnackBarHostCustom(
+                        headerMessage = snackBarHostState.currentSnackbarData?.visuals?.message
+                            ?: "",
+                        contentMessage = snackBarHostState.currentSnackbarData?.visuals?.actionLabel
+                            ?: "",
+                        snackBarHostState = snackBarHostState,
+                        disMissSnackBar = { snackBarHostState.currentSnackbarData?.dismiss() })
                 }
             ) { paddingValues ->
                 NavigationGraph(

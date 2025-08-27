@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="price_map_title_first">전국에서 </string>
+    <string name="price_map_title_second">이(가) 제일 저렴한 지역</string>
+
+
+    <string name="price_map_empty_title">혹시 우리 동네가 1등일지도?</string>
+    <string name="price_map_empty_content_first">지역별 가격차이</string>
+    <string name="price_map_empty_content_second">를 알아보세요!</string>
+
+    <string name="price_chart_title">의 가격은 지난 10년간...</string>
+    <string name="price_chart_content_first">증가했어요  🥶</string>
+
+
+    <string name="price_chart_empty_title">지난 10년간 얼마나 올랐을까?</string>
+    <string name="price_chart_content_empty_first">가격 변화를 한 눈에 </string>
+    <string name="price_chart_content_empty_second"> 확인해보세요!</string>
+</resources>
