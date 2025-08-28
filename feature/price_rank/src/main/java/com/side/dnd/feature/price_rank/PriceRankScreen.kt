@@ -81,6 +81,12 @@ fun PriceRankScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.tabChangeFlow.collect { tabIndex ->
+            pagerState.animateScrollToPage(tabIndex)
+        }
+    }
+
     RememberEffect(Unit) {
         fabOnClickListener {
             isFabClicked = !isFabClicked

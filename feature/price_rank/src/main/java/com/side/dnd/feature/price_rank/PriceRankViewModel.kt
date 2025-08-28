@@ -25,10 +25,9 @@ class PriceRankViewModel @Inject constructor(
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
 
-//    init {
-//        loadProductData(42, "수박")
-//
-//    }
+    private val _tabChangeFlow = MutableSharedFlow<Int>()
+    val tabChangeFlow get() = _tabChangeFlow.asSharedFlow()
+
 
     fun loadProductData(productId: Int, productName: String) {
         viewModelScope.launch {
@@ -63,5 +62,10 @@ class PriceRankViewModel @Inject constructor(
         }
     }
 
+    fun switchToRegionTab() {
+        viewModelScope.launch {
+            _tabChangeFlow.emit(1)
+        }
+    }
 
 }
