@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -99,7 +100,6 @@ fun HomeScreen(
         mutableStateOf(Store.DEFAULT)
     }
     val cameraPositionState = rememberCameraPositionState("cameraPositionState") {
-        Log.d("test", "abc: $position")
         if (!BuildConfig.DEBUG && ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -159,8 +159,9 @@ fun HomeScreen(
     }
 
     if (dialogVisibility) {
-        Dialog(
-            onDismissRequest = { dialogVisibility = false }
+        Dialog (
+            onDismissRequest = { dialogVisibility = false },
+            properties = DialogProperties()
         ) {
             StoreDetailCard(
                 selectedStore
@@ -197,6 +198,11 @@ fun HomeScreen(
                         state = MarkerState(
                             position = store.latLng.toNaverLatLng()
                         ),
+                        onClick = {
+                            selectedStore = store
+                            dialogVisibility = true
+                            true
+                        }
                     ) {
                         MapMarker(
                             store = store,
