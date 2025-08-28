@@ -1,5 +1,6 @@
 package com.side.dnd.feature.price_rank.component.region
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,8 +19,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,13 +45,24 @@ import side.dnd.design.R as UI
 @Composable
 fun RegionRankScreen(
     uiState: NationWideUiState,
-    viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>(),
     modifier: Modifier = Modifier
 ) {
     val listingState = rememberLazyListState()
+    var isExpanded by remember { mutableStateOf(false) }
     
-    val isEmptyKeyword = uiState.isEmptyKeyword
     val productRanking = uiState.productRanking
+    val isEmptyKeyword = uiState.keyWord.isEmpty()
+
+    val rankingList = if (isEmptyKeyword) {
+        MockProductRanking.emptyProductRanking.ranking.mapIndexed { index, regionRanking ->
+            regionRanking.copy(rank = index + 1)
+        }
+    } else {
+        productRanking.ranking.mapIndexed { index, regionRanking ->
+            regionRanking.copy(rank = index + 1)
+        }
+    }
+    val bgColor = if(isExpanded) EodigoColor.Light else EodigoColor.White
 
     LazyColumn(
         state = listingState,
@@ -56,7 +73,7 @@ fun RegionRankScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(EodigoColor.White)
+                    .background(bgColor)
             ) {
                 Spacer(modifier = Modifier.size(52.dp))
 
@@ -66,22 +83,25 @@ fun RegionRankScreen(
                         style = EodigoTheme.typography.body3Medium,
                         color = EodigoColor.Gray500,
                     )
+                    Spacer(modifier = Modifier.size(5.dp))
+
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = stringResource(id = R.string.price_map_empty_content_first),
-                            style = EodigoTheme.typography.body3Medium,
+                            style = EodigoTheme.typography.title1Medium,
                             color = EodigoColor.Normal
                         )
                         Text(
                             text = stringResource(id = R.string.price_map_empty_content_second),
-                            style = EodigoTheme.typography.body3Medium,
+                            style = EodigoTheme.typography.title1Medium,
                             color = EodigoColor.Gray900
                         )
                     }
                 } else {
+                    Log.e("loadProductTrendData 22",productRanking.productName )
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
@@ -112,53 +132,98 @@ fun RegionRankScreen(
                 }
                 
                 Spacer(modifier = Modifier.height(15.dp))
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable {}
-                ) {
-                    Text(
-                        text = "더보기",
-                        style = EodigoTheme.typography.body3Medium,
-                        color = EodigoColor.Gray500,
-                    )
-                    Spacer(modifier = Modifier.height(15.dp))
+                if (!isEmptyKeyword && !isExpanded) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable {
+                                isExpanded = !isExpanded
+                            }
+                    ) {
+                        Text(
+                            text = "더보기",
+                            style = EodigoTheme.typography.body3Medium,
+                            color = EodigoColor.Gray500,
+                        )
+                        Spacer(modifier = Modifier.height(15.dp))
 
-                    Image(
-                        painter = painterResource(R.drawable.ic_arrow_right),
-                        contentDescription = null,
-                        modifier = Modifier.size(10.dp)
-                    )
+                        Image(
+                            painter = painterResource(R.drawable.ic_arrow_right),
+                            contentDescription = null,
+                            modifier = Modifier.size(10.dp)
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(15.dp))
 
-                RankingBarComponent(
-                    rankItems = if (productRanking.ranking.isNotEmpty()) productRanking.ranking else emptyList(),
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                
+                if (!isExpanded) {
+                    RankingBarComponent(
+                        rankItems = rankingList,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .then(
+                                if (isEmptyKeyword) Modifier.blur(3.dp)
+                                else Modifier
+                            )
+                    )
+
+                    Spacer(modifier = Modifier.height(22.dp))
+                }
+
+
+
                 Spacer(modifier = Modifier.height(22.dp))
             }
         }
-        
-        if (productRanking.ranking.size > 3) {
-            items(productRanking.ranking.subList(3, minOf(10, productRanking.ranking.size))) { product ->
+
+        if (isExpanded) {
+            items(rankingList) { product ->
                 LocalRankRow(
                     rank = product.rank,
                     locationName = product.regionName,
                     price = product.price,
-                    maxScreen = false,
+
                     modifier = Modifier
                         .padding(start = 22.dp, end = 22.dp, top = 10.dp, bottom = 10.dp)
                         .fillMaxWidth()
-                        .background(EodigoColor.Light),
-                    onClick = {}
+                        .background(EodigoColor.Light)
+                        .then(
+                            if (isEmptyKeyword) Modifier.blur(3.dp)
+                            else Modifier
+                        )
                 )
             }
+        } else if (rankingList.size > 3 || isEmptyKeyword) {
+        items(rankingList.subList(3, minOf(10, rankingList.size))) { product ->
+
+            LocalRankRow(
+                rank = product.rank,
+                locationName = product.regionName,
+                price = product.price,
+                modifier = Modifier
+                    .padding(start = 22.dp, end = 22.dp, top = 10.dp, bottom = 10.dp)
+                    .fillMaxWidth()
+                    .background(EodigoColor.Light)
+                    .then(
+                        if (isEmptyKeyword) Modifier.blur(3.dp)
+                        else Modifier
+                    )
+            )
         }
+
     }
 }
 
+
+}
+@Preview(showBackground = true)
+@Composable
+fun RegionRankScreenPreview() {
+    RegionRankScreen(
+        uiState = NationWideUiState.Empty
+    )
+}
 
 
 @Composable

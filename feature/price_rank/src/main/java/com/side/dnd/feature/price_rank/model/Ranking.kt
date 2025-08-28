@@ -15,8 +15,8 @@ data class RegionRanking(
 
 object MockProductRanking {
     val sampleProductRanking = ProductRanking(
-        productId = 1,
-        productName = "감자",
+        productId = 0,
+        productName = "",
         surveyDate = "",
         ranking = listOf(
             RegionRanking(1, "울산", 1000),
@@ -38,4 +38,28 @@ object MockProductRanking {
 //            RegionRanking(17, "제주", 1600)
         )
     )
+
+    val emptyProductRanking = ProductRanking(
+        productId = 0,
+        productName = "",
+        surveyDate = "",
+        ranking = listOf(
+            RegionRanking(1, "서울특별시", 10900),
+            RegionRanking(2, "지역명지역", 10900),
+            RegionRanking(3, "지역명", 10900),
+            RegionRanking(4, "지역명이 들어가요!", 1200),
+            RegionRanking(5, "지역명이 들어가요!", 1200),
+            RegionRanking(6, "지역명이 들어가요!", 1200),
+            RegionRanking(7, "지역명이 들어가요!", 1200),
+            RegionRanking(8, "지역명이 들어가요!", 1200),
+            RegionRanking(9, "지역명이 들어가요!", 1200),
+            RegionRanking(10, "지역명이 들어가요!", 1200),
+            RegionRanking(11, "지역명이 들어가요!", 1200),
+            RegionRanking(12, "지역명이 들어가요!", 1200),
+            RegionRanking(13, "지역명이 들어가요!", 1200),
+            RegionRanking(14, "지역명이 들어가요!", 1200),
+        )
+    )
+
+
 }

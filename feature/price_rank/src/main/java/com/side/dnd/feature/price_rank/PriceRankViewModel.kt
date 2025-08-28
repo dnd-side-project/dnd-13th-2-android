@@ -1,5 +1,6 @@
 package com.side.dnd.feature.price_rank
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.dnd.feature.price_rank.data.repository.ProductPriceRepository
@@ -25,6 +26,7 @@ class PriceRankViewModel @Inject constructor(
     val errorFlow get() = _errorFlow.asSharedFlow()
 
     init {
+        loadProductData(42, "수박")
 
     }
 
@@ -32,12 +34,28 @@ class PriceRankViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val rankingResult = productPriceRepository.getProductRanking(productId)
+                val trendResult = productPriceRepository.getProductTrend(productId)
+                
+                Log.e("loadProductData", "ranking result : $rankingResult")
+                Log.e("loadProductData", "trend result : $trendResult")
+
                 rankingResult.onSuccess { ranking ->
-                    _rankUiState.update { currentState ->
-                        currentState.copy(
-                            keyWord = productName,
-                            productRanking = ranking
-                        )
+                    trendResult.onSuccess { chartData ->
+                        _rankUiState.update { currentState ->
+                            currentState.copy(
+                                keyWord = productName,
+                                productRanking = ranking,
+                                chartData = chartData
+                            )
+                        }
+                    }.onFailure { error ->
+                        _rankUiState.update { currentState ->
+                            currentState.copy(
+                                keyWord = productName,
+                                productRanking = ranking
+                            )
+                        }
+                        _errorFlow.emit(error)
                     }
                 }.onFailure { error ->
                     _errorFlow.emit(error)
@@ -48,21 +66,5 @@ class PriceRankViewModel @Inject constructor(
         }
     }
 
-    fun loadProductTrendData(productId: Int, productName: String) {
-        viewModelScope.launch {
-            try {
-                val trendResult = productPriceRepository.getProductTrend(productId)
-                trendResult.onSuccess { chartData ->
-                    _rankUiState.update { currentState ->
-                        currentState.copy(chartData = chartData)
-                    }
-                }.onFailure { error ->
-                    _errorFlow.emit(error)
-                }
-            } catch (e: Exception) {
-                _errorFlow.emit(e)
-            }
-        }
-    }
 
 }
