@@ -14,6 +14,7 @@ import com.side.dnd.feature.price_rank.navigation.PriceRankNavigationAction
 import com.side.dnd.feature.price_rank.navigation.PriceRankRoute
 import com.side.dnd.feature.price_rank.navigation.navigateToCategorySearch
 import com.side.dnd.feature.price_rank.navigation.navigateToPriceRank
+import com.side.dnd.feature.price_rank.navigation.navigateToPriceRankWithProduct
 import side.dnd.core.TopLevelRoute
 import side.dnd.core.compositionLocals.CommonNavigationAction
 import side.dnd.core.compositionLocals.NavigationAction
@@ -66,6 +67,7 @@ internal class Router(val navController: NavHostController) {
             is HomeNavigationAction.NavigateToSearch -> navController.navigateToSearch(action.userMapState)
             is HomeNavigationAction.NavigateToStore -> navController.navigateToStore(userMapState = action.userMapState)
             is PriceRankNavigationAction.NavigateToPriceRank -> navController.navigateToPriceRank()
+            is PriceRankNavigationAction.NavigateToPriceRankWithProduct -> navController.navigateToPriceRankWithProduct(action.productId, action.productName)
             is PriceRankNavigationAction.NavigateToCategorySearch -> navController.navigateToCategorySearch()
         }
     }

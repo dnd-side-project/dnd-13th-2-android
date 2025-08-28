@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,7 +58,9 @@ internal fun PriceRankRoute(
 
 @Composable
 fun PriceRankScreen(
-    viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>()
+    viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>(),
+    productId: Int = 0,
+    productName: String = ""
 ) {
     val uiState by viewModel.rankUiState.collectAsStateWithLifecycle()
     val tabs = listOf("전국팔도", "지역별")
@@ -71,6 +74,12 @@ fun PriceRankScreen(
     }
     val navigationAction = LocalNavigationActions.current
     val fabState = LocalCircularFabState.current
+
+    LaunchedEffect(productId, productName) {
+        if (productId > 0 && productName.isNotEmpty()) {
+            viewModel.loadProductData(productId, productName)
+        }
+    }
 
     RememberEffect(Unit) {
         fabOnClickListener {

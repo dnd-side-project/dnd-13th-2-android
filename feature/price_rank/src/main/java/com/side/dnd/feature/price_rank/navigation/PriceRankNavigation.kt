@@ -28,6 +28,12 @@ sealed class PriceRankRoute {
     }
 
     @Serializable
+    data class PriceRankWithProduct(
+        val productId: Int = 0,
+        val productName: String = ""
+    ) : PriceRankRoute()
+
+    @Serializable
     data object CategorySearch : PriceRankRoute()
     
     @Serializable
@@ -74,8 +80,16 @@ fun NavController.navigateToPriceRank() {
     navigate(PriceRankRoute.PriceRank)
 }
 
+fun NavController.navigateToPriceRankWithProduct(productId: Int, productName: String) {
+    navigate(PriceRankRoute.PriceRankWithProduct(productId = productId, productName = productName))
+}
+
 sealed class PriceRankNavigationAction : NavigationAction {
     data object NavigateToCategorySearch : PriceRankNavigationAction()
     data object NavigateToDetailCategory : PriceRankNavigationAction()
     data object NavigateToPriceRank : PriceRankNavigationAction()
+    data class NavigateToPriceRankWithProduct(
+        val productId: Int,
+        val productName: String
+    ) : PriceRankNavigationAction()
 }

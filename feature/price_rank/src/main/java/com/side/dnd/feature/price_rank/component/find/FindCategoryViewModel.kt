@@ -52,7 +52,10 @@ class FindCategoryViewModel @Inject constructor(
 
             is FindCategoryEvent.SearchFiltering -> {
                 viewModelScope.launch {
-                    sideEffect.send(Navigation(PriceRankNavigationAction.NavigateToPriceRank))
+                    val product = uiState.value.searchResult.find { it.id == event.id }
+                    product?.let {
+                        sideEffect.send(Navigation(PriceRankNavigationAction.NavigateToPriceRankWithProduct(it.id, it.name)))
+                    } ?: sideEffect.send(Navigation(PriceRankNavigationAction.NavigateToPriceRank))
                 }
             }
 

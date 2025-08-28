@@ -25,19 +25,16 @@ class PriceRankViewModel @Inject constructor(
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
 
-    init {
-        loadProductData(42, "수박")
-
-    }
+//    init {
+//        loadProductData(42, "수박")
+//
+//    }
 
     fun loadProductData(productId: Int, productName: String) {
         viewModelScope.launch {
             try {
                 val rankingResult = productPriceRepository.getProductRanking(productId)
                 val trendResult = productPriceRepository.getProductTrend(productId)
-                
-                Log.e("loadProductData", "ranking result : $rankingResult")
-                Log.e("loadProductData", "trend result : $trendResult")
 
                 rankingResult.onSuccess { ranking ->
                     trendResult.onSuccess { chartData ->
