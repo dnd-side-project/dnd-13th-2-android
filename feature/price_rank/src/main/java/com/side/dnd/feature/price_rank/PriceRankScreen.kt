@@ -54,10 +54,6 @@ internal fun PriceRankRoute(
     }
 }
 
-@Composable
-fun PriceRankLoading() {
-
-}
 
 @Composable
 fun PriceRankScreen(
@@ -101,7 +97,7 @@ fun PriceRankScreen(
                 content = { page ->
                     when (page) {
                         0 -> { NationwideScreen(uiState = uiState, viewModel = viewModel) }
-                        1 -> { RegionRankScreen(uiState = uiState, viewModel = viewModel) }
+                        1 -> { RegionRankScreen(uiState = uiState) }
                     }
                 },
                 pagerState = pagerState,

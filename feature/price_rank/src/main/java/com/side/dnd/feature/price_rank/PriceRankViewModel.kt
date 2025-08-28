@@ -26,43 +26,36 @@ class PriceRankViewModel @Inject constructor(
     val errorFlow get() = _errorFlow.asSharedFlow()
 
     init {
-//        loadProductData(42, "수박")
-//        loadProductTrendData(42, "수박")
+        loadProductData(42, "수박")
+
     }
 
     fun loadProductData(productId: Int, productName: String) {
         viewModelScope.launch {
             try {
                 val rankingResult = productPriceRepository.getProductRanking(productId)
-                Log.e("loadProductData", "result : $rankingResult")
-                rankingResult.onSuccess { ranking ->
-                    _rankUiState.update { currentState ->
-                        currentState.copy(
-                            keyWord = productName,
-                            productRanking = ranking
-                        )
-                    }
-                }.onFailure { error ->
-                    _errorFlow.emit(error)
-                }
-            } catch (e: Exception) {
-                _errorFlow.emit(e)
-            }
-        }
-    }
-
-    fun loadProductTrendData(productId: Int, productName: String) {
-        viewModelScope.launch {
-            try {
                 val trendResult = productPriceRepository.getProductTrend(productId)
-                Log.e("loadProductTrendData", "result : $trendResult")
+                
+                Log.e("loadProductData", "ranking result : $rankingResult")
+                Log.e("loadProductData", "trend result : $trendResult")
 
-                trendResult.onSuccess { chartData ->
-                    _rankUiState.update { currentState ->
-                        currentState.copy(
-                            keyWord = productName,
-                            chartData = chartData
-                        )
+                rankingResult.onSuccess { ranking ->
+                    trendResult.onSuccess { chartData ->
+                        _rankUiState.update { currentState ->
+                            currentState.copy(
+                                keyWord = productName,
+                                productRanking = ranking,
+                                chartData = chartData
+                            )
+                        }
+                    }.onFailure { error ->
+                        _rankUiState.update { currentState ->
+                            currentState.copy(
+                                keyWord = productName,
+                                productRanking = ranking
+                            )
+                        }
+                        _errorFlow.emit(error)
                     }
                 }.onFailure { error ->
                     _errorFlow.emit(error)
@@ -72,5 +65,6 @@ class PriceRankViewModel @Inject constructor(
             }
         }
     }
+
 
 }

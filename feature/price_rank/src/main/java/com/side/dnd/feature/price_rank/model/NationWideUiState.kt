@@ -9,6 +9,7 @@ data class NationWideUiState(
     val productRanking: ProductRanking,
     val chartData: ProductChartData,
 ) {
+    
    companion object {
        val Empty = NationWideUiState(
            keyWord = "",

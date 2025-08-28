@@ -30,8 +30,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.side.dnd.feature.price_rank.PriceRankViewModel
 import com.side.dnd.feature.price_rank.R
 import com.side.dnd.feature.price_rank.model.MockProductRanking
 import com.side.dnd.feature.price_rank.model.NationWideUiState
@@ -44,7 +42,6 @@ import side.dnd.design.R as UI
 @Composable
 fun RegionRankScreen(
     uiState: NationWideUiState,
-    viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>(),
     modifier: Modifier = Modifier
 ) {
     val listingState = rememberLazyListState()
@@ -53,7 +50,7 @@ fun RegionRankScreen(
     val productRanking = uiState.productRanking
     val isEmptyKeyword = uiState.keyWord.isEmpty()
 
-    val rankingList = if (isEmptyKeyword) MockProductRanking.emptyProductRanking.ranking else productRanking.ranking
+    val rankingList = if (isEmptyKeyword) MockProductRanking.emptyProductRanking.ranking else productRanking.sortedRanking
     val bgColor = if(isExpanded) EodigoColor.Light else EodigoColor.White
 
     LazyColumn(
@@ -75,22 +72,25 @@ fun RegionRankScreen(
                         style = EodigoTheme.typography.body3Medium,
                         color = EodigoColor.Gray500,
                     )
+                    Spacer(modifier = Modifier.size(5.dp))
+
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = stringResource(id = R.string.price_map_empty_content_first),
-                            style = EodigoTheme.typography.body3Medium,
+                            style = EodigoTheme.typography.title1Medium,
                             color = EodigoColor.Normal
                         )
                         Text(
                             text = stringResource(id = R.string.price_map_empty_content_second),
-                            style = EodigoTheme.typography.body3Medium,
+                            style = EodigoTheme.typography.title1Medium,
                             color = EodigoColor.Gray900
                         )
                     }
                 } else {
+                    val firstRankInfo = productRanking.sortedRanking.first()
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
@@ -114,39 +114,35 @@ fun RegionRankScreen(
                     Spacer(modifier = Modifier.size(5.dp))
 
                     Text(
-                        text = productRanking.ranking.first().regionName,
+                        text = firstRankInfo.regionName,
                         style = EodigoTheme.typography.title1Medium,
                         color = EodigoColor.Black,
                     )
                 }
                 
                 Spacer(modifier = Modifier.height(15.dp))
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable {
-                            if (!isEmptyKeyword) {
+                if (!isEmptyKeyword && !isExpanded){
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable {
                                 isExpanded = !isExpanded
                             }
-                        }
-                        .then(
-                            if (isEmptyKeyword) Modifier.blur(3.dp)
-                            else Modifier
+                    ) {
+                        Text(
+                            text = "더보기",
+                            style = EodigoTheme.typography.body3Medium,
+                            color = EodigoColor.Gray500,
                         )
-                ) {
-                    Text(
-                        text = "더보기",
-                        style = EodigoTheme.typography.body3Medium,
-                        color = EodigoColor.Gray500,
-                    )
-                    Spacer(modifier = Modifier.height(15.dp))
+                        Spacer(modifier = Modifier.height(15.dp))
 
-                    Image(
-                        painter = painterResource(R.drawable.ic_arrow_right),
-                        contentDescription = null,
-                        modifier = Modifier.size(10.dp)
-                    )
+                        Image(
+                            painter = painterResource(R.drawable.ic_arrow_right),
+                            contentDescription = null,
+                            modifier = Modifier.size(10.dp)
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(15.dp))
 
@@ -237,15 +233,15 @@ fun RankingBarComponent(
         verticalAlignment = Alignment.Bottom
     ) {
         RegionRankBarItem(
-            item = rankItems[1],
+            item = rankItems[1].copy(rank = 2),
             modifier = Modifier.weight(1f)
         )
         RegionRankBarItem(
-            item = rankItems.first(),
+            item = rankItems.first().copy(rank = 1),
             modifier = Modifier.weight(1f)
         )
         RegionRankBarItem(
-            item = rankItems[2],
+            item = rankItems[2].copy(rank = 3),
             modifier = Modifier.weight(1f)
         )
     }

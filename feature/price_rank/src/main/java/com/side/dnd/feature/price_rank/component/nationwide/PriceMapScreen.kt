@@ -67,6 +67,7 @@ fun PriceMapScreen(
                 )
             }
         } else {
+            val firstRankInfo = productRanking.sortedRanking.first()
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -89,7 +90,7 @@ fun PriceMapScreen(
             }
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = productRanking.ranking.first().regionName,
+                text = firstRankInfo.regionName,
                 style = EodigoTheme.typography.title1Medium,
                 color = EodigoColor.Normal,
             )
@@ -107,6 +108,7 @@ fun MapScreen(
     isEmptyKeyword: Boolean = false,
     productRanking: ProductRanking
 ) {
+
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -209,7 +211,7 @@ fun PriceMapScreenPreview() {
 @Composable
 fun PriceMapScreenLoadingPreview() {
     PriceMapScreen(
-        isEmptyKeyword = false,
+        isEmptyKeyword = true,
         productRanking = ProductRanking(
             productId = 1,
             productName = "테스트",
