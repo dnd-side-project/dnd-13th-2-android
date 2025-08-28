@@ -66,6 +66,7 @@ import side.dnd.core.compositionLocals.LocalNavigationActions
 import side.dnd.core.compositionLocals.LocalSharedElementTransitionScope
 import side.dnd.design.R
 import side.dnd.design.component.CircularFabState
+import side.dnd.design.component.FabType
 import side.dnd.design.component.LocalCircularFabState
 import side.dnd.design.component.button.clickableAvoidingDuplication
 import side.dnd.design.component.effect.RememberEffect
@@ -86,10 +87,14 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel<HomeViewModel>(),
     context: Context = LocalContext.current,
 ) {
+    val fabState = LocalCircularFabState.current
+
     LifecycleEventEffect(Lifecycle.Event.ON_CREATE) {
         NaverMapSdk.getInstance(context).client =
             NaverMapSdk.NcpKeyClient(BuildConfig.NAVER_MAP_KEY)
+        fabState.updateFabType(FabType.Circle)
     }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val navActions = LocalNavigationActions.current
@@ -117,7 +122,6 @@ fun HomeScreen(
     }
     val localFABOnClickedListener = LocalFabOnClickedListener.current
     val locationSource = rememberFusedLocationSource()
-    val fabState = LocalCircularFabState.current
 
     LaunchedEffect(Unit) {
         snapshotFlow {
