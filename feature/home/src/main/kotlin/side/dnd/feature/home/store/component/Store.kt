@@ -87,118 +87,116 @@ private fun StoreCard(
         iterations = LottieConstants.IterateForever
     )
 
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(128.dp)
             .shadow(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(8.dp),
             )
             .background(Color.White, RoundedCornerShape(8.dp))
+            .padding(14.dp),
     ) {
-        Row(
-            modifier = Modifier.padding(14.dp)
+        SubcomposeAsyncImageWithPreview(
+            modifier = Modifier
+                .size(100.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            placeHolderPreview = R.drawable.ic_launcher_background,
+            model = ImageRequest.Builder(context).data(store.image).build(),
+            loading = {
+                ProgressIndicatorRotating()
+            },
+            error = {
+                LottieAnimation(
+                    composition = composition,
+                    progress = { lottieProgress },
+                    modifier = Modifier.height(300.dp)
+                )
+            },
+            contentDescription = "Store image",
+            contentScale = ContentScale.Crop,
+        )
+
+        HorizontalSpacer(16.dp)
+
+        Column(
+            modifier = Modifier
+                .padding(top = 2.dp, bottom = 3.dp),
+            verticalArrangement = Arrangement.Center
+
         ) {
-            SubcomposeAsyncImageWithPreview(
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                placeHolderPreview = R.drawable.ic_launcher_background,
-                model = ImageRequest.Builder(context).data(store.image).build(),
-                loading = {
-                    ProgressIndicatorRotating()
+            Text(
+                text = store.name,
+                style = LocalTypography.current.body1Medium,
+            )
+            VerticalSpacer(33.dp)
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(
+                        if (isFirst && sortType == SortType.PRICE)
+                            SpanStyle(
+                                color = Color(0xFF8369FF),
+                                fontSize = 18.tu,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        else
+                            SpanStyle(
+                                color = Color(0xFF817F84),
+                                fontSize = 18.tu,
+                            )
+                    ) {
+                        append("${store.price}")
+                    }
+                    append("원")
                 },
-                error = {
-                    LottieAnimation(
-                        composition = composition,
-                        progress = { lottieProgress },
-                        modifier = Modifier.height(300.dp)
-                    )
-                },
-                contentDescription = "Store image",
-                contentScale = ContentScale.Crop,
+                style = LocalTypography.current.body2Medium,
             )
 
-            HorizontalSpacer(16.dp)
+            VerticalSpacer(7.dp)
 
-            Column(
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .padding(top = 2.dp, bottom = 3.dp),
-                verticalArrangement = Arrangement.Center
-
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = store.name,
-                    style = LocalTypography.current.body1Medium,
-                )
-                VerticalSpacer(33.dp)
                 Text(
                     text = buildAnnotatedString {
                         withStyle(
-                            if (isFirst && sortType == SortType.PRICE)
+                            if (isFirst && sortType == SortType.DISTANCE)
                                 SpanStyle(
                                     color = Color(0xFF8369FF),
-                                    fontSize = 18.tu,
                                     fontWeight = FontWeight.Bold,
                                 )
                             else
                                 SpanStyle(
                                     color = Color(0xFF817F84),
-                                    fontSize = 18.tu,
                                 )
                         ) {
-                            append("${store.price}")
+                            append("${store.distance}m")
                         }
-                        append("원")
                     },
-                    style = LocalTypography.current.body2Medium,
+                    style = LocalTypography.current.body4Medium,
+                    color = Color(0xFF868686),
+                    modifier = Modifier.alignByBaseline()
                 )
-
-                VerticalSpacer(7.dp)
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(
-                                if (isFirst && sortType == SortType.DISTANCE)
-                                    SpanStyle(
-                                        color = Color(0xFF8369FF),
-                                        fontWeight = FontWeight.Bold,
-                                    )
-                                else
-                                    SpanStyle(
-                                        color = Color(0xFF817F84),
-                                    )
-                            ) {
-                                append("${store.distance}m")
-                            }
-                        },
-                        style = LocalTypography.current.body4Medium,
-                        color = Color(0xFF868686),
-                    )
-                    HorizontalSpacer(4.dp)
-                    Canvas(Modifier.size(2.dp)) {
-                        drawCircle(
-                            color = Color(0xFF868686)
-                        )
-                    }
-                    HorizontalSpacer(4.dp)
-                    Text(
-                        text = store.address,
-                        style = LocalTypography.current.body4Medium,
-                        color = Color(0xFF868686),
+                HorizontalSpacer(4.dp)
+                Canvas(Modifier.size(2.dp)) {
+                    drawCircle(
+                        color = Color(0xFF868686)
                     )
                 }
+                HorizontalSpacer(4.dp)
+                Text(
+                    text = store.address,
+                    style = LocalTypography.current.body4Medium,
+                    color = Color(0xFF868686),
+                    modifier = Modifier.alignByBaseline(),
+                    maxLines = 1,
+                )
             }
         }
     }
+
 }
 
 @Composable
