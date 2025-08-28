@@ -41,8 +41,8 @@ fun NationwideScreen(
         ) { page ->
             when (page) {
                 0 -> PriceMapScreen(
+                    isEmptyKeyword = uiState.keyWord.isEmpty(),
                     productRanking = uiState.productRanking,
-                    isEmptyKeyword = uiState.isEmptyKeyword
                 )
 
                 1 -> PriceChartScreen(

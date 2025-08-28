@@ -237,8 +237,12 @@ fun PriceChart(
             val yFactor = if (yAxisRange > 0) chartHeight.toPx() / yAxisRange else 1f
             val selectedYFromTop = (annualPrices[selectedIndex] - yAxisStart) * yFactor
             val circleY = 24.dp.toPx() + (chartHeight.toPx() - selectedYFromTop)
-            val tooltipY = (circleY / density.density).dp - 50.dp
-            
+            val circleRadius = 20.dp
+            val cardHeight = 32.dp
+            val arrowHeight = 8.dp
+            val tooltipY = (circleY / density.density).dp - circleRadius - cardHeight - arrowHeight
+
+
             Card(
                 modifier = Modifier
                     .offset {
@@ -256,7 +260,7 @@ fun PriceChart(
                             moveTo(arrowOffsetX - arrowWidth / 2, size.height)
                             quadraticBezierTo(
                                 arrowOffsetX - arrowWidth / 4, size.height + arrowHeight / 2,
-                                arrowOffsetX, size.height + arrowHeight // 꼬리 끝점
+                                arrowOffsetX, size.height + arrowHeight
                             )
                             quadraticBezierTo(
                                 arrowOffsetX + arrowWidth / 4, size.height + arrowHeight / 2,

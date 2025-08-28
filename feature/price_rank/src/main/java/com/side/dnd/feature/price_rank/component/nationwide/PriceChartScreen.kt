@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.side.dnd.feature.price_rank.R
 import com.side.dnd.feature.price_rank.model.MockProductChartData
@@ -26,8 +27,7 @@ fun PriceChartScreen(
     chartData: ProductChartData,
     modifier: Modifier = Modifier
 ) {
-//    val isEmptyData = chartData.annualData.isEmpty()
-    val isEmptyData = true
+    val isEmptyData = chartData.annualData.isEmpty()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -90,4 +90,20 @@ fun PriceChartScreen(
             modifier = Modifier
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PriceChartScreenPreview() {
+    PriceChartScreen(
+        chartData = MockProductChartData.sampleChartData
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PriceChartScreenEmptyPreview() {
+    PriceChartScreen(
+        chartData = MockProductChartData.emptyChartData
+    )
 }

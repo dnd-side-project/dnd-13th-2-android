@@ -1,5 +1,6 @@
 package com.side.dnd.feature.price_rank
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.dnd.feature.price_rank.data.repository.ProductPriceRepository
@@ -25,13 +26,14 @@ class PriceRankViewModel @Inject constructor(
     val errorFlow get() = _errorFlow.asSharedFlow()
 
     init {
-
+//        loadProductData(42, "수박")
     }
 
     fun loadProductData(productId: Int, productName: String) {
         viewModelScope.launch {
             try {
                 val rankingResult = productPriceRepository.getProductRanking(productId)
+                Log.e("result", "result : $rankingResult")
                 rankingResult.onSuccess { ranking ->
                     _rankUiState.update { currentState ->
                         currentState.copy(

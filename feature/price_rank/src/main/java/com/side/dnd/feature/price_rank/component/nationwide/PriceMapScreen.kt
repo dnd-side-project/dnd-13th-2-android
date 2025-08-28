@@ -31,8 +31,8 @@ import side.dnd.design.theme.EodigoTheme
 
 @Composable
 fun PriceMapScreen(
+    isEmptyKeyword: Boolean,
     productRanking: ProductRanking,
-    isEmptyKeyword: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -121,7 +121,6 @@ fun MapScreen(
                 .height(maxHeight)
         )
 
-        if (isEmptyKeyword && productRanking.ranking.isNotEmpty()) {
             val rankings = if(isEmptyKeyword) MockProductRanking.sampleProductRanking.ranking else productRanking.ranking
 
             rankings.forEachIndexed { index, regionRanking ->
@@ -158,7 +157,6 @@ fun MapScreen(
                         )
                 )
             }
-        }
     }
 }
 
@@ -193,6 +191,7 @@ fun PriceCircle(
 @Composable
 fun PriceMapScreenPreview() {
     PriceMapScreen(
+        isEmptyKeyword = true,
         productRanking = ProductRanking(
             productId = 1,
             productName = "테스트",
@@ -210,7 +209,7 @@ fun PriceMapScreenPreview() {
 @Composable
 fun PriceMapScreenLoadingPreview() {
     PriceMapScreen(
-        isEmptyKeyword = true,
+        isEmptyKeyword = false,
         productRanking = ProductRanking(
             productId = 1,
             productName = "테스트",
