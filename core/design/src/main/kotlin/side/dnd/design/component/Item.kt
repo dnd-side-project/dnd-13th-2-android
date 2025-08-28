@@ -42,9 +42,7 @@ fun LocalRankRow(
     rank: Int,
     locationName: String,
     price: Int,
-    modifier: Modifier = Modifier,
-    maxScreen: Boolean = true,
-    onClick: () -> Unit = {}
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -53,29 +51,35 @@ fun LocalRankRow(
                 color = Color.White,
                 shape = RoundedCornerShape(12.dp)
             )
-            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
                 .padding(horizontal = 14.dp, vertical = 7.dp),
             contentAlignment = Alignment.Center
         ) {
-            if (rank <=3 ) {
-                val  resource = when (rank) {
-                    1 -> R.drawable.ic_first_grade
-                    2 -> R.drawable.ic_second_grad
-                    3 -> R.drawable.ic_third_grade
-                    else -> R.drawable.ic_third_grade
-                }
+            val resource = when (rank) {
+                1 -> R.drawable.ic_first_grade
+                2 -> R.drawable.ic_second_grad
+                3 -> R.drawable.ic_third_grade
+                else -> R.drawable.ic_defalut_grade
+            }
+
+            if (rank <= 3) {
                 Image(
                     painter = painterResource(resource),
                     contentDescription = null,
-//                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier
+                        .size(48.dp)
                 )
-            }else {
+            } else {
+                Image(
+                    painter = painterResource(resource),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                )
                 Text(
                     text = rank.toString(),
                     style = TextStyle(
@@ -105,7 +109,7 @@ fun LocalRankRow(
                     letterSpacing = (-0.75).sp
                 )
             )
-            
+
             Text(
                 text = "${price}원",
                 style = TextStyle(
@@ -138,7 +142,7 @@ fun CircleCategoryItem(
                     shape = CircleShape,
                     spotColor = Color.Black.copy(alpha = 0.1f)
                 )
-                .clickable{
+                .clickable {
                     onClick(title)
                 }
                 .size(56.dp)
@@ -158,9 +162,9 @@ fun CircleCategoryItem(
 
             )
         }
-        
+
         Spacer(modifier = Modifier.height(17.dp))
-        
+
         Text(
             text = title,
             style = TextStyle(

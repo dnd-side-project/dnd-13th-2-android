@@ -67,7 +67,6 @@ fun PriceMapScreen(
                 )
             }
         } else {
-            val firstRankInfo = productRanking.sortedRanking.first()
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -90,7 +89,7 @@ fun PriceMapScreen(
             }
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = firstRankInfo.regionName,
+                text = productRanking.ranking.first().regionName,
                 style = EodigoTheme.typography.title1Medium,
                 color = EodigoColor.Normal,
             )

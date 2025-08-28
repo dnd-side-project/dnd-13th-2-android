@@ -5,10 +5,7 @@ data class ProductRanking(
     val productName: String,
     val surveyDate: String,
     val ranking: List<RegionRanking>
-) {
-    val sortedRanking: List<RegionRanking>
-        get() = ranking.sortedByDescending { it.price }
-}
+)
 
 data class RegionRanking(
     val rank: Int,

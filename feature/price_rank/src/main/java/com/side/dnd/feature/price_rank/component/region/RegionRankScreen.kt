@@ -1,5 +1,6 @@
 package com.side.dnd.feature.price_rank.component.region
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,6 +31,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.side.dnd.feature.price_rank.PriceRankViewModel
 import com.side.dnd.feature.price_rank.R
 import com.side.dnd.feature.price_rank.model.MockProductRanking
 import com.side.dnd.feature.price_rank.model.NationWideUiState
@@ -50,7 +53,15 @@ fun RegionRankScreen(
     val productRanking = uiState.productRanking
     val isEmptyKeyword = uiState.keyWord.isEmpty()
 
-    val rankingList = if (isEmptyKeyword) MockProductRanking.emptyProductRanking.ranking else productRanking.sortedRanking
+    val rankingList = if (isEmptyKeyword) {
+        MockProductRanking.emptyProductRanking.ranking.mapIndexed { index, regionRanking ->
+            regionRanking.copy(rank = index + 1)
+        }
+    } else {
+        productRanking.ranking.mapIndexed { index, regionRanking ->
+            regionRanking.copy(rank = index + 1)
+        }
+    }
     val bgColor = if(isExpanded) EodigoColor.Light else EodigoColor.White
 
     LazyColumn(
@@ -90,7 +101,7 @@ fun RegionRankScreen(
                         )
                     }
                 } else {
-                    val firstRankInfo = productRanking.sortedRanking.first()
+                    Log.e("loadProductTrendData 22",productRanking.productName )
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
@@ -114,14 +125,14 @@ fun RegionRankScreen(
                     Spacer(modifier = Modifier.size(5.dp))
 
                     Text(
-                        text = firstRankInfo.regionName,
+                        text = productRanking.ranking.first().regionName,
                         style = EodigoTheme.typography.title1Medium,
                         color = EodigoColor.Black,
                     )
                 }
                 
                 Spacer(modifier = Modifier.height(15.dp))
-                if (!isEmptyKeyword && !isExpanded){
+                if (!isEmptyKeyword && !isExpanded) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
@@ -172,7 +183,7 @@ fun RegionRankScreen(
                     rank = product.rank,
                     locationName = product.regionName,
                     price = product.price,
-                    maxScreen = true,
+
                     modifier = Modifier
                         .padding(start = 22.dp, end = 22.dp, top = 10.dp, bottom = 10.dp)
                         .fillMaxWidth()
@@ -180,9 +191,7 @@ fun RegionRankScreen(
                         .then(
                             if (isEmptyKeyword) Modifier.blur(3.dp)
                             else Modifier
-                        ),
-
-                    onClick = {}
+                        )
                 )
             }
         } else if (rankingList.size > 3 || isEmptyKeyword) {
@@ -192,7 +201,6 @@ fun RegionRankScreen(
                 rank = product.rank,
                 locationName = product.regionName,
                 price = product.price,
-                maxScreen = false,
                 modifier = Modifier
                     .padding(start = 22.dp, end = 22.dp, top = 10.dp, bottom = 10.dp)
                     .fillMaxWidth()
@@ -200,9 +208,7 @@ fun RegionRankScreen(
                     .then(
                         if (isEmptyKeyword) Modifier.blur(3.dp)
                         else Modifier
-                    ),
-
-                onClick = {}
+                    )
             )
         }
 
@@ -233,15 +239,15 @@ fun RankingBarComponent(
         verticalAlignment = Alignment.Bottom
     ) {
         RegionRankBarItem(
-            item = rankItems[1].copy(rank = 2),
+            item = rankItems[1],
             modifier = Modifier.weight(1f)
         )
         RegionRankBarItem(
-            item = rankItems.first().copy(rank = 1),
+            item = rankItems.first(),
             modifier = Modifier.weight(1f)
         )
         RegionRankBarItem(
-            item = rankItems[2].copy(rank = 3),
+            item = rankItems[2],
             modifier = Modifier.weight(1f)
         )
     }
