@@ -3,6 +3,8 @@ package com.side.dnd.feature.price_rank.component.nationwide
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -15,6 +17,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +37,7 @@ import side.dnd.design.theme.EodigoTheme
 fun PriceMapScreen(
     isEmptyKeyword: Boolean,
     productRanking: ProductRanking,
+    onRegionClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -97,7 +102,8 @@ fun PriceMapScreen(
         Spacer(modifier = Modifier.height(52.dp))
         MapScreen(
             isEmptyKeyword = isEmptyKeyword,
-            productRanking = productRanking
+            productRanking = productRanking,
+            onRegionClick = onRegionClick
         )
     }
 }
@@ -105,7 +111,8 @@ fun PriceMapScreen(
 @Composable
 fun MapScreen(
     isEmptyKeyword: Boolean = false,
-    productRanking: ProductRanking
+    productRanking: ProductRanking,
+    onRegionClick: (() -> Unit)? = null
 ) {
 
     BoxWithConstraints(
@@ -122,7 +129,7 @@ fun MapScreen(
                 .height(maxHeight)
         )
 
-            val rankings = if(isEmptyKeyword) MockProductRanking.sampleProductRanking.ranking else productRanking.ranking
+            val rankings = if(isEmptyKeyword) MockProductRanking.sampleProductRanking.ranking else productRanking.ranking.take(3 )
 
             rankings.forEachIndexed { index, regionRanking ->
                 val isFirstRank = index == 0
@@ -137,6 +144,7 @@ fun MapScreen(
                     "울산" -> Pair(0.75f, 0.6f)
                     "세종" -> Pair(0.4f, 0.5f)
                     "경기" -> Pair(0.4f, 0.25f)
+                    "성남" -> Pair(0.45f, 0.22f)
                     "강원" -> Pair(0.6f, 0.15f)
                     "충북" -> Pair(0.5f, 0.4f)
                     "충남" -> Pair(0.35f, 0.55f)
@@ -151,10 +159,11 @@ fun MapScreen(
                 PriceCircle(
                     text = priceData,
                     isFirstRank = isFirstRank,
+                    onRegionClick = onRegionClick,
                     modifier = Modifier
                         .offset(
-                            x = maxWidth * xOffset - (if (isFirstRank) 61.dp else 40.dp),
-                            y = maxHeight * yOffset - (if (isFirstRank) 61.dp else 40.dp)
+                            x = (maxWidth * xOffset - (if (isFirstRank) 61.dp else 40.dp)).coerceAtLeast(0.dp),
+                            y = (maxHeight * yOffset - (if (isFirstRank) 61.dp else 40.dp)).coerceAtLeast(0.dp)
                         )
                 )
             }
@@ -165,16 +174,26 @@ fun MapScreen(
 fun PriceCircle(
     text: String,
     isFirstRank: Boolean = false,
+    onRegionClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val size = if (isFirstRank) 122.dp else 80.dp
     val bgResource =
         if (isFirstRank) painterResource(R.drawable.ic_first_price_bg) else painterResource(R.drawable.ic_second_price_bg)
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(size)
-            .clickable {}
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+                println("DEBUG: PriceCircle clicked!")
+                onRegionClick?.invoke()
+            }
     ) {
         Image(
             painter = bgResource,

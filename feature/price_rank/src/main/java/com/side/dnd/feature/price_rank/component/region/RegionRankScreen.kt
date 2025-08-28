@@ -101,10 +101,9 @@ fun RegionRankScreen(
                         )
                     }
                 } else {
-                    Log.e("loadProductTrendData 22",productRanking.productName )
                     Row(
                         horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             text = stringResource(id = R.string.price_map_title_first),

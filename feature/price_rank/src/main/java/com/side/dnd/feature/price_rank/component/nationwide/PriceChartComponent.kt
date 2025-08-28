@@ -43,6 +43,21 @@ import com.side.dnd.feature.price_rank.model.AnnualPriceData
 import side.dnd.design.theme.EodigoColor
 import kotlin.math.roundToInt
 
+private fun formatPriceToManWon(price: Int): String {
+    return when {
+        price >= 10000 -> {
+            val manWon = price / 10000
+            val remainder = price % 10000
+            when {
+                remainder == 0 -> "${String.format("%,d", manWon)}만원"
+                remainder >= 1000 -> "${String.format("%,d", manWon)}.${remainder / 1000}만원"
+                else -> "${String.format("%,d", manWon)}만원"
+            }
+        }
+        price >= 1000 -> "${String.format("%,d", price / 1000)}천원"
+        else -> "${String.format("%,d", price)}원"
+    }
+}
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
@@ -89,7 +104,7 @@ fun PriceChart(
                             (yAxisStart + yAxisRange * 0.4).toInt(),
                             (yAxisStart + yAxisRange * 0.1).toInt()
                         )
-                        yPositions.map { "${it}원" }
+                        yPositions.map { formatPriceToManWon(it) }
                     }
 
                     val yGridPositions = listOf(
@@ -273,7 +288,7 @@ fun PriceChart(
                 colors = CardDefaults.cardColors(containerColor = Color.Black)
             ) {
                 Text(
-                    text = if (isEmptyKeyword) "n,nnn원" else "${annualPrices[selectedIndex]}원",
+                    text = if (isEmptyKeyword) "n,nnn원" else formatPriceToManWon(annualPrices[selectedIndex]),
                     color = Color.White,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
