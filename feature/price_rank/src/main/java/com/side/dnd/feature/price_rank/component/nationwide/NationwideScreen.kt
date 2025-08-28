@@ -46,6 +46,7 @@ fun NationwideScreen(
                 )
 
                 1 -> PriceChartScreen(
+                    isEmptyKeyword = uiState.keyWord.isEmpty(),
                     chartData = uiState.chartData
                 )
             }

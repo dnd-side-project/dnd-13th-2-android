@@ -27,13 +27,14 @@ class PriceRankViewModel @Inject constructor(
 
     init {
 //        loadProductData(42, "수박")
+//        loadProductTrendData(42, "수박")
     }
 
     fun loadProductData(productId: Int, productName: String) {
         viewModelScope.launch {
             try {
                 val rankingResult = productPriceRepository.getProductRanking(productId)
-                Log.e("result", "result : $rankingResult")
+                Log.e("loadProductData", "result : $rankingResult")
                 rankingResult.onSuccess { ranking ->
                     _rankUiState.update { currentState ->
                         currentState.copy(
@@ -54,9 +55,14 @@ class PriceRankViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val trendResult = productPriceRepository.getProductTrend(productId)
+                Log.e("loadProductTrendData", "result : $trendResult")
+
                 trendResult.onSuccess { chartData ->
                     _rankUiState.update { currentState ->
-                        currentState.copy(chartData = chartData)
+                        currentState.copy(
+                            keyWord = productName,
+                            chartData = chartData
+                        )
                     }
                 }.onFailure { error ->
                     _errorFlow.emit(error)

@@ -47,21 +47,20 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun PriceChart(
+    isEmptyKeyword: Boolean,
     data: List<AnnualPriceData>,
     modifier: Modifier = Modifier
 ) {
     val textMeasurer = rememberTextMeasurer()
     val density = LocalDensity.current
-    val isEmptyData = true
 
     val highlightColor = Color(0xFF8B5CF6)
 
-    val annualPrices = data.map { it.averagePrice }
-    val years =
-        if (isEmptyData) listOf(2015, 2017, 2019, 2021, 2023, 2025) else data.map { it.year }
-    val numPoints = if (isEmptyData) years.size else data.size
+    val annualPrices = if (isEmptyKeyword) data.map { it.averagePrice } else data.filter { it.year % 2 == 1 }.map { it.averagePrice }
+    val years = if (isEmptyKeyword) listOf(2015, 2017, 2019, 2021, 2023, 2025) else data.map { it.year }.filter { it % 2 == 1 }
+    val numPoints = years.size
 
-    var selectedIndex by remember { mutableIntStateOf(numPoints - 1) }
+    var selectedIndex by remember { mutableIntStateOf((numPoints - 1).coerceAtLeast(0)) }
 
     Box(modifier = modifier) {
         Column {
@@ -75,7 +74,7 @@ fun PriceChart(
                         .height(250.dp)
                         .padding(top = 24.dp, bottom = 24.dp, start = 16.dp)
                 ) {
-                    val yLabels = if (isEmptyData) {
+                    val yLabels = if (isEmptyKeyword) {
                         listOf("n만원", "n백원", "n십원", "n원")
                     } else {
                         val minPrice = data.map { it.averagePrice }.minOrNull() ?: 0
@@ -270,11 +269,11 @@ fun PriceChart(
                         }
                         drawPath(arrowPath, Color.Black)
                     },
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.Black)
             ) {
                 Text(
-                    text = if (isEmptyData) "n,nnn원" else "${annualPrices[selectedIndex]}원",
+                    text = if (isEmptyKeyword) "n,nnn원" else "${annualPrices[selectedIndex]}원",
                     color = Color.White,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
@@ -302,6 +301,7 @@ fun PriceChartPreview() {
     )
 
     PriceChart(
+        isEmptyKeyword = true,
         data = sampleData,
         modifier = Modifier.padding(16.dp)
     )

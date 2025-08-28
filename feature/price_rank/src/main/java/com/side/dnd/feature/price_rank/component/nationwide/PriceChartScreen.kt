@@ -24,10 +24,12 @@ import side.dnd.design.theme.EodigoTheme
 
 @Composable
 fun PriceChartScreen(
+    isEmptyKeyword: Boolean,
     chartData: ProductChartData,
     modifier: Modifier = Modifier
 ) {
-    val isEmptyData = chartData.annualData.isEmpty()
+    val chartAnnualData = if (isEmptyKeyword) MockProductChartData.emptyChartData.annualData else chartData.annualData
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -40,7 +42,7 @@ fun PriceChartScreen(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (isEmptyData) {
+            if (isEmptyKeyword) {
                 Text(
                     text = stringResource(R.string.price_chart_empty_title),
                     style = EodigoTheme.typography.body3Medium,
@@ -67,9 +69,8 @@ fun PriceChartScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val formattedRate = String.format("%.3f", chartData.inflationRate)
-            val firstText = if (isEmptyData) stringResource(R.string.price_chart_content_empty_first) else "+${formattedRate}% "
-            val secondText = if (isEmptyData) stringResource(id = R.string.price_chart_content_empty_second) else stringResource(id = R.string.price_chart_content_first)
-
+            val firstText = if (isEmptyKeyword) stringResource(R.string.price_chart_content_empty_first) else "+${formattedRate}% "
+            val secondText = if (isEmptyKeyword) stringResource(id = R.string.price_chart_content_empty_second) else stringResource(id = R.string.price_chart_content_first)
             Text(
                 text = firstText,
                 style = EodigoTheme.typography.title1Medium,
@@ -83,11 +84,12 @@ fun PriceChartScreen(
             )
         }
 
-        Spacer(modifier = Modifier.size(40.dp))
+        Spacer(modifier = Modifier.size(80.dp))
 
         PriceChart(
-            data = MockProductChartData.sampleChartData.annualData,
-            modifier = Modifier
+            isEmptyKeyword = isEmptyKeyword,
+            data = chartAnnualData,
+            modifier = Modifier.padding(16.dp)
         )
     }
 }
@@ -96,6 +98,7 @@ fun PriceChartScreen(
 @Composable
 fun PriceChartScreenPreview() {
     PriceChartScreen(
+        isEmptyKeyword = false,
         chartData = MockProductChartData.sampleChartData
     )
 }
@@ -104,6 +107,7 @@ fun PriceChartScreenPreview() {
 @Composable
 fun PriceChartScreenEmptyPreview() {
     PriceChartScreen(
+        isEmptyKeyword = true,
         chartData = MockProductChartData.emptyChartData
     )
 }
