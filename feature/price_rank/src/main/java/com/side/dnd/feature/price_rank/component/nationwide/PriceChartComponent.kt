@@ -41,27 +41,42 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import com.side.dnd.feature.price_rank.model.AnnualPriceData
 import side.dnd.design.theme.EodigoColor
+import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
+private fun formatPriceToManWon(price: Int): String {
+    return when {
+        price >= 10000 -> {
+            val manWon = price / 10000
+            val remainder = price % 10000
+            when {
+                remainder == 0 -> "${String.format("%,d", manWon)}만원"
+                remainder >= 1000 -> "${String.format("%,d", manWon)}.${remainder / 1000}만원"
+                else -> "${String.format("%,d", manWon)}만원"
+            }
+        }
+        price >= 1000 -> "${String.format("%,d", price / 1000)}천원"
+        else -> "${String.format("%,d", price)}원"
+    }
+}
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun PriceChart(
+    isEmptyKeyword: Boolean,
     data: List<AnnualPriceData>,
     modifier: Modifier = Modifier
 ) {
     val textMeasurer = rememberTextMeasurer()
     val density = LocalDensity.current
-    val isEmptyData = true
 
     val highlightColor = Color(0xFF8B5CF6)
 
-    val annualPrices = data.map { it.averagePrice }
-    val years =
-        if (isEmptyData) listOf(2015, 2017, 2019, 2021, 2023, 2025) else data.map { it.year }
-    val numPoints = if (isEmptyData) years.size else data.size
+    val annualPrices = if (isEmptyKeyword) data.map { it.averagePrice } else data.filter { it.year % 2 == 1 }.map { it.averagePrice }
+    val years = if (isEmptyKeyword) listOf(2015, 2017, 2019, 2021, 2023, 2025) else data.map { it.year }.filter { it % 2 == 1 }
+    val numPoints = years.size
 
-    var selectedIndex by remember { mutableIntStateOf(numPoints - 1) }
+    var selectedIndex by remember { mutableIntStateOf((numPoints - 1).coerceAtLeast(0)) }
 
     Box(modifier = modifier) {
         Column {
@@ -75,7 +90,7 @@ fun PriceChart(
                         .height(250.dp)
                         .padding(top = 24.dp, bottom = 24.dp, start = 16.dp)
                 ) {
-                    val yLabels = if (isEmptyData) {
+                    val yLabels = if (isEmptyKeyword) {
                         listOf("n만원", "n백원", "n십원", "n원")
                     } else {
                         val minPrice = data.map { it.averagePrice }.minOrNull() ?: 0
@@ -90,7 +105,7 @@ fun PriceChart(
                             (yAxisStart + yAxisRange * 0.4).toInt(),
                             (yAxisStart + yAxisRange * 0.1).toInt()
                         )
-                        yPositions.map { "${it}원" }
+                        yPositions.map { formatPriceToManWon(it) }
                     }
 
                     val yGridPositions = listOf(
@@ -237,8 +252,12 @@ fun PriceChart(
             val yFactor = if (yAxisRange > 0) chartHeight.toPx() / yAxisRange else 1f
             val selectedYFromTop = (annualPrices[selectedIndex] - yAxisStart) * yFactor
             val circleY = 24.dp.toPx() + (chartHeight.toPx() - selectedYFromTop)
-            val tooltipY = (circleY / density.density).dp - 50.dp
-            
+            val circleRadius = 20.dp
+            val cardHeight = 32.dp
+            val arrowHeight = 8.dp
+            val tooltipY = (circleY / density.density).dp - circleRadius - cardHeight - arrowHeight
+
+
             Card(
                 modifier = Modifier
                     .offset {
@@ -256,7 +275,7 @@ fun PriceChart(
                             moveTo(arrowOffsetX - arrowWidth / 2, size.height)
                             quadraticBezierTo(
                                 arrowOffsetX - arrowWidth / 4, size.height + arrowHeight / 2,
-                                arrowOffsetX, size.height + arrowHeight // 꼬리 끝점
+                                arrowOffsetX, size.height + arrowHeight
                             )
                             quadraticBezierTo(
                                 arrowOffsetX + arrowWidth / 4, size.height + arrowHeight / 2,
@@ -266,11 +285,11 @@ fun PriceChart(
                         }
                         drawPath(arrowPath, Color.Black)
                     },
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.Black)
             ) {
                 Text(
-                    text = if (isEmptyData) "n,nnn원" else "${annualPrices[selectedIndex]}원",
+                    text = if (isEmptyKeyword) "n,nnn원" else DecimalFormat("#,###").format(annualPrices[selectedIndex]),
                     color = Color.White,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
@@ -298,6 +317,7 @@ fun PriceChartPreview() {
     )
 
     PriceChart(
+        isEmptyKeyword = true,
         data = sampleData,
         modifier = Modifier.padding(16.dp)
     )

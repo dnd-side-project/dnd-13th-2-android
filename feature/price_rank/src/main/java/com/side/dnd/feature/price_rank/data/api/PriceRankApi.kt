@@ -16,4 +16,5 @@ interface PriceRankApi {
     suspend fun getProductTrends(
         @Path("productId") productId: Int
     ): ProductChartData
+
 }

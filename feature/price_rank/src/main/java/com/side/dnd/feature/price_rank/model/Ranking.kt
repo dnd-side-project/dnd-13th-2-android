@@ -15,27 +15,51 @@ data class RegionRanking(
 
 object MockProductRanking {
     val sampleProductRanking = ProductRanking(
-        productId = 1,
-        productName = "감자",
+        productId = 0,
+        productName = "",
         surveyDate = "",
         ranking = listOf(
             RegionRanking(1, "울산", 1000),
             RegionRanking(2, "충남", 4800),
-            RegionRanking(3, "강원", 4500),
-//            RegionRanking(4, "인천", 4200),
-//            RegionRanking(5, "광주", 4000),
-//            RegionRanking(6, "대전", 3800),
-//            RegionRanking(7, "울산", 3600),
-//            RegionRanking(8, "세종", 3400),
-//            RegionRanking(9, "경기", 3200),
-//            RegionRanking(10, "강원", 3000),
-//            RegionRanking(11, "충북", 2800),
-//            RegionRanking(12, "충남", 2600),
-//            RegionRanking(13, "전북", 2400),
-//            RegionRanking(14, "전남", 2200),
-//            RegionRanking(15, "경북", 2000),
-//            RegionRanking(16, "경남", 1800),
-//            RegionRanking(17, "제주", 1600)
+            RegionRanking(3, "강원", 4500)
+//            RegionRanking(5, "인천", 4200),
+//            RegionRanking(6, "광주", 4000),
+//            RegionRanking(7, "대전", 3800),
+//            RegionRanking(8, "울산", 3600),
+//            RegionRanking(9, "세종", 3400),
+//            RegionRanking(10, "경기", 3200),
+//            RegionRanking(11, "강원", 3000),
+//            RegionRanking(12, "충북", 2800),
+//            RegionRanking(13, "충남", 2600),
+//            RegionRanking(14, "전북", 2400),
+//            RegionRanking(15, "전남", 2200),
+//            RegionRanking(16, "경북", 2000),
+//            RegionRanking(17, "경남", 1800),
+//            RegionRanking(18, "제주", 1600)
         )
     )
+
+    val emptyProductRanking = ProductRanking(
+        productId = 0,
+        productName = "",
+        surveyDate = "",
+        ranking = listOf(
+            RegionRanking(1, "서울특별시", 10900),
+            RegionRanking(2, "지역명지역", 10900),
+            RegionRanking(3, "지역명", 10900),
+            RegionRanking(4, "지역명이 들어가요!", 1200),
+            RegionRanking(5, "지역명이 들어가요!", 1200),
+            RegionRanking(6, "지역명이 들어가요!", 1200),
+            RegionRanking(7, "지역명이 들어가요!", 1200),
+            RegionRanking(8, "지역명이 들어가요!", 1200),
+            RegionRanking(9, "지역명이 들어가요!", 1200),
+            RegionRanking(10, "지역명이 들어가요!", 1200),
+            RegionRanking(11, "지역명이 들어가요!", 1200),
+            RegionRanking(12, "지역명이 들어가요!", 1200),
+            RegionRanking(13, "지역명이 들어가요!", 1200),
+            RegionRanking(14, "지역명이 들어가요!", 1200),
+        )
+    )
+
+
 }

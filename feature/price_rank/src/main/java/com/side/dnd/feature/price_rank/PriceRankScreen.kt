@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,30 +39,10 @@ import side.dnd.design.component.effect.RememberEffect
 import side.dnd.design.theme.EodigoColor
 
 @Composable
-internal fun PriceRankRoute(
-    viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>(),
-) {
-    val context = LocalContext.current
-    val uiState by viewModel.rankUiState.collectAsStateWithLifecycle()
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(EodigoColor.White)
-            .systemBarsPadding()
-    ) {
-        PriceRankScreen(viewModel = viewModel)
-    }
-}
-
-@Composable
-fun PriceRankLoading() {
-
-}
-
-@Composable
 fun PriceRankScreen(
-    viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>()
+    viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>(),
+    productId: Int = 0,
+    productName: String = ""
 ) {
     val uiState by viewModel.rankUiState.collectAsStateWithLifecycle()
     val tabs = listOf("전국팔도", "지역별")
@@ -75,6 +56,18 @@ fun PriceRankScreen(
     }
     val navigationAction = LocalNavigationActions.current
     val fabState = LocalCircularFabState.current
+
+    LaunchedEffect(productId, productName) {
+        if (productId > 0 && productName.isNotEmpty()) {
+            viewModel.loadProductData(productId, productName)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.tabChangeFlow.collect { tabIndex ->
+            pagerState.animateScrollToPage(tabIndex)
+        }
+    }
 
     RememberEffect(Unit) {
         fabOnClickListener {
@@ -101,7 +94,7 @@ fun PriceRankScreen(
                 content = { page ->
                     when (page) {
                         0 -> { NationwideScreen(uiState = uiState, viewModel = viewModel) }
-                        1 -> { RegionRankScreen(uiState = uiState, viewModel = viewModel) }
+                        1 -> { RegionRankScreen(uiState = uiState) }
                     }
                 },
                 pagerState = pagerState,

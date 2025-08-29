@@ -27,7 +27,7 @@ fun NationwideScreen(
     uiState: NationWideUiState,
     viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>()
 ) {
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val localPagerState = rememberPagerState(pageCount = { 2 })
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -36,16 +36,20 @@ fun NationwideScreen(
             .background(EodigoColor.White)
     ) {
         HorizontalPager(
-            state = pagerState,
+            state = localPagerState,
 //            modifier = Modifier.weight(1f)
         ) { page ->
             when (page) {
                 0 -> PriceMapScreen(
+                    isEmptyKeyword = uiState.keyWord.isEmpty(),
                     productRanking = uiState.productRanking,
-                    isEmptyKeyword = uiState.isEmptyKeyword
+                    onRegionClick = {
+                        viewModel.switchToRegionTab()
+                    }
                 )
 
                 1 -> PriceChartScreen(
+                    isEmptyKeyword = uiState.keyWord.isEmpty(),
                     chartData = uiState.chartData
                 )
             }
@@ -57,9 +61,9 @@ fun NationwideScreen(
                 .padding(bottom = 30.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            repeat(pagerState.pageCount) { iteration ->
+            repeat(localPagerState.pageCount) { iteration ->
                 val color =
-                    if (pagerState.currentPage == iteration) EodigoColor.Normal else EodigoColor.Gray300
+                    if (localPagerState.currentPage == iteration) EodigoColor.Normal else EodigoColor.Gray300
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)

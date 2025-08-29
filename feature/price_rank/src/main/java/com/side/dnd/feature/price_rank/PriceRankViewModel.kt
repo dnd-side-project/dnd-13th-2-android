@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PriceRankViewModel @Inject constructor(
-    private val productPriceRepository: ProductPriceRepository
+    private val productPriceRepository: ProductPriceRepository,
 ) : ViewModel() {
 
     private val _rankUiState = MutableStateFlow<NationWideUiState>(NationWideUiState.Empty)
@@ -24,20 +24,32 @@ class PriceRankViewModel @Inject constructor(
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
 
-    init {
-
-    }
+    private val _tabChangeFlow = MutableSharedFlow<Int>()
+    val tabChangeFlow get() = _tabChangeFlow.asSharedFlow()
 
     fun loadProductData(productId: Int, productName: String) {
         viewModelScope.launch {
             try {
                 val rankingResult = productPriceRepository.getProductRanking(productId)
+                val trendResult = productPriceRepository.getProductTrend(productId)
+
                 rankingResult.onSuccess { ranking ->
-                    _rankUiState.update { currentState ->
-                        currentState.copy(
-                            keyWord = productName,
-                            productRanking = ranking
-                        )
+                    trendResult.onSuccess { chartData ->
+                        _rankUiState.update { currentState ->
+                            currentState.copy(
+                                keyWord = productName,
+                                productRanking = ranking,
+                                chartData = chartData
+                            )
+                        }
+                    }.onFailure { error ->
+                        _rankUiState.update { currentState ->
+                            currentState.copy(
+                                keyWord = productName,
+                                productRanking = ranking
+                            )
+                        }
+                        _errorFlow.emit(error)
                     }
                 }.onFailure { error ->
                     _errorFlow.emit(error)
@@ -48,20 +60,9 @@ class PriceRankViewModel @Inject constructor(
         }
     }
 
-    fun loadProductTrendData(productId: Int, productName: String) {
+    fun switchToRegionTab() {
         viewModelScope.launch {
-            try {
-                val trendResult = productPriceRepository.getProductTrend(productId)
-                trendResult.onSuccess { chartData ->
-                    _rankUiState.update { currentState ->
-                        currentState.copy(chartData = chartData)
-                    }
-                }.onFailure { error ->
-                    _errorFlow.emit(error)
-                }
-            } catch (e: Exception) {
-                _errorFlow.emit(e)
-            }
+            _tabChangeFlow.emit(1)
         }
     }
 

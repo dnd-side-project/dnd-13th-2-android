@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -65,6 +66,7 @@ import side.dnd.core.compositionLocals.LocalNavigationActions
 import side.dnd.core.compositionLocals.LocalSharedElementTransitionScope
 import side.dnd.design.R
 import side.dnd.design.component.CircularFabState
+import side.dnd.design.component.FabType
 import side.dnd.design.component.LocalCircularFabState
 import side.dnd.design.component.button.clickableAvoidingDuplication
 import side.dnd.design.component.effect.RememberEffect
@@ -85,10 +87,14 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel<HomeViewModel>(),
     context: Context = LocalContext.current,
 ) {
+    val fabState = LocalCircularFabState.current
+
     LifecycleEventEffect(Lifecycle.Event.ON_CREATE) {
         NaverMapSdk.getInstance(context).client =
             NaverMapSdk.NcpKeyClient(BuildConfig.NAVER_MAP_KEY)
+        fabState.updateFabType(FabType.Circle)
     }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val navActions = LocalNavigationActions.current
@@ -99,7 +105,6 @@ fun HomeScreen(
         mutableStateOf(Store.DEFAULT)
     }
     val cameraPositionState = rememberCameraPositionState("cameraPositionState") {
-        Log.d("test", "abc: $position")
         if (!BuildConfig.DEBUG && ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -117,7 +122,6 @@ fun HomeScreen(
     }
     val localFABOnClickedListener = LocalFabOnClickedListener.current
     val locationSource = rememberFusedLocationSource()
-    val fabState = LocalCircularFabState.current
 
     LaunchedEffect(Unit) {
         snapshotFlow {
@@ -159,8 +163,9 @@ fun HomeScreen(
     }
 
     if (dialogVisibility) {
-        Dialog(
-            onDismissRequest = { dialogVisibility = false }
+        Dialog (
+            onDismissRequest = { dialogVisibility = false },
+            properties = DialogProperties()
         ) {
             StoreDetailCard(
                 selectedStore
@@ -197,6 +202,11 @@ fun HomeScreen(
                         state = MarkerState(
                             position = store.latLng.toNaverLatLng()
                         ),
+                        onClick = {
+                            selectedStore = store
+                            dialogVisibility = true
+                            true
+                        }
                     ) {
                         MapMarker(
                             store = store,

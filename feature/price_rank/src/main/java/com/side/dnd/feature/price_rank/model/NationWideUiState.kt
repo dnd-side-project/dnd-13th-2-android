@@ -8,14 +8,14 @@ data class NationWideUiState(
     val keyWord: String,
     val productRanking: ProductRanking,
     val chartData: ProductChartData,
-    val isEmptyKeyword: Boolean = true
 ) {
+    
    companion object {
        val Empty = NationWideUiState(
            keyWord = "",
            productRanking = MockProductRanking.sampleProductRanking,
            chartData = MockProductChartData.sampleChartData,
-           isEmptyKeyword = true
+
        )
    }
 }

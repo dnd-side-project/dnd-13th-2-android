@@ -24,6 +24,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import side.dnd.core.TopLevelRoute
 import side.dnd.core.compositionLocals.LocalNavigationActions
 import side.dnd.core.compositionLocals.LocalSharedElementTransitionScope
@@ -32,6 +33,8 @@ import side.dnd.design.utils.tu
 import side.dnd.feature.home.HomeRoute
 import side.dnd.feature.home.homeGraph
 import com.side.dnd.feature.price_rank.navigation.priceRankGraph
+import com.side.dnd.feature.price_rank.navigation.PriceRankRoute
+import com.side.dnd.feature.price_rank.PriceRankScreen
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

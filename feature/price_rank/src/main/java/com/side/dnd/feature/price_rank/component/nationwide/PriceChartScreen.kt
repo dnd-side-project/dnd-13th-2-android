@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.side.dnd.feature.price_rank.R
 import com.side.dnd.feature.price_rank.model.MockProductChartData
@@ -23,11 +24,12 @@ import side.dnd.design.theme.EodigoTheme
 
 @Composable
 fun PriceChartScreen(
+    isEmptyKeyword: Boolean,
     chartData: ProductChartData,
     modifier: Modifier = Modifier
 ) {
-//    val isEmptyData = chartData.annualData.isEmpty()
-    val isEmptyData = true
+    val chartAnnualData = if (isEmptyKeyword) MockProductChartData.emptyChartData.annualData else chartData.annualData
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -40,7 +42,7 @@ fun PriceChartScreen(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (isEmptyData) {
+            if (isEmptyKeyword) {
                 Text(
                     text = stringResource(R.string.price_chart_empty_title),
                     style = EodigoTheme.typography.body3Medium,
@@ -67,9 +69,8 @@ fun PriceChartScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val formattedRate = String.format("%.3f", chartData.inflationRate)
-            val firstText = if (isEmptyData) stringResource(R.string.price_chart_content_empty_first) else "+${formattedRate}% "
-            val secondText = if (isEmptyData) stringResource(id = R.string.price_chart_content_empty_second) else stringResource(id = R.string.price_chart_content_first)
-
+            val firstText = if (isEmptyKeyword) stringResource(R.string.price_chart_content_empty_first) else "+${formattedRate}% "
+            val secondText = if (isEmptyKeyword) stringResource(id = R.string.price_chart_content_empty_second) else stringResource(id = R.string.price_chart_content_first)
             Text(
                 text = firstText,
                 style = EodigoTheme.typography.title1Medium,
@@ -83,11 +84,30 @@ fun PriceChartScreen(
             )
         }
 
-        Spacer(modifier = Modifier.size(40.dp))
+        Spacer(modifier = Modifier.size(80.dp))
 
         PriceChart(
-            data = MockProductChartData.sampleChartData.annualData,
-            modifier = Modifier
+            isEmptyKeyword = isEmptyKeyword,
+            data = chartAnnualData,
+            modifier = Modifier.padding(16.dp)
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PriceChartScreenPreview() {
+    PriceChartScreen(
+        isEmptyKeyword = false,
+        chartData = MockProductChartData.sampleChartData
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PriceChartScreenEmptyPreview() {
+    PriceChartScreen(
+        isEmptyKeyword = true,
+        chartData = MockProductChartData.emptyChartData
+    )
 }

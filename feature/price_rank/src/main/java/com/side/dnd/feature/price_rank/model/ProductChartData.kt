@@ -29,4 +29,17 @@ object MockProductChartData {
             AnnualPriceData(2025,2800),
         )
     )
+    val emptyChartData = ProductChartData(
+        productName = "",
+        inflationRate = 0.0,
+        annualData = listOf(
+            AnnualPriceData(2020,300),
+            AnnualPriceData(2021,100),
+            AnnualPriceData(2022,200),
+            AnnualPriceData(2023,700),
+            AnnualPriceData(2024,1000),
+            AnnualPriceData(2025,800)
+        )
+    )
+
 }
