@@ -56,14 +56,6 @@ internal fun NavigationGraph(
             ) {
                 homeGraph()
                 priceRankGraph()
-                
-                composable<PriceRankRoute.PriceRankWithProduct> { backStackEntry ->
-                    val productId = backStackEntry.arguments?.getInt("productId") ?: 0
-                    val productName = backStackEntry.arguments?.getString("productName") ?: ""
-                    CompositionLocalProvider(LocalSharedElementTransitionScope provides this@SharedTransitionLayout) {
-                        PriceRankScreen(productId = productId, productName = productName)
-                    }
-                }
             }
         }
     }

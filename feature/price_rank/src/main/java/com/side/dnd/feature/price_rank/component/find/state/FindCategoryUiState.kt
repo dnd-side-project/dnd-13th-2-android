@@ -30,7 +30,7 @@ data class SearchCategory(
 
 sealed class FindCategoryEvent {
     data class SearchProduct(val searchQuery: String) : FindCategoryEvent()
-    data class SearchFiltering(val id: Int) : FindCategoryEvent()
+    data class SearchFiltering(val id: Int, val name: String) : FindCategoryEvent()
     data class OnSearchClicked(val searchQuery: String) : FindCategoryEvent()
 }
 

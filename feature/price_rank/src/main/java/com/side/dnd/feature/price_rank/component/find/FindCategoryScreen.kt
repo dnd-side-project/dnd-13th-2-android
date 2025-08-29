@@ -201,7 +201,10 @@ fun SearchResultList(
                                 onItemSelect(idx)
                             },
                             onTap = {
-                                onEvent(FindCategoryEvent.SearchFiltering(result.id))
+                                onEvent(FindCategoryEvent.SearchFiltering(
+                                    id = result.id,
+                                    name = result.name,
+                                ))
                             }
                         )
                     }

@@ -39,24 +39,6 @@ import side.dnd.design.component.effect.RememberEffect
 import side.dnd.design.theme.EodigoColor
 
 @Composable
-internal fun PriceRankRoute(
-    viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>(),
-) {
-    val context = LocalContext.current
-    val uiState by viewModel.rankUiState.collectAsStateWithLifecycle()
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(EodigoColor.White)
-            .systemBarsPadding()
-    ) {
-        PriceRankScreen(viewModel = viewModel)
-    }
-}
-
-
-@Composable
 fun PriceRankScreen(
     viewModel: PriceRankViewModel = hiltViewModel<PriceRankViewModel>(),
     productId: Int = 0,

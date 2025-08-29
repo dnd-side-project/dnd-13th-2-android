@@ -6,9 +6,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.side.dnd.feature.price_rank.PriceRankScreen
 import com.side.dnd.feature.price_rank.component.find.FindCategoryScreen
-import com.side.dnd.feature.price_rank.component.find.DetailCategoryScreen
 import kotlinx.serialization.Serializable
 import side.dnd.core.TopLevelRoute
 import side.dnd.core.compositionLocals.LocalAnimatedContentScope
@@ -20,7 +20,10 @@ sealed class PriceRankRoute {
     object PriceRankGraph : PriceRankRoute()
 
     @Serializable
-    data object PriceRank : PriceRankRoute(), TopLevelRoute {
+    data class PriceRank(
+        val productId: Int = 0,
+        val productName: String = ""
+    ) : PriceRankRoute(), TopLevelRoute {
         override val icon: Int
             get() = side.dnd.design.R.drawable.ic_search_ranking
         override val description: String
@@ -28,41 +31,31 @@ sealed class PriceRankRoute {
     }
 
     @Serializable
-    data class PriceRankWithProduct(
-        val productId: Int = 0,
-        val productName: String = ""
-    ) : PriceRankRoute()
-
-    @Serializable
     data object CategorySearch : PriceRankRoute()
     
     @Serializable
     data class DetailCategory(
-        val categoryCode: String = "",
-        val categoryName: String = ""
+        val code: String = "",
+        val name: String = ""
     ) : PriceRankRoute()
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.priceRankGraph() {
-    navigation<PriceRankRoute.PriceRankGraph>(startDestination = PriceRankRoute.PriceRank) {
-        composable<PriceRankRoute.PriceRank> {
+    navigation<PriceRankRoute.PriceRankGraph>(startDestination = PriceRankRoute.PriceRank()) {
+        composable<PriceRankRoute.PriceRank> { navBackStackEntry ->
+            val argument = navBackStackEntry.toRoute<PriceRankRoute.PriceRank>()
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
-                PriceRankScreen()
+                PriceRankScreen(
+                    productId = argument.productId,
+                    productName = argument.productName
+                )
             }
         }
 
         composable<PriceRankRoute.CategorySearch> {
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
                 FindCategoryScreen()
-            }
-        }
-        
-        composable<PriceRankRoute.DetailCategory> { backStackEntry ->
-            val categoryCode = backStackEntry.arguments?.getString("categoryCode") ?: ""
-            val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
-            CompositionLocalProvider(LocalAnimatedContentScope provides this) {
-                DetailCategoryScreen()
             }
         }
     }
@@ -73,23 +66,19 @@ fun NavController.navigateToCategorySearch() {
 }
 
 fun NavController.navigateToDetailCategory(categoryCode: String, categoryName: String) {
-    navigate("${PriceRankRoute.DetailCategory}?categoryCode=$categoryCode&categoryName=$categoryName")
+    navigate(PriceRankRoute.DetailCategory(code = categoryCode, name = categoryName))
 }
 
-fun NavController.navigateToPriceRank() {
-    navigate(PriceRankRoute.PriceRank)
-}
-
-fun NavController.navigateToPriceRankWithProduct(productId: Int, productName: String) {
-    navigate(PriceRankRoute.PriceRankWithProduct(productId = productId, productName = productName))
+fun NavController.navigateToPriceRank(id: Int, name: String) {
+    navigate(PriceRankRoute.PriceRank(productId = id, productName = name)) {
+        popUpTo<PriceRankRoute.PriceRank> {
+            inclusive = true
+        }
+    }
 }
 
 sealed class PriceRankNavigationAction : NavigationAction {
     data object NavigateToCategorySearch : PriceRankNavigationAction()
-    data object NavigateToDetailCategory : PriceRankNavigationAction()
-    data object NavigateToPriceRank : PriceRankNavigationAction()
-    data class NavigateToPriceRankWithProduct(
-        val productId: Int,
-        val productName: String
-    ) : PriceRankNavigationAction()
+    data class NavigateToDetailCategory(val code: String, val name: String) : PriceRankNavigationAction()
+    data class NavigateToPriceRank(val id: Int, val name: String) : PriceRankNavigationAction()
 }

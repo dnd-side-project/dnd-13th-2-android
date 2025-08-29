@@ -14,7 +14,6 @@ import com.side.dnd.feature.price_rank.navigation.PriceRankNavigationAction
 import com.side.dnd.feature.price_rank.navigation.PriceRankRoute
 import com.side.dnd.feature.price_rank.navigation.navigateToCategorySearch
 import com.side.dnd.feature.price_rank.navigation.navigateToPriceRank
-import com.side.dnd.feature.price_rank.navigation.navigateToPriceRankWithProduct
 import side.dnd.core.TopLevelRoute
 import side.dnd.core.compositionLocals.CommonNavigationAction
 import side.dnd.core.compositionLocals.NavigationAction
@@ -26,7 +25,7 @@ import side.dnd.feature.home.navigateToStore
 
 internal val TopLevelRoutes: List<TopLevelRoute> = listOf(
     HomeRoute.Home,
-    PriceRankRoute.PriceRank
+    PriceRankRoute.PriceRank()
 )
 
 @Composable
@@ -56,7 +55,7 @@ internal class Router(val navController: NavHostController) {
 
         when (topLevelRoute) {
             is HomeRoute.Home -> navController.navigate(HomeRoute.Home, navOptions)
-            is PriceRankRoute.PriceRank -> navController.navigate(PriceRankRoute.PriceRank, navOptions)
+            is PriceRankRoute.PriceRank -> navController.navigate(PriceRankRoute.PriceRank(), navOptions)
         }
     }
 
@@ -66,8 +65,7 @@ internal class Router(val navController: NavHostController) {
             is HomeNavigationAction.NavigateToHome -> navController.navigateToHome()
             is HomeNavigationAction.NavigateToSearch -> navController.navigateToSearch(action.userMapState)
             is HomeNavigationAction.NavigateToStore -> navController.navigateToStore(userMapState = action.userMapState)
-            is PriceRankNavigationAction.NavigateToPriceRank -> navController.navigateToPriceRank()
-            is PriceRankNavigationAction.NavigateToPriceRankWithProduct -> navController.navigateToPriceRankWithProduct(action.productId, action.productName)
+            is PriceRankNavigationAction.NavigateToPriceRank -> navController.navigateToPriceRank(id = action.id, name = action.name)
             is PriceRankNavigationAction.NavigateToCategorySearch -> navController.navigateToCategorySearch()
         }
     }
