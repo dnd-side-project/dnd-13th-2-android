@@ -1,6 +1,5 @@
 package com.side.dnd.feature.price_rank
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.dnd.feature.price_rank.data.repository.ProductPriceRepository
@@ -16,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PriceRankViewModel @Inject constructor(
-    private val productPriceRepository: ProductPriceRepository
+    private val productPriceRepository: ProductPriceRepository,
 ) : ViewModel() {
 
     private val _rankUiState = MutableStateFlow<NationWideUiState>(NationWideUiState.Empty)
@@ -27,7 +26,6 @@ class PriceRankViewModel @Inject constructor(
 
     private val _tabChangeFlow = MutableSharedFlow<Int>()
     val tabChangeFlow get() = _tabChangeFlow.asSharedFlow()
-
 
     fun loadProductData(productId: Int, productName: String) {
         viewModelScope.launch {

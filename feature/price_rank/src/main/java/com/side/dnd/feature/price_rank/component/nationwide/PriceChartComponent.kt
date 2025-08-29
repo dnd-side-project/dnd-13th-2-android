@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import com.side.dnd.feature.price_rank.model.AnnualPriceData
 import side.dnd.design.theme.EodigoColor
+import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 private fun formatPriceToManWon(price: Int): String {
@@ -288,7 +289,7 @@ fun PriceChart(
                 colors = CardDefaults.cardColors(containerColor = Color.Black)
             ) {
                 Text(
-                    text = if (isEmptyKeyword) "n,nnn원" else formatPriceToManWon(annualPrices[selectedIndex]),
+                    text = if (isEmptyKeyword) "n,nnn원" else DecimalFormat("#,###").format(annualPrices[selectedIndex]),
                     color = Color.White,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
