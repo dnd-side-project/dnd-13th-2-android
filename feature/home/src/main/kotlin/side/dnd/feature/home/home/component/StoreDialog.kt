@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,11 +26,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import side.dnd.design.R
 import side.dnd.design.component.HorizontalSpacer
 import side.dnd.design.component.HorizontalWeightSpacer
 import side.dnd.design.component.SubcomposeAsyncImageWithPreview
 import side.dnd.design.component.VerticalSpacer
+import side.dnd.design.component.progress.ProgressIndicatorRotating
 import side.dnd.design.theme.EodigoTheme
 import side.dnd.design.theme.LocalTypography
 import side.dnd.design.utils.tu
@@ -40,6 +47,12 @@ fun StoreDetailCard(
     store: Store,
     modifier: Modifier = Modifier,
 ) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.Asset("error_black_cat.json"))
+    val lottieProgress by animateLottieCompositionAsState(
+        composition,
+        iterations = LottieConstants.IterateForever
+    )
+
     Column(
         modifier = modifier
             .padding(top = 250.dp)
@@ -58,6 +71,16 @@ fun StoreDetailCard(
                 .clip(
                     shape = RoundedCornerShape(16.dp)
                 ),
+            loading = {
+                ProgressIndicatorRotating()
+            },
+            error = {
+                LottieAnimation(
+                    composition = composition,
+                    progress = { lottieProgress },
+                    modifier = Modifier.height(300.dp)
+                )
+            },
             contentScale = ContentScale.FillWidth,
         )
 
