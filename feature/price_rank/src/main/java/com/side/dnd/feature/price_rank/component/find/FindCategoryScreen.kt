@@ -62,6 +62,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
+import side.dnd.core.SnackBarMessage
 import side.dnd.core.compositionLocals.LocalNavigationActions
 import side.dnd.core.compositionLocals.LocalShowSnackBar
 import side.dnd.design.component.HorizontalWeightSpacer
@@ -97,6 +98,22 @@ internal fun FindCategoryScreen(
     FindCategoryScreen(
         uiState = uiState,
         onEvent = viewModel::onEvent,
+        onCategoryClick = {
+            showSnackBar.invoke(
+                SnackBarMessage(
+                    headerMessage = "서비스 준비중인 기능이에요.",
+                    contentMessage = "조금만 기다려 주세요."
+                )
+            )
+        },
+        onDetailCategoryClick = {
+            showSnackBar.invoke(
+                SnackBarMessage(
+                    headerMessage = "서비스 준비중인 기능이에요.",
+                    contentMessage = "조금만 기다려 주세요."
+                )
+            )
+        }
     )
 }
 
@@ -201,10 +218,12 @@ fun SearchResultList(
                                 onItemSelect(idx)
                             },
                             onTap = {
-                                onEvent(FindCategoryEvent.SearchFiltering(
-                                    id = result.id,
-                                    name = result.name,
-                                ))
+                                onEvent(
+                                    FindCategoryEvent.SearchFiltering(
+                                        id = result.id,
+                                        name = result.name,
+                                    )
+                                )
                             }
                         )
                     }

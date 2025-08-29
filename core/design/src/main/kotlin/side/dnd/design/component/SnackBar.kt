@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,7 +60,7 @@ private fun SnackBarCustom(
             .padding(horizontal = 16.dp)
             .height(78.dp),
         containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
+        contentColor = Color.White,
         shape = RoundedCornerShape(8.dp),
         action = {
             Column(
@@ -76,7 +77,7 @@ private fun SnackBarCustom(
                         painter = painterResource(id = R.drawable.ic_x),
                         contentDescription = "snackBarCloseButton",
                         modifier = Modifier.fillMaxSize(),
-                        tint = MaterialTheme.colorScheme.scrim
+                        tint = Color.White
                     )
                 }
             }
