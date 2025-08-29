@@ -79,13 +79,11 @@ class MainActivity : ComponentActivity() {
 
         LaunchedEffect(key1 = snackBarChannel) {
             snackBarChannel.receiveAsFlow().collect { snackBarMessage ->
-                snackBarHostState.currentSnackbarData?.let {
-                    snackBarHostState.showSnackbar(
-                        message = snackBarMessage.headerMessage,
-                        actionLabel = snackBarMessage.contentMessage,
-                        duration = SnackbarDuration.Indefinite,
-                    )
-                }
+                snackBarHostState.showSnackbar(
+                    message = snackBarMessage.headerMessage,
+                    actionLabel = snackBarMessage.contentMessage,
+                    duration = SnackbarDuration.Indefinite,
+                )
             }
         }
 
@@ -158,12 +156,11 @@ class MainActivity : ComponentActivity() {
                 },
                 snackbarHost = {
                     SnackBarHostCustom(
-                        headerMessage = snackBarHostState.currentSnackbarData?.visuals?.message
-                            ?: "",
-                        contentMessage = snackBarHostState.currentSnackbarData?.visuals?.actionLabel
-                            ?: "",
+                        headerMessage = snackBarHostState.currentSnackbarData?.visuals?.message ?: "",
+                        contentMessage = snackBarHostState.currentSnackbarData?.visuals?.actionLabel ?: "",
                         snackBarHostState = snackBarHostState,
-                        disMissSnackBar = { snackBarHostState.currentSnackbarData?.dismiss() })
+                        disMissSnackBar = { snackBarHostState.currentSnackbarData?.dismiss() }
+                    )
                 }
             ) { paddingValues ->
                 NavigationGraph(

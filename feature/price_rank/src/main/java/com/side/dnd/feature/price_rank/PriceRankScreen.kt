@@ -2,8 +2,11 @@ package com.side.dnd.feature.price_rank
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.rememberPagerState
@@ -28,8 +31,11 @@ import com.side.dnd.feature.price_rank.model.NationWideUiState
 import com.side.dnd.feature.price_rank.navigation.PriceRankNavigationAction
 import com.side.dnd.feature.price_rank.navigation.PriceRankRoute
 import com.side.dnd.feature.price_rank.navigation.navigateToCategorySearch
+import side.dnd.core.SnackBarMessage
+import side.dnd.core.compositionLocals.LocalFABControl
 import side.dnd.core.compositionLocals.LocalFabOnClickedListener
 import side.dnd.core.compositionLocals.LocalNavigationActions
+import side.dnd.core.compositionLocals.LocalShowSnackBar
 import side.dnd.design.component.CategoryBottomSheet
 import side.dnd.design.component.CustomNavigationTab
 import side.dnd.design.component.FabType
@@ -56,6 +62,8 @@ fun PriceRankScreen(
     }
     val navigationAction = LocalNavigationActions.current
     val fabState = LocalCircularFabState.current
+    val fabControl = LocalFABControl.current
+    val showSnackBar = LocalShowSnackBar.current
 
     LaunchedEffect(productId, productName) {
         if (productId > 0 && productName.isNotEmpty()) {
@@ -73,16 +81,21 @@ fun PriceRankScreen(
         fabOnClickListener {
             isFabClicked = !isFabClicked
         }
+        fabControl(false)
+        fabState.animateOffset(fabState.center)
     }
-    
+
     RememberEffect(isFabClicked) {
         if(isFabClicked)
             fabState.updateFabType(FabType.Multiply)
         else
             fabState.updateFabType(FabType.Plus)
+
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
@@ -124,7 +137,12 @@ fun PriceRankScreen(
                         navigationAction(PriceRankNavigationAction.NavigateToCategorySearch)
                     }
                     else -> {
-                        // priceRankViewModel.selectCategory(categoryName)
+                        showSnackBar.invoke(
+                            SnackBarMessage(
+                                headerMessage = "서비스 준비중인 기능이에요.",
+                                contentMessage = "조금만 기다려 주세요."
+                            )
+                        )
                     }
                 }
             },

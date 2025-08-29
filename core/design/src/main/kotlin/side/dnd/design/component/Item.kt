@@ -194,7 +194,6 @@ fun SquareCategoryItem(
     ) {
         Box(
             modifier = Modifier
-                .clickable(onClick = onClick)
                 .size(64.dp)
                 .background(
                     color = EodigoColor.Gray100,
